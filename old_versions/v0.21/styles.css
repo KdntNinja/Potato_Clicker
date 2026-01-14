@@ -5,7 +5,6 @@ html {
   user-select: none;
   cursor: default;  
   overflow: hidden;
-  font-family: "Rubik", sans-serif;
 }
 
 nav {
@@ -190,43 +189,24 @@ section {
 }
 
 .potato-wrapper {
+  position: relative;       /* make it the stacking context */
+  display: inline-block;    /* shrink-wrap to potato size */
+}
+
+.potato-wrapper {
   position: relative;
-  display: inline-block;
+  display: inline-block; /* shrink to potato size */
 }
 
 .shine,
 .shine2 {
   position: absolute;
-  top: clamp(15px, calc(160px - 10vw), 150px);
-  left: 10%;
+  top: 3%;                 /* distance from top of wrapper */
+  left: 10%;                /* distance from left of wrapper */
   width: 80%;
   opacity: 0.3;
   animation: spin 8s linear infinite;
-  transform-origin: center;
-}
-
-@media (min-width: 1000px) and (max-width: 1299px) {
-  .shine, .shine2 {
-    top: clamp(15px, calc(160px - 9.5vw), 150px);
-  }
-}
-
-@media (min-width: 1300px) and (max-width: 1499px) {
-  .shine, .shine2 {
-    top: clamp(15px, calc(160px - 8.5vw), 150px);
-  }
-}
-
-@media (min-width: 1500px) and (max-width: 1749px) {
-  .shine, .shine2 {
-    top: clamp(15px, calc(160px - 7vw), 150px);
-  }
-}
-
-@media (min-width: 1750px) {
-  .shine, .shine2 {
-    top: clamp(15px, calc(160px - 9vw), 150px);
-  }
+  transform-origin: center; /* rotate around its own center */
 }
 
 .shine2 {
@@ -236,9 +216,9 @@ section {
 
 
 #potato-button {
-  position: relative;
+  position: relative;       /* stays on top */
   z-index: 2;
-  background: none;
+  background: none;         /* optional */
   border: none;
   padding: 0;
 }
@@ -454,7 +434,6 @@ h3 {
 .major-update {
   border-top: 3px solid rgb(109, 121, 7);
   border-bottom: 3px solid rgb(109, 121, 7);
-  margin-bottom: 15px
 }
 
 .major-h2 {
@@ -477,43 +456,6 @@ h3 {
   margin-top: 10px;
 }
 
-.minor-update {
-  border-top: 3px solid rgb(87, 87, 87);
-  border-bottom: 3px solid rgb(87, 87, 87);
-  margin-bottom: 15px
-}
-
-.minor-h2 {
-  color: rgb(119, 119, 119);
-  text-align: left;
-  font-size: 24px;
-  padding-top: 5px
-}
-
-.minor-p {
-  color: rgb(184, 184, 184);
-  text-align: left;
-  font-size: 16px;
-}
-
-.minor-ul {
-  color: rgb(212, 212, 212);
-  text-align: left;
-  font-size: 16px;
-  margin-top: 10px;
-}
-
-.flashing {
-  color: yellow;
-  animation: blinker 0.5s linear infinite;
-}
-
-@keyframes blinker {
-  70% {
-    color: red;
-  }
-}
-
 .red {
   color: red;
 }
@@ -521,7 +463,6 @@ h3 {
 .general-stats {
   border-top: 3px solid rgba(255, 255, 255, 0.685);
   border-bottom: 3px solid rgba(255, 255, 255, 0.685);
-  margin-bottom: 15px;
 }
 
 .general-text {
@@ -770,33 +711,4 @@ h3 {
 
 .darker-year {
   color:#b1b1b1;
-}
-
-.save-load-button, .wipe-button {
-  position: relative;
-  color:chocolate;
-  font-weight: bold;
-  padding: 10px;
-  border: chocolate solid 2px;
-  margin: 20px;
-  background-color: #1f2635;
-  font-weight: bold;
-}
-
-.save-load-button {
-  color: rgb(37, 37, 197);
-  border: rgb(37, 37, 197) solid 2px;
-}
-
-.save-load-button:hover {
-  background-color: #263452;
-}
-
-.wipe-button {
-  color: rgb(197, 37, 37);
-  border: rgb(197, 37, 37) solid 2px;
-}
-
-.wipe-button:hover {
-  background-color: #522626;
 }

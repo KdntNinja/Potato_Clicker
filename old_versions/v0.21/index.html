@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico"> 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
   <title id="title">0 potatoes - Potato Clicker</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -81,25 +78,11 @@
                 <button class="closeButton" id="closeModalOptions">&times;</button>
               </div>
               <div class="general-stats">
-                <h2 class="general-text">General</h2>
-                <p class="options-p">Saving and Loading options are found underneath.</p>
-                <button onclick="setLocalData()" class="save-load-button">
-                  <p>Save</p>
-                </button>
-                <button onclick="getLocalData()" class="save-load-button">
-                  <p>Load</p>
-                </button>
-                <button onclick="clearLocalData()" class="wipe-button">
-                  <p>Wipe</p>
-                </button>
-              </div>
-              <div class="general-stats">
                 <h2 class="general-text">Versions</h2>
                 <p class="options-p">Hover over the box below to travel back in time!</p>
                 <div class="dropdown">Version select
                   <div class="dropdown-content">
                     <a href="/index.html" class="selected-version">Current</a>
-                    <a href="/old_versions/v0.21/index.html">v0.21</a>
                     <a href="/old_versions/v0.11/index.html">v0.11</a>
                   </div>
                 </div>
@@ -147,18 +130,6 @@
               <div class="modal-header">
                 <h2 class="info-h2">Information</h2>
                 <button class="closeButton" id="closeModal">&times;</button>
-              </div>
-              <div class="minor-update">
-                <h2 class="minor-h2">14/01/26: Minor bug fix update v0.27</h2>
-                <p class="minor-p">Couple of ui updates but mostly backend</p>
-                <ul class="minor-ul">
-                  <li>Website is now at: <span class="flashing">www.potatoclicker.online</span></li>
-                  <li>Potatoes go up more smoothly</li>
-                  <li>Now using <a href="https://fonts.google.com/specimen/Rubik?query=Rubi" >Rubik</a> font instead of the default</li>
-                  <li>Made it so clicking isn't as fast as usuall because the game would progress too fast then</li>
-                  <li>Finally fixed the glow to be under the potato for screen resolutions 1000px to 1700px+ (because mobile will get it's own ui in the future)</li>
-                  <li>Saving, Loading and Wipe feature which includes autoSaving every 60 seconds!</li>
-                </ul>
               </div>
               <div class="major-update">
                 <h2 class="major-h2">12/01/26: Buildings Update v0.21</h2>

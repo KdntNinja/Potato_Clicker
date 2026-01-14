@@ -42,9 +42,9 @@ let potatoesPerClick = 1;
 let potatoClicks = 0;
 let handFarmedPotatoes = 0;
 let goldenPotatoClicks = 0;
-let runningVersion = "v0.27"
+let runningVersion = "v0.21"
 let autoClickAmount = 0;
-let runDurationSeconds
+
 
 let buildings = [
   {
@@ -115,6 +115,10 @@ var comment_types = {
   "legendary": ["Your potatoes are legendary!", "Your potatoes have achieved mythical status!", "Your potatoes are the stuff of legends!", "Your potatoes are immortalized in history!"]
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function setCommentSmooth(text) {
   comments.style.opacity = "0";
 
@@ -163,11 +167,23 @@ function updatePotatoDisplay() {
     clickerCountDisplay.innerText = Math.floor(potatoes) + ' Potatoes';
     titleElement.innerText = Math.floor(potatoes) + ' potatoes - Potato Clicker';
   }
+  renderBuildings();
 }
 
 function rateCounter() {
+  /*
+    if (potatoes !== potatoesLastSecond || potatoesPerSecond !== (potatoes - potatoesLastSecond)) {
+      potatoesPerSecond = potatoes - potatoesLastSecond;
+      potatoesLastSecond = potatoes;
+      if (potatoesPerSecond < 0) {
+        document.querySelector('.potato-amount-persecond').innerText = 'per second: 0';
+      } else {
+        document.querySelector('.potato-amount-persecond').innerText = 'per second: ' + (Math.floor(potatoesPerSecond * 10) / 10);
+      }
+    }
+  */
     document.querySelector('.potato-amount-persecond').innerText = 'per second: ' + Math.floor(autoClickAmount * 10) / 10;
-    setTimeout(rateCounter, 1000);
+    setTimeout(rateCounter, 1000); // schedule the next call
 }
 
 function formatRunTime(seconds) {
@@ -183,7 +199,7 @@ function formatRunTime(seconds) {
 function updateStatsDisplay() {
   potatoesCountElement.innerText = 'Potatoes in bank: ' + Math.floor(potatoes * 10) / 10;
   allTimePotatoesElement.innerText = 'Potatoes gathered (all time): ' + Math.floor(allTimePotatoes * 10) / 10;
-  runDurationSeconds = Math.floor((Date.now() - runStartTime) / 1000);
+  const runDurationSeconds = Math.floor((Date.now() - runStartTime) / 1000);
   runStartTimeElement.innerText = 'Run started: ' + formatRunTime(runDurationSeconds);
   buildingsOwnedElement.innerText = 'Buildings owned: ' + buildingsOwned;
   potatoesPerSecondElement.innerText = 'Potatoes per second: ' + Math.floor(autoClickAmount * 10) / 10;
@@ -218,93 +234,14 @@ function enforceMysteryLimit() {
   });
 }
 
-function setLocalData() {
-  localStorage.setItem("potatoes", potatoes);
-  localStorage.setItem("potatoes_gathered", allTimePotatoes);
-  localStorage.setItem("run_started", runDurationSeconds);
-  localStorage.setItem("buildings_owned", buildingsOwned);
-  localStorage.setItem("potatoes_per_second", autoClickAmount);
-  localStorage.setItem("potatoes_per_click", potatoesPerClick);
-  localStorage.setItem("potato_clicks", potatoClicks);
-  localStorage.setItem("hand_farmed_potatoes", handFarmedPotatoes);
-  localStorage.setItem("golden_potato_clicks", goldenPotatoClicks);
-
-  const cursorBuilding = buildings.find(b => b.id === "cursor");
-  localStorage.setItem("cursors", cursorBuilding ? cursorBuilding.owned : 0);
-  localStorage.setItem("cursor_mystery", cursorBuilding ? cursorBuilding.mystery : true);
-
-  const farmerBuilding = buildings.find(b => b.id === "farmer");
-  localStorage.setItem("farmers", farmerBuilding ? farmerBuilding.owned : 0);
-  localStorage.setItem("farmer_mystery", farmerBuilding ? farmerBuilding.mystery : true);
-
-  const tractorBuilding = buildings.find(b => b.id === "tractor");
-  localStorage.setItem("tractors", tractorBuilding ? tractorBuilding.owned : 0);
-  localStorage.setItem("tractor_mystery", tractorBuilding ? tractorBuilding.mystery : true);
-
-  const greenhouseBuilding = buildings.find(b => b.id === "greenhouse");
-  localStorage.setItem("greenhouses", greenhouseBuilding ? greenhouseBuilding.owned : 0);
-  localStorage.setItem("greenhouse_mystery", greenhouseBuilding ? greenhouseBuilding.mystery : true);
-}
-
-function getLocalData() {
-  potatoes = Math.floor(Number(localStorage.getItem("potatoes") || 0) * 10) / 10;
-  allTimePotatoes = Math.floor(Number(localStorage.getItem("potatoes_gathered") || 0) * 10) / 10;
-  runDurationSeconds = Number(localStorage.getItem("run_started") || 0);
-  buildingsOwned = Number(localStorage.getItem("buildings_owned") || 0);
-  autoClickAmount = Number(localStorage.getItem("potatoes_per_second") || 0);
-  potatoesPerClick = Number(localStorage.getItem("potatoes_per_click") || 1);
-  potatoClicks = Number(localStorage.getItem("potato_clicks") || 0);
-  handFarmedPotatoes = Number(localStorage.getItem("hand_farmed_potatoes") || 0);
-  goldenPotatoClicks = Number(localStorage.getItem("golden_potato_clicks") || 0);
-
-  const cursorBuilding = buildings.find(b => b.id === "cursor");
-  if (cursorBuilding) {
-    cursorBuilding.owned = Number(localStorage.getItem("cursors") || 0);
-    cursorBuilding.mystery = JSON.parse(localStorage.getItem("cursor_mystery") || "true");
-    cursorBuilding.price = Math.ceil(15 * Math.pow(1.15, cursorBuilding.owned));
-  }
-  const farmerBuilding = buildings.find(b => b.id === "farmer");
-  if (farmerBuilding) {
-    farmerBuilding.owned = Number(localStorage.getItem("farmers") || 0);
-    farmerBuilding.mystery = JSON.parse(localStorage.getItem("cursor_mystery") || "true");
-    farmerBuilding.price = Math.ceil(100 * Math.pow(1.15, farmerBuilding.owned));
-  }
-  const tractorBuilding = buildings.find(b => b.id === "tractor");
-  if (tractorBuilding) {
-    tractorBuilding.owned = Number(localStorage.getItem("tractors") || 0);
-    tractorBuilding.mystery = JSON.parse(localStorage.getItem("cursor_mystery") || "true");
-    tractorBuilding.price = Math.ceil(1100 * Math.pow(1.15, tractorBuilding.owned));
-  }
-  const greenhouseBuilding = buildings.find(b => b.id === "greenhouse");
-  if (greenhouseBuilding) {
-    greenhouseBuilding.owned = Number(localStorage.getItem("greenhouses") || 0);
-    greenhouseBuilding.mystery = JSON.parse(localStorage.getItem("cursor_mystery") || "true");
-    greenhouseBuilding.price = Math.ceil(12000 * Math.pow(1.15, greenhouseBuilding.owned));
-  }
-  renderBuildings();
-}
-
-function clearLocalData() {
-  if (confirm("Are you sure you want to erase your current save (this change cannot by reverted)?")) {
-    localStorage.clear();
-    location.reload();
-  } else {
-    console.log("DEBUG: Canceled")
-  }
-}
-
 clickerButton.addEventListener('click', function() {
-  clickerButton.disabled = true;
-  potatoes += Math.floor(potatoesPerClick * 10) / 10;
+  potatoes += potatoesPerClick;
   rawPotatoes += potatoesPerClick;
   handFarmedPotatoes += potatoesPerClick;
   allTimePotatoes += potatoesPerClick;
   potatoClicks++;
   updatePotatoDisplay()
-  renderBuildings();
-  setTimeout(() => {
-    clickerButton.disabled = false;
-  }, 85);
+  
 });
 
 const GOLDEN_DELAY = 1000 * 1000;
@@ -542,21 +479,13 @@ clickArea.addEventListener('click', (e) => {
 });
 
 function autoClick() {
-  potatoes += autoClickAmount/20;
-  allTimePotatoes += autoClickAmount/20;
+  potatoes += autoClickAmount;
+  allTimePotatoes += autoClickAmount
   updatePotatoDisplay();
-  setTimeout(autoClick, 50);
+  setTimeout(autoClick, 1000);
 }
 
-function autoSave() {
-  setLocalData();
-  setTimeout(autoSave, 60000);
-}
-
-getLocalData();
 rateCounter();
 updatePotatoComments();
 updateStatsDisplay()
 autoClick();
-renderBuildings();
-autoSave();
