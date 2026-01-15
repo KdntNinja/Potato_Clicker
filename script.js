@@ -18,9 +18,7 @@ const allTimePotatoesElement = document.getElementById("totPot");
 const runStartTimeElement = document.getElementById("runStart");
 const buildingsOwnedElement = document.getElementById("buildingsOwned");
 const potatoesPerSecondElement = document.getElementById("potatoesPerSecond");
-const rawPotatoesPerSecondElement = document.getElementById(
-  "rawPotatoesPerSecond",
-);
+const rawPotatoesPerSecondElement = document.getElementById("rawPotatoesPerSecond");
 const potatoesPerClickElement = document.getElementById("potatoesPerClick");
 const potatoClicksElement = document.getElementById("potatoClicks");
 const handFarmedPotatoesElement = document.getElementById("handFarmedPotatoes");
@@ -43,7 +41,7 @@ let potatoesPerClick = 1;
 let potatoClicks = 0;
 let handFarmedPotatoes = 0;
 let goldenPotatoClicks = 0;
-let runningVersion = "v0.27";
+let runningVersion = "v0.32";
 let autoClickAmount = 0;
 let runDurationSeconds;
 
@@ -56,7 +54,7 @@ let buildings = [
     icon: "assets/cursor.png",
     realIcon: "assets/cursor.png",
     cps: 0.1,
-    unlocked: true,
+    unlocked: false,
     sort: 1,
     mystery: true,
   },
@@ -68,7 +66,7 @@ let buildings = [
     icon: "assets/farmer.png",
     realIcon: "assets/farmer.png",
     cps: 1,
-    unlocked: true,
+    unlocked: false,
     sort: 2,
     mystery: true,
   },
@@ -80,7 +78,7 @@ let buildings = [
     icon: "assets/tractor.png",
     realIcon: "assets/tractor.png",
     cps: 8,
-    unlocked: true,
+    unlocked: false,
     sort: 3,
     mystery: true,
   },
@@ -92,8 +90,32 @@ let buildings = [
     icon: "assets/greenhouse.png",
     realIcon: "assets/greenhouse.png",
     cps: 30,
-    unlocked: true,
+    unlocked: false,
     sort: 4,
+    mystery: true,
+  },
+  {
+    id: "chip_factory",
+    name: "Chip Factory",
+    price: 150000,
+    owned: 0,
+    icon: "assets/chip_factory.png",
+    realIcon: "assets/chip_factory.png",
+    cps: 260,
+    unlocked: false,
+    sort: 5,
+    mystery: true,
+  },
+  {
+    id: "restaurant",
+    name: "Restaurant",
+    price: 1400000,
+    owned: 0,
+    icon: "assets/restaurant.png",
+    realIcon: "assets/restaurant.png",
+    cps: 1400,
+    unlocked: false,
+    sort: 6,
     mystery: true,
   },
 ];
@@ -298,6 +320,26 @@ function setLocalData() {
     "greenhouse_mystery",
     greenhouseBuilding ? greenhouseBuilding.mystery : true,
   );
+
+  const chipfactoryBuilding = buildings.find((b) => b.id === "chip_factory");
+  localStorage.setItem(
+    "chip_factorys",
+    chipfactoryBuilding ? chipfactoryBuilding.owned : 0,
+  );
+  localStorage.setItem(
+    "chip_factory_mystery",
+    chipfactoryBuilding ? chipfactoryBuilding.mystery : true,
+  );
+
+  const restaurantBuilding = buildings.find((b) => b.id === "restaurant");
+  localStorage.setItem(
+    "restaurants",
+    restaurantBuilding ? restaurantBuilding.owned : 0,
+  );
+  localStorage.setItem(
+    "restaurant_mystery",
+    restaurantBuilding ? restaurantBuilding.mystery : true,
+  );
 }
 
 function getLocalData() {
@@ -317,7 +359,6 @@ function getLocalData() {
   goldenPotatoClicks = Number(
     localStorage.getItem("golden_potato_clicks") || 0,
   );
-
   const cursorBuilding = buildings.find((b) => b.id === "cursor");
   if (cursorBuilding) {
     cursorBuilding.owned = Number(localStorage.getItem("cursors") || 0);
@@ -330,7 +371,7 @@ function getLocalData() {
   if (farmerBuilding) {
     farmerBuilding.owned = Number(localStorage.getItem("farmers") || 0);
     farmerBuilding.mystery = JSON.parse(
-      localStorage.getItem("cursor_mystery") || "true",
+      localStorage.getItem("farmer_mystery") || "true",
     );
     farmerBuilding.price = Math.ceil(
       100 * Math.pow(1.15, farmerBuilding.owned),
@@ -340,7 +381,7 @@ function getLocalData() {
   if (tractorBuilding) {
     tractorBuilding.owned = Number(localStorage.getItem("tractors") || 0);
     tractorBuilding.mystery = JSON.parse(
-      localStorage.getItem("cursor_mystery") || "true",
+      localStorage.getItem("farmer_mystery") || "true",
     );
     tractorBuilding.price = Math.ceil(
       1100 * Math.pow(1.15, tractorBuilding.owned),
@@ -350,10 +391,30 @@ function getLocalData() {
   if (greenhouseBuilding) {
     greenhouseBuilding.owned = Number(localStorage.getItem("greenhouses") || 0);
     greenhouseBuilding.mystery = JSON.parse(
-      localStorage.getItem("cursor_mystery") || "true",
+      localStorage.getItem("farmer_mystery") || "true",
     );
     greenhouseBuilding.price = Math.ceil(
       12000 * Math.pow(1.15, greenhouseBuilding.owned),
+    );
+  }
+  const chipfactoryBuilding = buildings.find((b) => b.id === "chip_factory");
+  if (chipfactoryBuilding) {
+    chipfactoryBuilding.owned = Number(localStorage.getItem("chip_factorys") || 0);
+    chipfactoryBuilding.mystery = JSON.parse(
+      localStorage.getItem("chipfactory_mystery") || "true",
+    );
+    chipfactoryBuilding.price = Math.ceil(
+      12000 * Math.pow(1.15, chipfactoryBuilding.owned),
+    );
+  }
+  const restaurantBuilding = buildings.find((b) => b.id === "restaurant");
+  if (restaurantBuilding) {
+    restaurantBuilding.owned = Number(localStorage.getItem("restaurants") || 0);
+    restaurantBuilding.mystery = JSON.parse(
+      localStorage.getItem("restaurant_mystery") || "true",
+    );
+    restaurantBuilding.price = Math.ceil(
+      12000 * Math.pow(1.15, restaurantBuilding.owned),
     );
   }
   renderBuildings();
@@ -395,13 +456,13 @@ let hideTimeout = null;
 goldenPotatoImage.addEventListener("click", (e) => {
   const text = document.createElement("div");
   text.className = "text";
-  text.textContent = `Lucky, ${potatoesPerClick * 100} Potatoes!`;
+  text.textContent = `Lucky, ${potatoesPerClick * 5000} Potatoes!`;
   text.style.left = e.clientX + (Math.random() * 40 - 20) + "px";
   text.style.top = e.clientY - 20 + "px";
   document.body.appendChild(text);
   setTimeout(() => text.remove(), 1000);
 
-  const reward = potatoesPerClick * 100;
+  const reward = potatoesPerClick * 5000;
   potatoes += reward;
   allTimePotatoes += reward;
   goldenPotatoClicks++;
@@ -489,11 +550,16 @@ function renderBuildings() {
     `;
 
     const priceElement = buildingButton.querySelector(".building-price");
+
     if (!isNaN(b.price) && potatoes >= b.price) {
       priceElement.style.color = "lightgreen";
+      buildingButton.style.backgroundColor = "#37495a";
+      buildingButton.style.cursor = "pointer";
     } else {
       priceElement.style.color = "rgb(209, 73, 73)";
-    }
+      buildingButton.style.backgroundColor = "#212d38";
+      buildingButton.style.cursor = "cursor";
+}
 
     buildingButton.addEventListener("click", () => {
       if (!b.mystery && potatoes >= b.price) {
@@ -632,10 +698,15 @@ function autoSave() {
   setTimeout(autoSave, 60000);
 }
 
+function renderBuildingsRegular() {
+  renderBuildings()
+  setTimeout(renderBuildingsRegular, 1000);
+}
+
 getLocalData();
 rateCounter();
 updatePotatoComments();
 updateStatsDisplay();
 autoClick();
-renderBuildings();
+renderBuildingsRegular();
 autoSave();

@@ -3,9 +3,7 @@ html {
   margin: 0px;
   padding: 0px;
   user-select: none;
-  cursor: default;
-  overflow: hidden;
-  font-family: "Rubik", sans-serif;
+  cursor: default;  
 }
 
 nav {
@@ -26,25 +24,16 @@ a {
   color: white;
 }
 
-nav button {
-  background-color: #222b35;
-  color: white;
-  border: none;
-  padding: 3px 7px 7px 7px;
-}
-
-nav button:hover {
-  text-decoration: underline;
-}
-
 .nav-box {
   border-style: solid;
   border-width: 2px;
   border-color: #37495a;
 }
 .nav-box-right {
+  border-style: solid;
+  border-width: 2px;
+  border-color: #37495a;
   margin-left: auto;
-  display: flex;
 }
 
 main {
@@ -74,17 +63,15 @@ section {
 
 .clicking-section {
   background: linear-gradient(
-    to bottom,
-    #2a3f52 0%,
-    #2a3f52 75%,
-    rgb(35, 43, 51) 100%
-  );
+  to bottom,
+  #2a3f52 0%,
+  #2a3f52 75%,
+  rgb(35, 43, 51) 100%
+);
   width: 100px;
   margin: 5px;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .game-section {
@@ -95,8 +82,6 @@ section {
 .upgrade-section {
   width: 10px;
   margin: 5px;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .name-box {
@@ -110,20 +95,6 @@ section {
   font-size: 18px;
   padding: 0px 50px 0px 50px;
   width: 350px;
-}
-
-@media (min-width: 0px) and (max-width: 1100px) {
-  .name-box {
-    width: 150px;
-    padding: 0px;
-  }
-}
-
-@media (min-width: 1101px) and (max-width: 1330px) {
-  .name-box {
-    width: 250px;
-    padding: 0px 50px 0px 50px;
-  }
 }
 
 .name-box-container {
@@ -201,54 +172,31 @@ section {
   padding-left: 10px;
 }
 
-.shine-container {
+.shine-container{
   position: absolute;
-  top: 18.3%;
-  left: 2%;
+    top:18.3%;
+    left:2%;
+}
+
+.potato-wrapper {
+  position: relative;       /* make it the stacking context */
+  display: inline-block;    /* shrink-wrap to potato size */
 }
 
 .potato-wrapper {
   position: relative;
-  display: inline-block;
+  display: inline-block; /* shrink to potato size */
 }
 
 .shine,
 .shine2 {
   position: absolute;
-  top: clamp(15px, calc(160px - 10vw), 150px);
-  left: 10%;
+  top: 3%;                 /* distance from top of wrapper */
+  left: 10%;                /* distance from left of wrapper */
   width: 80%;
   opacity: 0.3;
   animation: spin 8s linear infinite;
-  transform-origin: center;
-}
-
-@media (min-width: 1000px) and (max-width: 1299px) {
-  .shine,
-  .shine2 {
-    top: clamp(15px, calc(160px - 9.5vw), 150px);
-  }
-}
-
-@media (min-width: 1300px) and (max-width: 1499px) {
-  .shine,
-  .shine2 {
-    top: clamp(15px, calc(160px - 8.5vw), 150px);
-  }
-}
-
-@media (min-width: 1500px) and (max-width: 1749px) {
-  .shine,
-  .shine2 {
-    top: clamp(15px, calc(160px - 7vw), 150px);
-  }
-}
-
-@media (min-width: 1750px) {
-  .shine,
-  .shine2 {
-    top: clamp(15px, calc(160px - 9vw), 150px);
-  }
+  transform-origin: center; /* rotate around its own center */
 }
 
 .shine2 {
@@ -256,30 +204,23 @@ section {
   animation: spin-counter 8s linear infinite;
 }
 
+
 #potato-button {
-  position: relative;
+  position: relative;       /* stays on top */
   z-index: 2;
-  background: none;
+  background: none;         /* optional */
   border: none;
   padding: 0;
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
 }
 
 @keyframes spin-counter {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-360deg);
-  }
+  from {transform: rotate(0deg);}
+  to {transform: rotate(-360deg);}
 }
 
 .middle-top {
@@ -288,11 +229,11 @@ section {
   gap: 16px;
 }
 
-.left-middle-buttons,
-.right-middle-buttons {
+.left-middle-buttons, .right-middle-buttons {
   display: flex;
   flex-direction: column;
   gap: 12px;
+
 }
 
 .middle-buttons {
@@ -320,9 +261,7 @@ section {
 .middle-buttons:hover {
   background-color: #6c819615;
   color: rgb(255, 255, 255);
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   border-color: rgb(255, 255, 255);
 }
 
@@ -331,6 +270,7 @@ section {
   color: white;
   padding: 16px;
   border-radius: 0px 0px 10px 10px;
+  
 }
 
 #comment {
@@ -341,7 +281,7 @@ section {
 h3 {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center;  
 }
 
 .divider {
@@ -359,8 +299,8 @@ h3 {
 .store-title {
   display: flex;
   justify-content: center;
-  align-items: center;
-  color: white;
+  align-items: center; 
+  color: white; 
 }
 
 .upgrades-container {
@@ -396,18 +336,15 @@ h3 {
   text-align: center;
 }
 
-.selected,
-.buy-sell-button:hover {
+.selected, .buy-sell-button:hover {
   color: rgb(255, 255, 255);
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .multiplier-container {
   display: flex;
   justify-content: center;
-  margin-top: 5px;
+  margin-top: 5px
 }
 
 .multiplier {
@@ -418,8 +355,7 @@ h3 {
   border: none;
 }
 
-.multiplier:hover,
-.selected {
+.multiplier:hover, .selected{
   cursor: pointer;
   color: rgb(255, 255, 255);
   transition: color 0.3s ease;
@@ -436,10 +372,10 @@ h3 {
   right: 25.3%;
   bottom: 100%;
   z-index: -1;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
 }
 
 .modal.open {
@@ -454,8 +390,6 @@ h3 {
   text-align: center;
   width: 1000px;
   height: 750px;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .modal-inner h2 {
@@ -488,14 +422,13 @@ h3 {
 .major-update {
   border-top: 3px solid rgb(109, 121, 7);
   border-bottom: 3px solid rgb(109, 121, 7);
-  margin-bottom: 15px;
 }
 
 .major-h2 {
   color: rgb(229, 255, 0);
   text-align: left;
   font-size: 24px;
-  padding-top: 5px;
+  padding-top: 5px
 }
 
 .major-p {
@@ -511,43 +444,6 @@ h3 {
   margin-top: 10px;
 }
 
-.minor-update {
-  border-top: 3px solid rgb(87, 87, 87);
-  border-bottom: 3px solid rgb(87, 87, 87);
-  margin-bottom: 15px;
-}
-
-.minor-h2 {
-  color: rgb(119, 119, 119);
-  text-align: left;
-  font-size: 24px;
-  padding-top: 5px;
-}
-
-.minor-p {
-  color: rgb(184, 184, 184);
-  text-align: left;
-  font-size: 16px;
-}
-
-.minor-ul {
-  color: rgb(212, 212, 212);
-  text-align: left;
-  font-size: 16px;
-  margin-top: 10px;
-}
-
-.flashing {
-  color: yellow;
-  animation: blinker 0.5s linear infinite;
-}
-
-@keyframes blinker {
-  70% {
-    color: red;
-  }
-}
-
 .red {
   color: red;
 }
@@ -555,7 +451,6 @@ h3 {
 .general-stats {
   border-top: 3px solid rgba(255, 255, 255, 0.685);
   border-bottom: 3px solid rgba(255, 255, 255, 0.685);
-  margin-bottom: 15px;
 }
 
 .general-text {
@@ -603,14 +498,8 @@ h3 {
 }
 
 @keyframes floatUp {
-  0% {
-    opacity: 1;
-    transform: translate(0, 0);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(0, -50px);
-  }
+  0% { opacity: 1; transform: translate(0, 0); }
+  100% { opacity: 0; transform: translate(0, -50px); }
 }
 
 .jump-image {
@@ -633,17 +522,9 @@ h3 {
 }
 
 @keyframes jiggle {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(30deg);
-  }
-  75% {
-    transform: rotate(-10deg);
-  }
-}
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(30deg); }
+  75% { transform: rotate(-10deg); } }
 
 .gold-potato:hover {
   transform: scale(1.05);
@@ -667,194 +548,15 @@ h3 {
 }
 
 @keyframes glow {
-  0%,
-  100% {
-    text-shadow:
-      0 0 1px gold,
-      0 0 5ch gold,
-      0 0 5px gold;
+  0%, 100% {
+    text-shadow: 0 0 5px gold, 0 0 10px gold, 0 0 20px gold;
   }
   50% {
-    text-shadow:
-      0 0 10px gold,
-      0 0 20px gold,
-      0 0 30px gold;
+    text-shadow: 0 0 10px gold, 0 0 20px gold, 0 0 30px gold;
   }
 }
 
 .purple-text {
   color: purple;
   font-weight: bold;
-}
-
-.building-container {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  background-color: #37495a;
-  border: #283642 solid 2px;
-  color: white;
-}
-
-.building-area {
-  display: flex;
-  flex-direction: column;
-}
-
-.building-container:hover {
-  align-items: center;
-  width: 100%;
-  background-color: #2d3c49;
-  color: white;
-}
-
-#buildings {
-  display: flex;
-  flex-direction: column;
-}
-
-.building-info {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.building-amount {
-  margin-left: auto;
-}
-
-.building-icon {
-  margin-right: 10px;
-  justify-content: center;
-  display: flex;
-  align-items: center;
-}
-
-.building-name-price {
-  display: flex;
-  align-items: flex;
-  flex-direction: column;
-}
-
-.building-name {
-  font-weight: bold;
-  font-size: 22px;
-  padding: 0px;
-  margin: 0px;
-}
-
-.building-price {
-  margin-left: -25px;
-  padding-top: 5px;
-  color: rgb(209, 73, 73);
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.amount-owned {
-  font-size: 40px;
-  padding-right: 10px;
-}
-
-.dropdown {
-  position: relative;
-  color: chocolate;
-  font-weight: bold;
-  padding: 10px;
-  border: chocolate solid 2px;
-  margin: 20px;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: chocolate;
-  min-width: 130px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-}
-
-.dropdown-content a {
-  color: #1f2635;
-  padding: 12px 16px;
-  display: block;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.options-p {
-  color: white;
-  text-align: center;
-  padding-top: 20px;
-}
-
-.dropdown-content a:hover {
-  background-color: rgb(243, 125, 40);
-}
-
-.selected-version {
-  background-color: rgb(255, 136, 0);
-}
-
-.spinning-globe-container {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.spinning-globe {
-  margin: -1px 0px -4px 0px;
-}
-
-.potion {
-  margin: -5px -8px -4px 3px;
-}
-
-.github-logo {
-  margin: -5px -8px -4px 5px;
-  filter: invert(1);
-}
-
-.bug-fixes {
-  color: rgb(180, 184, 189);
-  margin-left: -20px;
-}
-
-.darker-year {
-  color: #b1b1b1;
-}
-
-.save-load-button,
-.wipe-button {
-  position: relative;
-  color: chocolate;
-  font-weight: bold;
-  padding: 10px;
-  border: chocolate solid 2px;
-  margin: 20px;
-  background-color: #1f2635;
-  font-weight: bold;
-}
-
-.save-load-button {
-  color: rgb(37, 37, 197);
-  border: rgb(37, 37, 197) solid 2px;
-}
-
-.save-load-button:hover {
-  background-color: #263452;
-}
-
-.wipe-button {
-  color: rgb(197, 37, 37);
-  border: rgb(197, 37, 37) solid 2px;
-}
-
-.wipe-button:hover {
-  background-color: #522626;
-}
-
-.green {
-  color: rgb(92, 199, 92);
 }

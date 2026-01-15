@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico"> 
+  <title id="title">0 potatoes - Potato Clicker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-box">
+      <p>Potato Clicker™ © <strong>MaxTheRock</strong>, 2026</p>
+    </div>
+    <div class="nav-box">
+      <a href="https://github.com/MaxTheRock/Potato_Clicker" target="_blank" rel="noopener noreferrer">
+        <p>github</p>
+      </a>
+    </div>
+    <div class="nav-box">
+      <p>Nothing to see here...</p>
+    </div>
+    <div class="nav-box">
+      <a href="https://potionclicker.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <p>Check out Potion Clicker!</p>
+      </a>
+    </div>
+    <div class="nav-box-right">
+      <p>CHANGE LANGUAGE (in progress)</p>
+    </div>
+  </nav>
+
+  <main>
+    <section class="clicking-section">
+      <div class="name-box-container">
+        <input id="nameInput" class="name-box" type="text" value="Max's Potato Farm" placeholder="Enter name">
+      </div>
+      <div class="amount-box-container">
+        <p id="potato-amount" class="potato-amount">0 Potatoes</p>
+        <p class="potato-amount-persecond">per second: 0</p>
+      </div>
+      <div class="potato-wrapper">
+        <img class="shine" src="assets/shine.png" alt="Shine" draggable="false">
+        <img class="shine2" src="assets/shine.png" alt="Shine" draggable="false">
+        <div class="clicker-container">
+        <button id="potato-button" class="clicker-button">
+          <img class="clicker-image" src="assets/potato.png" alt="Potato Image" draggable="false">
+        </button>
+      </div>
+      </div>
+      
+      <div class="version-box-container">
+        <p id="version" class="version-text">v0.13</p>
+      </div>
+      
+    </section>
+    <section class="game-section">
+      <div class="middle-top">
+        <div class="left-middle-buttons">
+          <button class="middle-buttons-unused">Options</button>
+          <button id="openModalStats" class="middle-buttons">Stats</button>
+          <div class="modal" id="modalstats">
+            <div class="modal-inner">
+              <div class="modal-header">
+                <h2 class="info-h2">Statistics</h2>
+                <button class="closeButton" id="closeModalStats">&times;</button>
+              </div>
+              <div class="general-stats">
+                <h2 class="general-text">General</h2>
+                <ul class="stats-ul">
+                  <li id="potBank">Potatoes in bank: </li>
+                  <li id="totPot">Potatoes gathered (all time): </li>
+                  <li id="runStart">Run started: </li>
+                  <li id="buildingsOwned">Buildings owned: </li>
+                  <li id="potatoesPerSecond">Potatoes per second: </li>
+                  <li id="rawPotatoesPerSecond">Raw potatoes per second: </li>
+                  <li id="potatoesPerClick">Potatoes per click: </li>
+                  <li id="potatoClicks">Potato clicks: </li>
+                  <li id="handFarmedPotatoes">Hand-farmed potatoes: </li>
+                  <li id="goldenPotatoClicks">Golden potato clicks: </li>
+                  <div class="space"></div>
+                  <li id="runningVersion">Running version: </li>
+                </ul>
+              </div>
+              <div class="minor-update">
+
+              </div>
+              <div class="general-stats">
+                <h2 class="general-text">Upgrades</h2>
+                <ul class="stats-ul">
+                </ul>
+              </div>
+              <div class="minor-update">
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="comments">
+          <h3 id="comment">Nobody is talking about your potatoes.</h3>
+        </div>
+        <div class="right-middle-buttons">
+          <button id="openModal" class="middle-buttons">Info</button>
+          <div class="modal" id="modal">
+            <div class="modal-inner">
+              <div class="modal-header">
+                <h2 class="info-h2">Information</h2>
+                <button class="closeButton" id="closeModal">&times;</button>
+              </div>
+              <div class="major-update">
+                <h2 class="major-h2">9/01/26, 10/01/26: First Major Update v0.11</h2>
+                <p class="major-p">This is the first update of the game. It includes: </p>
+                <ul class="major-ul">
+                  <li>The basic layout</li>
+                  <li>The first appearance of the <span class="yellow-text">potato</span>!</li>
+                  <li>Patch notes screen (the one your on now)</li>
+                  <li>Basic clicker mechanics</li>
+                  <li class="red">Not mobile supported at this time :(</li>
+                  <li>Stats screen</li>
+                  <li>Clicking text animation</li>
+                  <li>Scrolling comments (the thing at the top)</li>
+                  <li>The <span class="gold-text">Golden</span> Potato</li>
+                  <li>Easy version control</li>
+                  <li><span class="purple-text">Potion clicker</span> shoutout!</li>
+                </ul>
+              </div>
+              <div class="minor-update">
+
+              </div>
+            </div>
+
+          </div>
+          <button class="middle-buttons-unused">Legacy</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+    </section>
+    <section class="upgrade-section">
+      <h1 class="store-title">Store</h1>
+      <div class="divider"></div>
+      <div class="upgrades-container">
+        <!-- Upgrades will be dynamically added here -->
+      </div>
+      <div class="divider-bs"></div>
+      <div class="buy-sell-selector">
+        <div class="buy-sell-label">
+          <button class="buy-sell-button selected">BUY</button>
+          <button class="buy-sell-button">SELL</button>
+        </div>
+        <div class="multiplier-container">
+          <button class="multiplier selected">1</button>
+          <button class="multiplier">10</button>
+          <button class="multiplier">100</button>
+        </div>
+        
+      </div>
+    </section>
+  </main>
+
+  <footer></footer>
+  <button id="golden-potato-button" class="golden-potato-button">
+    <img src="assets/golden_potato.png" alt="Golden Potato" id="golden-potato" draggable="false" class="gold-potato">
+  </button>
+  
+  <script src="script.js" defer></script>
+</body>
+</html>

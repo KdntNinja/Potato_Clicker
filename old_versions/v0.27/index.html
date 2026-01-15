@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico"> 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <title id="title">0 potatoes - Potato Clicker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <nav>
+    <div class="nav-box">
+      <p>
+        <strong>Potato Clicker</strong>™ © MaxTheRock, <span class="darker-year">2026</span>
+      </p>
+    </div>
+    <div class="nav-box">
+      <a href="https://github.com/MaxTheRock/Potato_Clicker" target="_blank" rel="noopener noreferrer" class="spinning-globe-container">
+        <img width="15" src="assets/github.png" alt="Github" draggable="false" class="github-logo">
+        <p>github</p>
+      </a>
+    </div>
+    <div class="nav-box">
+      <p>
+        <span class="darker-year">Nothing to see here...</span>
+      </p>
+    </div>
+    <div class="nav-box">
+      <a href="https://potionclicker.vercel.app/" target="_blank" rel="noopener noreferrer" class="spinning-globe-container">
+        <img width="15" src="assets/Potion.png" alt="Potion" draggable="false" class="potion">
+        <p>Check out Potion Clicker!</p>
+      </a>
+    </div>
+    <div class="nav-box-right">
+      <div class="nav-box">
+        <button id="openModalOptionsv">Older versions</button>
+      </div>
+      <div class="nav-box">
+        <p class="spinning-globe-container">
+          CHANGE LANGUAGE (in progress)<img width="15" src="assets/globe.gif" alt="Spinning Globe" draggable="false" class="spinning-globe">
+        </p>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="clicking-section">
+      <div class="name-box-container">
+        <input id="nameInput" class="name-box" type="text" value="My Potato Farm" placeholder="My Potato Farm">
+      </div>
+      <div class="amount-box-container">
+        <p id="potato-amount" class="potato-amount">0 Potatoes</p>
+        <p class="potato-amount-persecond">per second: 0</p>
+      </div>
+      <div class="potato-wrapper">
+        <img class="shine" src="assets/shine.png" alt="Shine" draggable="false">
+        <img class="shine2" src="assets/shine.png" alt="Shine" draggable="false">
+        <div class="clicker-container">
+        <button id="potato-button" class="clicker-button">
+          <img class="clicker-image" src="assets/potato.png" alt="Potato Image" draggable="false">
+        </button>
+      </div>
+      </div>
+      <div class="version-box-container">
+        <p id="version" class="version-text">v0.00</p>
+      </div>
+    </section>
+
+    <section class="game-section">
+      <div class="middle-top">
+        <div class="left-middle-buttons">
+          <button id="openModalOptions" class="middle-buttons">Options</button>
+          <div class="modal" id="modaloptions">
+            <div class="modal-inner">
+              <div class="modal-header">
+                <h2 class="info-h2">Options</h2>
+                <button class="closeButton" id="closeModalOptions">&times;</button>
+              </div>
+              <div class="general-stats">
+                <h2 class="general-text">General</h2>
+                <p class="options-p">Saving and Loading options are found underneath.</p>
+                <button onclick="setLocalData()" class="save-load-button">
+                  <p>Save</p>
+                </button>
+                <button onclick="getLocalData()" class="save-load-button">
+                  <p>Load</p>
+                </button>
+                <button onclick="clearLocalData()" class="wipe-button">
+                  <p>Wipe</p>
+                </button>
+              </div>
+              <div class="general-stats">
+                <h2 class="general-text">Versions</h2>
+                <p class="options-p">Hover over the box below to travel back in time!</p>
+                <div class="dropdown">Version select
+                  <div class="dropdown-content">
+                    <a href="/index.html" class="selected-version">Current</a>
+                    <a href="/old_versions/v0.21/index.html">v0.21</a>
+                    <a href="/old_versions/v0.11/index.html">v0.11</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button id="openModalStats" class="middle-buttons">Stats</button>
+          <div class="modal" id="modalstats">
+            <div class="modal-inner">
+              <div class="modal-header">
+                <h2 class="info-h2">Statistics</h2>
+                <button class="closeButton" id="closeModalStats">&times;</button>
+              </div>
+              <div class="general-stats">
+                <h2 class="general-text">General</h2>
+                <ul class="stats-ul">
+                  <li id="potBank">Potatoes in bank: </li>
+                  <li id="totPot">Potatoes gathered (all time): </li>
+                  <li id="runStart">Run started: </li>
+                  <li id="buildingsOwned">Buildings owned: </li>
+                  <li id="potatoesPerSecond">Potatoes per second: </li>
+                  <li id="potatoesPerClick">Potatoes per click: </li>
+                  <li id="potatoClicks">Potato clicks: </li>
+                  <li id="handFarmedPotatoes">Hand-farmed potatoes: </li>
+                  <li id="goldenPotatoClicks">Golden potato clicks: </li>
+                  <div class="space"></div>
+                  <li id="runningVersion">Running version: </li>
+                </ul>
+              </div>
+              <div class="general-stats">
+                <h2 class="general-text">Upgrades</h2>
+                <ul class="stats-ul">
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="comments">
+          <h3 id="comment">Nobody is talking about your potatoes.</h3>
+        </div>
+        <div class="right-middle-buttons">
+          <button id="openModal" class="middle-buttons">Info</button>
+          <div class="modal" id="modal">
+            <div class="modal-inner">
+              <div class="modal-header">
+                <h2 class="info-h2">Information</h2>
+                <button class="closeButton" id="closeModal">&times;</button>
+              </div>
+              <div class="minor-update">
+                <h2 class="minor-h2">14/01/26: Minor bug fix update v0.27</h2>
+                <p class="minor-p">Couple of ui updates but mostly backend</p>
+                <ul class="minor-ul">
+                  <li>Website is now at: <span class="flashing">www.potatoclicker.online</span></li>
+                  <li>Potatoes go up more smoothly</li>
+                  <li>Now using <a href="https://fonts.google.com/specimen/Rubik?query=Rubi" >Rubik</a> font instead of the default</li>
+                  <li>Made it so clicking isn't as fast as usuall because the game would progress too fast then</li>
+                  <li>Finally fixed the glow to be under the potato for screen resolutions 1000px to 1700px+ (because mobile will get it's own ui in the future)</li>
+                  <li>Saving, Loading and Wipe feature which includes autoSaving every 60 seconds!</li>
+                </ul>
+              </div>
+              <div class="major-update">
+                <h2 class="major-h2">12/01/26: Buildings Update v0.21</h2>
+                <p class="major-p">Buildings are kind of the best way to progress in the game so that's why they are here :)</p>
+                <ul class="major-ul">
+                  <li>Many new buildings added!</li>
+                  <li>They are dynamic (basically makes it easy to add more in future updates)</li>
+                  <li>Potatoes are actually usefull now</li>
+                  <li>Made the golden glow animation better: <span class="gold-text">insert_cool_animation</span></li>
+                  <li>Ability to view and play older versions (in the options tab or in the top right corner)</li>
+                  <li>Just so you know, every bullet point is 0.01 of a version added</li>
+                  <li>Added icons and more colours to nav bar</li>
+                  <li>Stats run time measurements fix</li>
+                  <li>Cleaner Code for HTML 🧼</li>
+                  <li>Bug Fixes</li>
+                  <ul class="bug-fixes">
+                    <li>Disabled Scrolling</li>
+                    <li>Pop-up screens being visible when z = -1</li>
+                    <li>randomGoldenPotatoPosition not defined fix</li>
+                  </ul>
+                  <li class="red">I can't figure out the shine not going directly under the potato for smaller screen resolutions but this bug should hopefully be patched in the next update</li>
+                </ul>
+              </div>
+              <div class="major-update">
+                <h2 class="major-h2">9/01/26, 10/01/26: First Major Update v0.11</h2>
+                <p class="major-p">This is the first update of the game. It includes: </p>
+                <ul class="major-ul">
+                  <li>The basic layout</li>
+                  <li>The first appearance of the <span class="yellow-text">potato</span>!</li>
+                  <li>Patch notes screen (the one your on now)</li>
+                  <li>Basic clicker mechanics</li>
+                  <li class="red">Not mobile supported at this time :(</li>
+                  <li>Stats screen</li>
+                  <li>Clicking text animation</li>
+                  <li>Scrolling comments (the thing at the top)</li>
+                  <li>The <span class="gold-text">Golden</span> Potato</li>
+                  <li>Easy version control</li>
+                  <li><span class="purple-text">Potion clicker</span> shoutout!</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <button class="middle-buttons-unused">Legacy</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+    </section>
+
+    <section class="upgrade-section">
+      <h1 class="store-title">Store</h1>
+      <div class="divider"></div>
+      <div class="upgrades-container">
+        <!-- Upgrades will be dynamically added here -->
+      </div>
+      <div class="divider-bs"></div>
+      <div class="buy-sell-selector">
+        <div class="buy-sell-label">
+          <button class="buy-sell-button selected">BUY</button>
+          <button class="buy-sell-button">SELL</button>
+        </div>
+        <div class="multiplier-container">
+          <button id ="mult1" class="multiplier selected">1</button>
+          <button id= "mult10" class="multiplier">10</button>
+          <button id="mult100" class="multiplier">100</button>
+        </div>
+      </div>
+      <div class="building-area">
+        <div id="buildings" class="building-container">
+          <!-- Buildings will be dynamically added here -->
+        </div>
+      </div>
+      
+    </section>
+  </main>
+
+  <footer></footer>
+  <button id="golden-potato-button" class="golden-potato-button">
+    <img src="assets/golden_potato.png" alt="Golden Potato" id="golden-potato" draggable="false" class="gold-potato">
+  </button>
+  
+  <script src="script.js"></script>
+</body>
+</html>
