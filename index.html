@@ -204,21 +204,36 @@
           <p class="options-p">
             Account manager and options.
           </p>
-          <button class="save-load-button">
-            <p>Login</p>
-          </button>
-          <button class="save-load-button">
-            <p>Sign Up</p>
-          </button>
-          <div class="account-input-container">
-            <div class="username">
-              <p>Username</p>
-            <input placeholder="Enter your username">
+          <div class="auth-wrapper">
+            <div class="auth-box">
+            <!-- Toggles -->
+            <input class="auth-toggle auth-toggle-login" type="radio" name="auth-toggle" id="auth-login" checked>
+            <input class="auth-toggle auth-toggle-signup" type="radio" name="auth-toggle" id="auth-signup">
+
+            <!-- Tabs -->
+            <div class="auth-tabs">
+              <label class="auth-tab auth-tab-login" for="auth-login">Login</label>
+              <label class="auth-tab auth-tab-signup" for="auth-signup">Sign Up</label>
             </div>
-            <div class="password">
-              <p>Password</p>
-              <input type="password" placeholder="Enter your password">
+
+            <!-- Forms -->
+            <div class="auth-forms">
+              <form class="auth-form auth-form-login">
+                <h2 class="auth-title">Login</h2>
+                <input class="auth-input" type="text" placeholder="Username">
+                <input class="auth-input" type="password" placeholder="Password">
+                <button class="auth-button">Login</button>
+              </form>
+
+              <form class="auth-form auth-form-signup">
+                <h2 class="auth-title">Sign Up</h2>
+                <input class="auth-input" type="text" placeholder="Username">
+                <input class="auth-input" type="email" placeholder="Email">
+                <input class="auth-input" type="password" placeholder="Password">
+                <button class="auth-button">Create Account</button>
+              </form>
             </div>
+          </div>
           </div>
         </div>
         <div class="general-stats">
@@ -272,9 +287,38 @@
         </div>
         <div class="general-stats">
           <h2 class="general-text">Leaderboard</h2>
-          <ul class="stats-ul">
-            <li id="upgrades-text">Nothing to see here...</li>
-          </ul>
+          <div class="leaderboard">
+            <div class="first">
+              <div class="place">1st</div>
+              <div class="username">MaxTheRock</div>
+              <div class="score">1,000,000 potatoes</div>
+            </div>
+            <div class="second">
+              <div class="place">2nd</div>
+              <div class="username">KdntNinja</div>
+              <div class="score">850,304 potatoes</div>
+            </div>
+            <div class="third">
+              <div class="place">3rd</div>
+              <div class="username">Arthur</div>
+              <div class="score">25,403 potatoes</div>
+            </div>
+            <div class="other">
+              <div class="place">4th</div>
+              <div class="username">William</div>
+              <div class="score">15,000 potatoes</div>
+            </div>
+            <div class="other">
+              <div class="place">5th</div>
+              <div class="username">Milo</div>
+              <div class="score">12,943 potatoes</div>
+            </div>
+            <div class="other">
+              <div class="place">6th</div>
+              <div class="username">Rohan</div>
+              <div class="score">6,789 potatoes</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
