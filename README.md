@@ -10,8 +10,8 @@ Watch the numbers go up.
 
 ## 🎮 Play the Game
 
-👉 **Live version:** https://potatoclicker.vercel.app  
-👉 **GitHub repository:** https://github.com/MaxTheRock/Potato_Clicker
+👉 **Live version:** <https://potatoclicker.online>  
+👉 **GitHub repository:** <https://github.com/MaxTheRock/Potato_Clicker>
 
 ---
 
@@ -38,7 +38,7 @@ Watch the numbers go up.
 
 ## 📁 Project Structure
 
-```
+```files
 Potato_Clicker/
 ├── index.html
 ├── styles.css
