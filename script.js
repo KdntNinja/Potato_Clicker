@@ -548,6 +548,14 @@ var comment_types = {
     "Your potatoes are No.1 in the country.",
     "Keep clicking...",
   ],
+  _10000000to50000000: [
+    "Your potatoes have their own website!",
+    "Potatoes are your countries national dish.",
+    "Just keep going...",
+    "Try to get 1st on the leaderboard!",
+    "Leon likes your potatoes.",
+    "Make an account and save your potatoes.",
+  ],
 };
 
 function setCommentSmooth(text) {

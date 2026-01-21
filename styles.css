@@ -183,7 +183,7 @@ section {
 .upgrades-container {
   margin: 0px;
   padding: 0px;
-  overflow-x: auto;
+  overflow: hidden !important;
 }
 
 .upgrade-button {
@@ -1297,6 +1297,15 @@ h3 {
   border-radius: 20px;
   padding: 10px 16px;
   overflow: hidden; /* important */
+}
+
+@media (max-width: 700px) {
+  .first,
+  .second,
+  .third,
+  .other {
+    font-size: 12px;
+  }
 }
 
 .place {
