@@ -69,14 +69,10 @@
       <button id="openModalOptions_mobile" class="mobile-buttons">
         Options
       </button>
-      <button id="openModalStats_mobile" class="mobile-buttons">
-        Stats
-      </button>
-      <button id="openModalInfo_mobile" class="mobile-buttons">
-        Info
-      </button>
+      <button id="openModalStats_mobile" class="mobile-buttons">Stats</button>
+      <button id="openModalInfo_mobile" class="mobile-buttons">Info</button>
     </div>
-    
+
     <main>
       <div class="main-inner">
         <section class="clicking-section">
@@ -129,15 +125,12 @@
                 Options
               </button>
               <button id="openModalStats" class="middle-buttons">Stats</button>
-              
             </div>
             <div class="comments">
               <h3 id="comment">Nobody is talking about your potatoes.</h3>
             </div>
             <div class="right-middle-buttons">
               <button id="openModal" class="middle-buttons">Info</button>
-              
-              
             </div>
           </div>
           <div class="divider"></div>
@@ -166,329 +159,395 @@
               <!-- Buildings will be dynamically added here -->
             </div>
           </div>
-            <img
-              src="assets/golden_potato.png"
-              alt="Golden Potato"
-              id="golden-potato"
-              draggable="false"
-              class="gold-potato"
-            />
-          </button>
+          <img
+            src="assets/golden_potato.png"
+            alt="Golden Potato"
+            id="golden-potato"
+            draggable="false"
+            class="gold-potato"
+          />
         </section>
       </div>
-    <div class="modal" id="modaloptions">
-      <div class="modal-inner">
-        <div class="modal-header">
-          <h2 class="info-h2">Options</h2>
-          <button class="closeButton" id="closeModalOptions">
-            &times;
-          </button>
-        </div>
-        <div class="general-stats">
-          <h2 class="general-text">General</h2>
-          <p class="options-p">
-            Saving and Loading options are found underneath.
-          </p>
-          <button onclick="saveGame()" class="save-load-button">
-            <p>Save</p>
-          </button>
-          <button onclick="loadGame()" class="save-load-button">
-            <p>Load</p>
-          </button>
-          <button onclick="clearLocalData()" class="wipe-button">
-            <p>Wipe</p>
-          </button>
-        </div>
-        <div class="general-stats">
-          <h2 class="general-text">Account</h2>
-          <p class="options-p">
-            Account manager and options.
-          </p>
-          <div class="auth-wrapper">
-            <div class="auth-box">
-            <!-- Toggles -->
-            <input class="auth-toggle auth-toggle-login" type="radio" name="auth-toggle" id="auth-login" checked>
-            <input class="auth-toggle auth-toggle-signup" type="radio" name="auth-toggle" id="auth-signup">
+      <div class="modal" id="modaloptions">
+        <div class="modal-inner">
+          <div class="modal-header">
+            <h2 class="info-h2">Options</h2>
+            <button class="closeButton" id="closeModalOptions">&times;</button>
+          </div>
+          <div class="general-stats">
+            <h2 class="general-text">General</h2>
+            <p class="options-p">
+              Saving and Loading options are found underneath.
+            </p>
+            <button onclick="saveGame()" class="save-load-button">
+              <p>Save</p>
+            </button>
+            <button onclick="loadGame()" class="save-load-button">
+              <p>Load</p>
+            </button>
+            <button onclick="clearLocalData()" class="wipe-button">
+              <p>Wipe</p>
+            </button>
+          </div>
+          <div class="general-stats">
+            <h2 class="general-text">Account</h2>
+            <p class="options-p">Account manager and options.</p>
+            <div class="auth-wrapper">
+              <div class="auth-box">
+                <!-- Toggles -->
+                <input
+                  class="auth-toggle auth-toggle-login"
+                  type="radio"
+                  name="auth-toggle"
+                  id="auth-login"
+                  checked
+                />
+                <input
+                  class="auth-toggle auth-toggle-signup"
+                  type="radio"
+                  name="auth-toggle"
+                  id="auth-signup"
+                />
 
-            <!-- Tabs -->
-            <div class="auth-tabs">
-              <label class="auth-tab auth-tab-login" for="auth-login">Login</label>
-              <label class="auth-tab auth-tab-signup" for="auth-signup">Sign Up</label>
-            </div>
+                <!-- Tabs -->
+                <div class="auth-tabs">
+                  <label class="auth-tab auth-tab-login" for="auth-login"
+                    >Login</label
+                  >
+                  <label class="auth-tab auth-tab-signup" for="auth-signup"
+                    >Sign Up</label
+                  >
+                </div>
 
-            <!-- Forms -->
-            <div class="auth-forms">
-              <form class="auth-form auth-form-login">
-                <h2 class="auth-title">Login</h2>
-                <input class="auth-input" type="text" placeholder="Username">
-                <input class="auth-input" type="password" placeholder="Password">
-                <button class="auth-button">Login</button>
-              </form>
+                <!-- Forms -->
+                <div class="auth-forms">
+                  <form class="auth-form auth-form-login">
+                    <h2 class="auth-title">Login</h2>
+                    <input
+                      class="auth-input"
+                      type="text"
+                      placeholder="Username"
+                    />
+                    <input
+                      class="auth-input"
+                      type="password"
+                      placeholder="Password"
+                    />
+                    <button class="auth-button">Login</button>
+                  </form>
 
-              <form class="auth-form auth-form-signup">
-                <h2 class="auth-title">Sign Up</h2>
-                <input class="auth-input" type="text" placeholder="Username">
-                <input class="auth-input" type="email" placeholder="Email">
-                <input class="auth-input" type="password" placeholder="Password">
-                <button class="auth-button">Create Account</button>
-              </form>
+                  <form class="auth-form auth-form-signup">
+                    <h2 class="auth-title">Sign Up</h2>
+                    <input
+                      class="auth-input"
+                      type="text"
+                      placeholder="Username"
+                    />
+                    <input
+                      class="auth-input"
+                      type="email"
+                      placeholder="Email"
+                    />
+                    <input
+                      class="auth-input"
+                      type="password"
+                      placeholder="Password"
+                    />
+                    <button class="auth-button">Create Account</button>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
-          </div>
-        </div>
-        <div class="general-stats">
-          <h2 class="general-text">Versions</h2>
-          <p class="options-p">
-            Hover over the box below to travel back in time!
-          </p>
-          <div class="dropdown">
-            Version select
-            <div class="dropdown-content">
-              <a href="/index.html" class="selected-version">Current</a>
-              <a href="/old_versions/v0.43/index.html">v0.43</a>
-              <a href="/old_versions/v0.32/index.html">v0.32</a>
-              <a href="/old_versions/v0.27/index.html">v0.27</a>
-              <a href="/old_versions/v0.21/index.html">v0.21</a>
-              <a href="/old_versions/v0.11/index.html">v0.11</a>
+          <div class="general-stats">
+            <h2 class="general-text">Versions</h2>
+            <p class="options-p">
+              Hover over the box below to travel back in time!
+            </p>
+            <div class="dropdown">
+              Version select
+              <div class="dropdown-content">
+                <a href="/index.html" class="selected-version">Current</a>
+                <a href="/old_versions/v0.43/index.html">v0.43</a>
+                <a href="/old_versions/v0.32/index.html">v0.32</a>
+                <a href="/old_versions/v0.27/index.html">v0.27</a>
+                <a href="/old_versions/v0.21/index.html">v0.21</a>
+                <a href="/old_versions/v0.11/index.html">v0.11</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="modal" id="modalstats">
-      <div class="modal-inner">
-        <div class="modal-header">
-          <h2 class="info-h2">Statistics</h2>
-          <button class="closeButton" id="closeModalStats">
-            &times;
-          </button>
-        </div>
-        <div class="general-stats">
-          <h2 class="general-text">General</h2>
-          <ul class="stats-ul">
-            <li id="potBank">Potatoes in bank:</li>
-            <li id="totPot">Potatoes gathered (all time):</li>
-            <li id="runStart">Run started:</li>
-            <li id="buildingsOwned">Buildings owned:</li>
-            <li id="potatoesPerSecond">Potatoes per second:</li>
-            <li id="potatoesPerClick">Potatoes per click:</li>
-            <li id="potatoClicks">Potato clicks:</li>
-            <li id="handFarmedPotatoes">Hand-farmed potatoes:</li>
-            <li id="goldenPotatoClicks">Golden potato clicks:</li>
-            <div class="space"></div>
-            <li id="runningVersion">Running version:</li>
-          </ul>
-        </div>
-        <div class="general-stats">
-          <h2 class="general-text">Upgrades</h2>
-          <ul class="stats-ul">
-            <li id="upgrades-text">Upgrades unlocked: 0/27 (0%)</li>
-          </ul>
-        </div>
-        <div class="general-stats">
-          <h2 class="general-text">Leaderboard</h2>
-          <div class="leaderboard">
-            <div class="first">
-              <div class="place">1st</div>
-              <div class="username">MaxTheRock</div>
-              <div class="score">1,000,000 potatoes</div>
-            </div>
-            <div class="second">
-              <div class="place">2nd</div>
-              <div class="username">KdntNinja</div>
-              <div class="score">850,304 potatoes</div>
-            </div>
-            <div class="third">
-              <div class="place">3rd</div>
-              <div class="username">Arthur</div>
-              <div class="score">25,403 potatoes</div>
-            </div>
-            <div class="other">
-              <div class="place">4th</div>
-              <div class="username">William</div>
-              <div class="score">15,000 potatoes</div>
-            </div>
-            <div class="other">
-              <div class="place">5th</div>
-              <div class="username">Milo</div>
-              <div class="score">12,943 potatoes</div>
-            </div>
-            <div class="other">
-              <div class="place">6th</div>
-              <div class="username">Rohan</div>
-              <div class="score">6,789 potatoes</div>
-            </div>
+      <div class="modal" id="modalstats">
+        <div class="modal-inner">
+          <div class="modal-header">
+            <h2 class="info-h2">Statistics</h2>
+            <button class="closeButton" id="closeModalStats">&times;</button>
           </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal" id="modal">
-      <div class="modal-inner">
-        <div class="modal-header">
-          <h2 class="info-h2">Information</h2>
-          <button class="closeButton" id="closeModal">&times;</button>
-        </div>
-        <div class="minor-update">
-          <h2 class="minor-h2">19/01/26: Progression Update v0.47</h2>
-          <p class="minor-p">Added a couple more stuff before the account update (just don't mind the login and leaderboard stuff for now)</p>
-          <ul class="minor-ul">
-            <li>A kid called one of your potatoes name is random now!</li>
-            <li>Added 3 new buildings: <span class="flashing">Supermarket</span>, <span class="flashing">Distillery</span> and <span class="flashing">Airport</span>.</li>
-            <li>New upgrades added (now 27 in total!).</li>
-            <li>Account placeholder features that are currently unavailable.</li>
-            <li>Leaderboard section in stats that is also currently unavailable.</li>
-            <div class="space"></div>
-            <li class="green"> 
-              <a
-                href="https://github.com/KdntNinja"
-                >KdntNinja</a
-              > will be helping me with the backend of potato clicker so thank him for the accounts, not me.
-            </li>
-          </ul>
-        </div>
-        <div class="major-update">
-          <h2 class="major-h2">17/01/26: Upgrades + Mobile update v0.43</h2>
-          <p class="major-p">
-            Upgrades added so progression is a little faster and also mobile update to allow potato clicker to be accessed anywhere!
-          </p>
-          <ul class="major-ul">
-            <li>Replaced cursor with peeler.</li>
-            <li>Refactored saving and loading (with a little help from chatGPT).</li>
-            <li>Added <span class="flashing">12</span> starting upgrades, try to get them all!</li>
-            <li>Stats screen now has data from the upgrades that you can explore.</li>
-            <li>Added tooltip when hovering over various items so you know the information about them.</li>
-            <li>Mobile and Tablet UI added and configured.</li>
-            <li>Removed legacy button and language button (it's not going to be needed for a while).</li>
-            <li>Made the pop-up tabs better and more responsive.</li>
-            <li>Total change of <span class="flashing">6,427</span> lines of code to make this update!</li>
-            <li>Added new comments.</li>
-            <li>Made it easier to read the numbers by adding commas.</li>
-          </ul>
-        </div>
-        <div class="minor-update">
-          <h2 class="minor-h2">15/01/26: Bug/Suggestion fix update v0.32</h2>
-          <p class="minor-p">After some discussion, some bugs and suggestions have been made to optimize the game. These include: </p>
-          <ul class="minor-ul">
-            <li>Fixed a refreshment bug with the buildings and added scrolling for smaller screens.</li>
-            <li>Removed the golden potato button when not active.</li>
-            <li>Added 2 new buildings: <span class="flashing">Chip Factory</span> and <span class="flashing">Restaurant</span>!</li>
-            <li>Decreased name box size for smaller windows.</li>
-            <li>Darkened buildings that cannot be purchased.</li>
-            <div class="space"></div>
-            <li class="green">Thanks to 
-              <a
-                href="https://github.com/KdntNinja"
-                >KdntNinja</a
-              > and many others for helping me develop this game :)
-            </li>
-          </ul>
-        </div>
-        <div class="minor-update">
-          <h2 class="minor-h2">14/01/26: Minor bug fix update v0.27</h2>
-          <p class="minor-p">Couple of ui updates but mostly backend</p>
-          <ul class="minor-ul">
-            <li>
-              Website is now at:
-              <span class="flashing">www.potatoclicker.online</span>
-            </li>
-            <li>Potatoes go up more smoothly</li>
-            <li>
-              Now using
-              <a
-                href="https://fonts.google.com/specimen/Rubik?query=Rubi"
-                >Rubik</a
-              >
-              font instead of the default
-            </li>
-            <li>
-              Made it so clicking isn't as fast as usuall because the
-              game would progress too fast then
-            </li>
-            <li>
-              Finally fixed the glow to be under the potato for screen
-              resolutions 1000px to 1700px+ (because mobile will get
-              it's own ui in the future)
-            </li>
-            <li>
-              Saving, Loading and Wipe feature which includes autoSaving
-              every 60 seconds!
-            </li>
-          </ul>
-        </div>
-        <div class="major-update">
-          <h2 class="major-h2">12/01/26: Buildings Update v0.21</h2>
-          <p class="major-p">
-            Buildings are kind of the best way to progress in the game
-            so that's why they are here :)
-          </p>
-          <ul class="major-ul">
-            <li>Many new buildings added!</li>
-            <li>
-              They are dynamic (basically makes it easy to add more in
-              future updates)
-            </li>
-            <li>Potatoes are actually usefull now</li>
-            <li>
-              Made the golden glow animation better:
-              <span class="gold-text">insert_cool_animation</span>
-            </li>
-            <li>
-              Ability to view and play older versions (in the options
-              tab or in the top right corner)
-            </li>
-            <li>
-              Just so you know, every bullet point is 0.01 of a version
-              added
-            </li>
-            <li>Added icons and more colours to nav bar</li>
-            <li>Stats run time measurements fix</li>
-            <li>Cleaner Code for HTML 🧼</li>
-            <li>Bug Fixes</li>
-            <ul class="bug-fixes">
-              <li>Disabled Scrolling</li>
-              <li>Pop-up screens being visible when z = -1</li>
-              <li>randomGoldenPotatoPosition not defined fix</li>
+          <div class="general-stats">
+            <h2 class="general-text">General</h2>
+            <ul class="stats-ul">
+              <li id="potBank">Potatoes in bank:</li>
+              <li id="totPot">Potatoes gathered (all time):</li>
+              <li id="runStart">Run started:</li>
+              <li id="buildingsOwned">Buildings owned:</li>
+              <li id="potatoesPerSecond">Potatoes per second:</li>
+              <li id="potatoesPerClick">Potatoes per click:</li>
+              <li id="potatoClicks">Potato clicks:</li>
+              <li id="handFarmedPotatoes">Hand-farmed potatoes:</li>
+              <li id="goldenPotatoClicks">Golden potato clicks:</li>
+              <div class="space"></div>
+              <li id="runningVersion">Running version:</li>
             </ul>
-            <li class="red">
-              I can't figure out the shine not going directly under the
-              potato for smaller screen resolutions but this bug should
-              hopefully be patched in the next update
-            </li>
-          </ul>
-        </div>
-        <div class="major-update">
-          <h2 class="major-h2">
-            9/01/26, 10/01/26: First Major Update v0.11
-          </h2>
-          <p class="major-p">
-            This is the first update of the game. It includes:
-          </p>
-          <ul class="major-ul">
-            <li>The basic layout</li>
-            <li>
-              The first appearance of the
-              <span class="yellow-text">potato</span>!
-            </li>
-            <li>Patch notes screen (the one your on now)</li>
-            <li>Basic clicker mechanics</li>
-            <li class="red">Not mobile supported at this time :(</li>
-            <li>Stats screen</li>
-            <li>Clicking text animation</li>
-            <li>Scrolling comments (the thing at the top)</li>
-            <li>The <span class="gold-text">Golden</span> Potato</li>
-            <li>Easy version control</li>
-            <li>
-              <span class="purple-text">Potion clicker</span> shoutout!
-            </li>
-          </ul>
+          </div>
+          <div class="general-stats">
+            <h2 class="general-text">Upgrades</h2>
+            <ul class="stats-ul">
+              <li id="upgrades-text">Upgrades unlocked: 0/27 (0%)</li>
+            </ul>
+          </div>
+          <div class="general-stats">
+            <h2 class="general-text">Leaderboard</h2>
+            <div class="leaderboard">
+              <div class="first">
+                <div class="place">1st</div>
+                <div class="username">MaxTheRock</div>
+                <div class="score">1,000,000 potatoes</div>
+              </div>
+              <div class="second">
+                <div class="place">2nd</div>
+                <div class="username">KdntNinja</div>
+                <div class="score">850,304 potatoes</div>
+              </div>
+              <div class="third">
+                <div class="place">3rd</div>
+                <div class="username">Arthur</div>
+                <div class="score">25,403 potatoes</div>
+              </div>
+              <div class="other">
+                <div class="place">4th</div>
+                <div class="username">William</div>
+                <div class="score">15,000 potatoes</div>
+              </div>
+              <div class="other">
+                <div class="place">5th</div>
+                <div class="username">Milo</div>
+                <div class="score">12,943 potatoes</div>
+              </div>
+              <div class="other">
+                <div class="place">6th</div>
+                <div class="username">Rohan</div>
+                <div class="score">6,789 potatoes</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+      <div class="modal" id="modal">
+        <div class="modal-inner">
+          <div class="modal-header">
+            <h2 class="info-h2">Information</h2>
+            <button class="closeButton" id="closeModal">&times;</button>
+          </div>
+          <div class="minor-update">
+            <h2 class="minor-h2">19/01/26: Progression Update v0.47</h2>
+            <p class="minor-p">
+              Added a couple more stuff before the account update (just don't
+              mind the login and leaderboard stuff for now)
+            </p>
+            <ul class="minor-ul">
+              <li>A kid called one of your potatoes name is random now!</li>
+              <li>
+                Added 3 new buildings:
+                <span class="flashing">Supermarket</span>,
+                <span class="flashing">Distillery</span> and
+                <span class="flashing">Airport</span>.
+              </li>
+              <li>New upgrades added (now 27 in total!).</li>
+              <li>
+                Account placeholder features that are currently unavailable.
+              </li>
+              <li>
+                Leaderboard section in stats that is also currently unavailable.
+              </li>
+              <div class="space"></div>
+              <li class="green">
+                <a href="https://github.com/KdntNinja">KdntNinja</a> will be
+                helping me with the backend of potato clicker so thank him for
+                the accounts, not me.
+              </li>
+            </ul>
+          </div>
+          <div class="major-update">
+            <h2 class="major-h2">17/01/26: Upgrades + Mobile update v0.43</h2>
+            <p class="major-p">
+              Upgrades added so progression is a little faster and also mobile
+              update to allow potato clicker to be accessed anywhere!
+            </p>
+            <ul class="major-ul">
+              <li>Replaced cursor with peeler.</li>
+              <li>
+                Refactored saving and loading (with a little help from chatGPT).
+              </li>
+              <li>
+                Added <span class="flashing">12</span> starting upgrades, try to
+                get them all!
+              </li>
+              <li>
+                Stats screen now has data from the upgrades that you can
+                explore.
+              </li>
+              <li>
+                Added tooltip when hovering over various items so you know the
+                information about them.
+              </li>
+              <li>Mobile and Tablet UI added and configured.</li>
+              <li>
+                Removed legacy button and language button (it's not going to be
+                needed for a while).
+              </li>
+              <li>Made the pop-up tabs better and more responsive.</li>
+              <li>
+                Total change of <span class="flashing">6,427</span> lines of
+                code to make this update!
+              </li>
+              <li>Added new comments.</li>
+              <li>Made it easier to read the numbers by adding commas.</li>
+            </ul>
+          </div>
+          <div class="minor-update">
+            <h2 class="minor-h2">15/01/26: Bug/Suggestion fix update v0.32</h2>
+            <p class="minor-p">
+              After some discussion, some bugs and suggestions have been made to
+              optimize the game. These include:
+            </p>
+            <ul class="minor-ul">
+              <li>
+                Fixed a refreshment bug with the buildings and added scrolling
+                for smaller screens.
+              </li>
+              <li>Removed the golden potato button when not active.</li>
+              <li>
+                Added 2 new buildings:
+                <span class="flashing">Chip Factory</span> and
+                <span class="flashing">Restaurant</span>!
+              </li>
+              <li>Decreased name box size for smaller windows.</li>
+              <li>Darkened buildings that cannot be purchased.</li>
+              <div class="space"></div>
+              <li class="green">
+                Thanks to
+                <a href="https://github.com/KdntNinja">KdntNinja</a> and many
+                others for helping me develop this game :)
+              </li>
+            </ul>
+          </div>
+          <div class="minor-update">
+            <h2 class="minor-h2">14/01/26: Minor bug fix update v0.27</h2>
+            <p class="minor-p">Couple of ui updates but mostly backend</p>
+            <ul class="minor-ul">
+              <li>
+                Website is now at:
+                <span class="flashing">www.potatoclicker.online</span>
+              </li>
+              <li>Potatoes go up more smoothly</li>
+              <li>
+                Now using
+                <a href="https://fonts.google.com/specimen/Rubik?query=Rubi"
+                  >Rubik</a
+                >
+                font instead of the default
+              </li>
+              <li>
+                Made it so clicking isn't as fast as usuall because the game
+                would progress too fast then
+              </li>
+              <li>
+                Finally fixed the glow to be under the potato for screen
+                resolutions 1000px to 1700px+ (because mobile will get it's own
+                ui in the future)
+              </li>
+              <li>
+                Saving, Loading and Wipe feature which includes autoSaving every
+                60 seconds!
+              </li>
+            </ul>
+          </div>
+          <div class="major-update">
+            <h2 class="major-h2">12/01/26: Buildings Update v0.21</h2>
+            <p class="major-p">
+              Buildings are kind of the best way to progress in the game so
+              that's why they are here :)
+            </p>
+            <ul class="major-ul">
+              <li>Many new buildings added!</li>
+              <li>
+                They are dynamic (basically makes it easy to add more in future
+                updates)
+              </li>
+              <li>Potatoes are actually usefull now</li>
+              <li>
+                Made the golden glow animation better:
+                <span class="gold-text">insert_cool_animation</span>
+              </li>
+              <li>
+                Ability to view and play older versions (in the options tab or
+                in the top right corner)
+              </li>
+              <li>
+                Just so you know, every bullet point is 0.01 of a version added
+              </li>
+              <li>Added icons and more colours to nav bar</li>
+              <li>Stats run time measurements fix</li>
+              <li>Cleaner Code for HTML 🧼</li>
+              <li>Bug Fixes</li>
+              <ul class="bug-fixes">
+                <li>Disabled Scrolling</li>
+                <li>Pop-up screens being visible when z = -1</li>
+                <li>randomGoldenPotatoPosition not defined fix</li>
+              </ul>
+              <li class="red">
+                I can't figure out the shine not going directly under the potato
+                for smaller screen resolutions but this bug should hopefully be
+                patched in the next update
+              </li>
+            </ul>
+          </div>
+          <div class="major-update">
+            <h2 class="major-h2">
+              9/01/26, 10/01/26: First Major Update v0.11
+            </h2>
+            <p class="major-p">
+              This is the first update of the game. It includes:
+            </p>
+            <ul class="major-ul">
+              <li>The basic layout</li>
+              <li>
+                The first appearance of the
+                <span class="yellow-text">potato</span>!
+              </li>
+              <li>Patch notes screen (the one your on now)</li>
+              <li>Basic clicker mechanics</li>
+              <li class="red">Not mobile supported at this time :(</li>
+              <li>Stats screen</li>
+              <li>Clicking text animation</li>
+              <li>Scrolling comments (the thing at the top)</li>
+              <li>The <span class="gold-text">Golden</span> Potato</li>
+              <li>Easy version control</li>
+              <li><span class="purple-text">Potion clicker</span> shoutout!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </main>
     <div id="tooltip" class="tooltip hidden"></div>
     <script src="script.js"></script>
     <script>
-      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+      window.va =
+        window.va ||
+        function () {
+          (window.vaq = window.vaq || []).push(arguments);
+        };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
   </body>

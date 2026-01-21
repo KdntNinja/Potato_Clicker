@@ -19,7 +19,9 @@ const allTimePotatoesElement = document.getElementById("totPot");
 const runStartTimeElement = document.getElementById("runStart");
 const buildingsOwnedElement = document.getElementById("buildingsOwned");
 const potatoesPerSecondElement = document.getElementById("potatoesPerSecond");
-const rawPotatoesPerSecondElement = document.getElementById("rawPotatoesPerSecond");
+const rawPotatoesPerSecondElement = document.getElementById(
+  "rawPotatoesPerSecond",
+);
 const potatoesPerClickElement = document.getElementById("potatoesPerClick");
 const potatoClicksElement = document.getElementById("potatoClicks");
 const handFarmedPotatoesElement = document.getElementById("handFarmedPotatoes");
@@ -34,7 +36,6 @@ const upgradeTotalElement = document.getElementById("upgrades-text");
 const openOptionsMobile = document.getElementById("openModalOptions_mobile");
 const openStatsMobile = document.getElementById("openModalStats_mobile");
 const openInfoMobile = document.getElementById("openModalInfo_mobile");
-
 
 let rawPotatoes = 0;
 let potatoes = 0;
@@ -194,33 +195,276 @@ let buildings = [
 
 // ================== UPGRADES ==================
 let upgrades = [
-  { id: "peelerx2_1", name: "Increased grip strength", description: "Your peelers work harder.", effect: "x2 Potatoes per click & x2 Peeler Building power.", price: 100, icon: "assets/upgrades/peeler_+2.png", unlocked: false, completed: false },
-  { id: "peelerx2_2", name: "Reinforced peeling", description: "Your peelers are tough", effect: "x2 Potatoes per click & x2 Peeler Building power.", price: 500, icon: "assets/upgrades/peeler_x2.png", unlocked: false, completed: false },
-  { id: "peelerx2_3", name: "Razor sharp peeler", description: "Each peeler is more efficient", effect: "x2 Potatoes per click & x2 Peeler Building power.", price: 10000, icon: "assets/upgrades/peelerx2_3.png", unlocked: false, completed: false },
-  { id: "farmerx2_1", name: "Farming Aprentiships", description: "Your farmers are more experienced", effect: "x2 Farmer Potatoes", price: 1000, icon: "assets/upgrades/farmerx2_1.png", unlocked: false, completed: false },
-  { id: "farmerx2_2", name: "Farming University", description: "Your farmers are smart", effect: "x2 Farmer Potatoes", price: 5000, icon: "assets/upgrades/farmerx2_2.png", unlocked: false, completed: false },
-  { id: "farmerx2_3", name: "Farming Degree's", description: "Your farmers are even more smarter", effect: "x2 Farmer Potatoes", price: 100000, icon: "assets/upgrades/farmerx2_3.png", unlocked: false, completed: false },
-  { id: "tractorx2_1", name: "Larger tires", description: "Tractors now come with larger wheels", effect: "x2 Tractor Potatoes", price: 10000, icon: "assets/upgrades/tractorx2_1.png", unlocked: false, completed: false },
-  { id: "tractorx2_2", name: "More horsepower", description: "Engine power has doubled!", effect: "x2 Tractor Potatoes", price: 50000, icon: "assets/upgrades/tractorx2_2.png", unlocked: false, completed: false },
-  { id: "tractorx2_3", name: "Newer Model", description: "Bought straight from the salon.", effect: "x2 Tractor Potatoes", price: 1000000, icon: "assets/upgrades/tractorx2_3.png", unlocked: false, completed: false },
-  { id: "greenhousex2_1", name: "Tempered glass windows", description: "Greenhouses are safer and more productive", effect: "x2 Greenhouse Potatoes", price: 120000, icon: "assets/upgrades/greenhousex2_1.png", unlocked: false, completed: false },
-  { id: "greenhousex2_2", name: "The taller, the better!", description: "Greenhouses have 2 floors now.", effect: "x2 Greenhouse Potatoes", price: 600000, icon: "assets/upgrades/greenhousex2_2.png", unlocked: false, completed: false },
-  { id: "greenhousex2_3", name: "What's better than walking... Levitation!", description: "Greenhouses have a lift!", effect: "x2 Greenhouse Potatoes", price: 12000000, icon: "assets/upgrades/greenhousex2_3.png", unlocked: false, completed: false },
-  { id: "chipfactoryx2_1", name: "Marketing", description: "Increasing the demand for home-made chips", effect: "x2 Chip Factory Potatoes", price: 1200000, icon: "assets/upgrades/chipfactoryx2_1.png", unlocked: false, completed: false },
-  { id: "chipfactoryx2_2", name: "Addictive Chemicals", description: "Chips are now part of your 5 a day", effect: "x2 Chip Factory Potatoes", price: 6000000, icon: "assets/upgrades/chipfactoryx2_2.png", unlocked: false, completed: false },
-  { id: "chipfactoryx2_3", name: "Happy Chip Bundles", description: "Marketing strategy to increase sales.", effect: "x2 Chip Factory Potatoes", price: 120000000, icon: "assets/upgrades/chipfactoryx2_3.png", unlocked: false, completed: false },
-  { id: "restaurantx2_1", name: "Cleaning staff", description: "People are more likely to have a meal here.", effect: "x2 Restaurant Potatoes", price: 14000000, icon: "assets/upgrades/restaurantx2_1.png", unlocked: false, completed: false },
-  { id: "restaurantx2_2", name: "Buffet", description: "A buffet has been added to every restaurant you own!", effect: "x2 Restaurant Potatoes", price: 70000000, icon: "assets/upgrades/restaurantx2_2.png", unlocked: false, completed: false },
-  { id: "restaurantx2_3", name: "VIP Service", description: "VIP service is offered to celebrities", effect: "x2 Restaurant Potatoes", price: 1400000000, icon: "assets/upgrades/restaurantx2_3.png", unlocked: false, completed: false },
-  { id: "supermarketx2_1", name: "Everyday restocking", description: "Ensuring that any kind of potato can be bought.", effect: "x2 Supermarket Potatoes.", price: 800000000, icon: "assets/upgrades/supermarketx2_1.png", unlocked: false, completed: false },
-  { id: "supermarketx2_2", name: "Rewards Systems", description: "Customers are more likely to come back for the rewards.", effect: "x2 Supermarket Potatoes.", price: 4000000000, icon: "assets/upgrades/supermarketx2_2.png", unlocked: false, completed: false },
-  { id: "supermarketx2_3", name: "Double Floor", description: "Larger supermarket = More customers", effect: "x2 Supermarket Potatoes.", price: 800000000000, icon: "assets/upgrades/supermarketx2_3.png", unlocked: false, completed: false },
-  { id: "distillaryx2_1", name: "Larger Capacity", description: "Can hold double the load.", effect: "x2 Distillary Potatoes.", price: 50000000000, icon: "assets/upgrades/distillaryx2_1.png", unlocked: false, completed: false },
-  { id: "distillaryx2_2", name: "Reinforced security.", description: "Less likely to be stolen from.", effect: "x2 Distillary Potatoes.", price: 250000000000, icon: "assets/upgrades/distillaryx2_2.png", unlocked: false, completed: false },
-  { id: "distillaryx2_3", name: "Better tasting", description: "Your business attracts more customers.", effect: "x2 Distillary Potatoes.", price: 50000000000000, icon: "assets/upgrades/distillaryx2_3.png", unlocked: false, completed: false },
-  { id: "airportx2_1", name: "New runway", description: "More plane exports.", effect: "x2 Airport Potatoes", price: 400000000000, icon: "assets/upgrades/airportx2_1.png", unlocked: false, completed: false },
-  { id: "airportx2_2", name: "Destination Expansion", description: "More trade routes", effect: "x2 Airport Potatoes", price: 2000000000000, icon: "assets/upgrades/airportx2_2.png", unlocked: false, completed: false },
-  { id: "airportx2_3", name: "Better planes", description: "Each plane has double the power", effect: "x2 Airport Potatoes", price: 400000000000000, icon: "assets/upgrades/airportx2_3.png", unlocked: false, completed: false },
+  {
+    id: "peelerx2_1",
+    name: "Increased grip strength",
+    description: "Your peelers work harder.",
+    effect: "x2 Potatoes per click & x2 Peeler Building power.",
+    price: 100,
+    icon: "assets/upgrades/peeler_+2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "peelerx2_2",
+    name: "Reinforced peeling",
+    description: "Your peelers are tough",
+    effect: "x2 Potatoes per click & x2 Peeler Building power.",
+    price: 500,
+    icon: "assets/upgrades/peeler_x2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "peelerx2_3",
+    name: "Razor sharp peeler",
+    description: "Each peeler is more efficient",
+    effect: "x2 Potatoes per click & x2 Peeler Building power.",
+    price: 10000,
+    icon: "assets/upgrades/peelerx2_3.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "farmerx2_1",
+    name: "Farming Aprentiships",
+    description: "Your farmers are more experienced",
+    effect: "x2 Farmer Potatoes",
+    price: 1000,
+    icon: "assets/upgrades/farmerx2_1.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "farmerx2_2",
+    name: "Farming University",
+    description: "Your farmers are smart",
+    effect: "x2 Farmer Potatoes",
+    price: 5000,
+    icon: "assets/upgrades/farmerx2_2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "farmerx2_3",
+    name: "Farming Degree's",
+    description: "Your farmers are even more smarter",
+    effect: "x2 Farmer Potatoes",
+    price: 100000,
+    icon: "assets/upgrades/farmerx2_3.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "tractorx2_1",
+    name: "Larger tires",
+    description: "Tractors now come with larger wheels",
+    effect: "x2 Tractor Potatoes",
+    price: 10000,
+    icon: "assets/upgrades/tractorx2_1.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "tractorx2_2",
+    name: "More horsepower",
+    description: "Engine power has doubled!",
+    effect: "x2 Tractor Potatoes",
+    price: 50000,
+    icon: "assets/upgrades/tractorx2_2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "tractorx2_3",
+    name: "Newer Model",
+    description: "Bought straight from the salon.",
+    effect: "x2 Tractor Potatoes",
+    price: 1000000,
+    icon: "assets/upgrades/tractorx2_3.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "greenhousex2_1",
+    name: "Tempered glass windows",
+    description: "Greenhouses are safer and more productive",
+    effect: "x2 Greenhouse Potatoes",
+    price: 120000,
+    icon: "assets/upgrades/greenhousex2_1.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "greenhousex2_2",
+    name: "The taller, the better!",
+    description: "Greenhouses have 2 floors now.",
+    effect: "x2 Greenhouse Potatoes",
+    price: 600000,
+    icon: "assets/upgrades/greenhousex2_2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "greenhousex2_3",
+    name: "What's better than walking... Levitation!",
+    description: "Greenhouses have a lift!",
+    effect: "x2 Greenhouse Potatoes",
+    price: 12000000,
+    icon: "assets/upgrades/greenhousex2_3.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "chipfactoryx2_1",
+    name: "Marketing",
+    description: "Increasing the demand for home-made chips",
+    effect: "x2 Chip Factory Potatoes",
+    price: 1200000,
+    icon: "assets/upgrades/chipfactoryx2_1.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "chipfactoryx2_2",
+    name: "Addictive Chemicals",
+    description: "Chips are now part of your 5 a day",
+    effect: "x2 Chip Factory Potatoes",
+    price: 6000000,
+    icon: "assets/upgrades/chipfactoryx2_2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "chipfactoryx2_3",
+    name: "Happy Chip Bundles",
+    description: "Marketing strategy to increase sales.",
+    effect: "x2 Chip Factory Potatoes",
+    price: 120000000,
+    icon: "assets/upgrades/chipfactoryx2_3.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "restaurantx2_1",
+    name: "Cleaning staff",
+    description: "People are more likely to have a meal here.",
+    effect: "x2 Restaurant Potatoes",
+    price: 14000000,
+    icon: "assets/upgrades/restaurantx2_1.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "restaurantx2_2",
+    name: "Buffet",
+    description: "A buffet has been added to every restaurant you own!",
+    effect: "x2 Restaurant Potatoes",
+    price: 70000000,
+    icon: "assets/upgrades/restaurantx2_2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "restaurantx2_3",
+    name: "VIP Service",
+    description: "VIP service is offered to celebrities",
+    effect: "x2 Restaurant Potatoes",
+    price: 1400000000,
+    icon: "assets/upgrades/restaurantx2_3.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "supermarketx2_1",
+    name: "Everyday restocking",
+    description: "Ensuring that any kind of potato can be bought.",
+    effect: "x2 Supermarket Potatoes.",
+    price: 800000000,
+    icon: "assets/upgrades/supermarketx2_1.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "supermarketx2_2",
+    name: "Rewards Systems",
+    description: "Customers are more likely to come back for the rewards.",
+    effect: "x2 Supermarket Potatoes.",
+    price: 4000000000,
+    icon: "assets/upgrades/supermarketx2_2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "supermarketx2_3",
+    name: "Double Floor",
+    description: "Larger supermarket = More customers",
+    effect: "x2 Supermarket Potatoes.",
+    price: 800000000000,
+    icon: "assets/upgrades/supermarketx2_3.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "distillaryx2_1",
+    name: "Larger Capacity",
+    description: "Can hold double the load.",
+    effect: "x2 Distillary Potatoes.",
+    price: 50000000000,
+    icon: "assets/upgrades/distillaryx2_1.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "distillaryx2_2",
+    name: "Reinforced security.",
+    description: "Less likely to be stolen from.",
+    effect: "x2 Distillary Potatoes.",
+    price: 250000000000,
+    icon: "assets/upgrades/distillaryx2_2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "distillaryx2_3",
+    name: "Better tasting",
+    description: "Your business attracts more customers.",
+    effect: "x2 Distillary Potatoes.",
+    price: 50000000000000,
+    icon: "assets/upgrades/distillaryx2_3.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "airportx2_1",
+    name: "New runway",
+    description: "More plane exports.",
+    effect: "x2 Airport Potatoes",
+    price: 400000000000,
+    icon: "assets/upgrades/airportx2_1.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "airportx2_2",
+    name: "Destination Expansion",
+    description: "More trade routes",
+    effect: "x2 Airport Potatoes",
+    price: 2000000000000,
+    icon: "assets/upgrades/airportx2_2.png",
+    unlocked: false,
+    completed: false,
+  },
+  {
+    id: "airportx2_3",
+    name: "Better planes",
+    description: "Each plane has double the power",
+    effect: "x2 Airport Potatoes",
+    price: 400000000000000,
+    icon: "assets/upgrades/airportx2_3.png",
+    unlocked: false,
+    completed: false,
+  },
 ];
 
 let mysteryCount = 0;
@@ -233,7 +477,19 @@ buildings.forEach((b) => {
   }
 });
 
-const comment_names = ["Max", "Oliver", "William", "Arthur", "Rohan", "Kaiden", "Leon", "David", "Ryan", "Milo", "Rowan"]
+const comment_names = [
+  "Max",
+  "Oliver",
+  "William",
+  "Arthur",
+  "Rohan",
+  "Kaiden",
+  "Leon",
+  "David",
+  "Ryan",
+  "Milo",
+  "Rowan",
+];
 
 function random_name() {
   return comment_names[Math.floor(Math.random() * comment_names.length)];
@@ -359,15 +615,17 @@ async function updatePotatoComments() {
 }
 
 function formatNumber(num) {
-    if (num >= 1_000_000_000_000) {
-        return (num / 1_000_000_000_000).toFixed(2).replace(/\.?0+$/, '') + " trillion";
-    } else if (num >= 1_000_000_000) {
-        return (num / 1_000_000_000).toFixed(2).replace(/\.?0+$/, '') + " billion";
-    } else if (num >= 1_000_000) {
-        return (num / 1_000_000).toFixed(2).replace(/\.?0+$/, '') + " million";
-    } else {
-        return num.toLocaleString();
-    }
+  if (num >= 1_000_000_000_000) {
+    return (
+      (num / 1_000_000_000_000).toFixed(2).replace(/\.?0+$/, "") + " trillion"
+    );
+  } else if (num >= 1_000_000_000) {
+    return (num / 1_000_000_000).toFixed(2).replace(/\.?0+$/, "") + " billion";
+  } else if (num >= 1_000_000) {
+    return (num / 1_000_000).toFixed(2).replace(/\.?0+$/, "") + " million";
+  } else {
+    return num.toLocaleString();
+  }
 }
 
 function updatePotatoDisplay() {
@@ -376,8 +634,10 @@ function updatePotatoDisplay() {
     titleElement.innerText = Math.floor(potatoes) + " potato - Potato Clicker";
     return;
   } else {
-    clickerCountDisplay.innerText = formatNumber(Math.floor(potatoes)) + " potatoes";
-    titleElement.innerText = formatNumber(Math.floor(potatoes)) + " potatoes - Potato Clicker";
+    clickerCountDisplay.innerText =
+      formatNumber(Math.floor(potatoes)) + " potatoes";
+    titleElement.innerText =
+      formatNumber(Math.floor(potatoes)) + " potatoes - Potato Clicker";
   }
 }
 
@@ -416,7 +676,7 @@ function updateStatsDisplay() {
     "Golden potato clicks: " + goldenPotatoClicks;
   runningVersionElement.innerText = "Running version: " + runningVersion;
   versionElement.innerText = runningVersion;
-  upgradeTotalElement.innerText = `Upgrades unlocked: ${totalUpgrades}/27 (${Math.floor((totalUpgrades/27*100) * 10) / 10}%)`;
+  upgradeTotalElement.innerText = `Upgrades unlocked: ${totalUpgrades}/27 (${Math.floor((totalUpgrades / 27) * 100 * 10) / 10}%)`;
   setTimeout(updateStatsDisplay, 1000);
 }
 
@@ -463,16 +723,16 @@ function saveGame() {
     upgrades: {},
   };
 
-  buildings.forEach(b => {
+  buildings.forEach((b) => {
     save.buildings[b.id] = {
       owned: b.owned,
       mystery: b.mystery,
       totalGenerated: b.totalGenerated,
-      cpsMultiplier: b.cpsMultiplier
+      cpsMultiplier: b.cpsMultiplier,
     };
   });
 
-  upgrades.forEach(u => {
+  upgrades.forEach((u) => {
     save.upgrades[u.id] = {
       unlocked: u.unlocked,
       completed: u.completed,
@@ -502,7 +762,7 @@ function loadV2(save) {
   buildingsOwned = s.buildingsOwned;
   totalUpgrades = s.totalUpgrades;
 
-  buildings.forEach(b => {
+  buildings.forEach((b) => {
     const data = save.buildings[b.id];
     if (!data) return;
     b.owned = data.owned;
@@ -512,7 +772,7 @@ function loadV2(save) {
     b.cpsMultiplier = data.cpsMultiplier || 1;
   });
 
-  upgrades.forEach(u => {
+  upgrades.forEach((u) => {
     const data = save.upgrades[u.id];
     if (!data) return;
     u.unlocked = data.unlocked;
@@ -544,7 +804,7 @@ function migrateOldSave() {
     airport: "airports",
   };
 
-  buildings.forEach(b => {
+  buildings.forEach((b) => {
     b.owned = +localStorage.getItem(map[b.id]) || 0;
     b.mystery = JSON.parse(localStorage.getItem(`${b.id}_mystery`) || "true");
     b.price = Math.ceil(b.price * Math.pow(1.15, b.owned));
@@ -577,7 +837,7 @@ clickerButton.addEventListener("click", function () {
   potatoClicks++;
   updatePotatoDisplay();
   renderBuildings();
-  renderUpgrades()
+  renderUpgrades();
   setTimeout(() => {
     clickerButton.disabled = false;
   }, 85);
@@ -605,7 +865,7 @@ goldenPotatoImage.addEventListener("click", (e) => {
 
   updatePotatoDisplay();
   renderBuildings();
-  renderUpgrades()
+  renderUpgrades();
   hideGoldenPotato();
   scheduleNextGoldenPotato();
 });
@@ -668,33 +928,107 @@ function renderUpgrades() {
   const container = document.getElementById("upgrades");
   container.innerHTML = "";
 
-  upgrades.forEach(u => {
+  upgrades.forEach((u) => {
     // Unlock based on building ownership
-    if ((u.id.includes("peelerx2_1") || (u.id.includes("peelerx2_2"))) && buildings.find(b => b.id === "cursor").owned >= 1) u.unlocked = !u.completed;
-    if ((u.id.includes("farmerx2_1") || (u.id.includes("farmerx2_2"))) && buildings.find(b => b.id === "farmer").owned >= 1) u.unlocked = !u.completed;
-    if ((u.id.includes("tractorx2_1") || (u.id.includes("tractorx2_2"))) && buildings.find(b => b.id === "tractor").owned >= 1) u.unlocked = !u.completed;
-    if ((u.id.includes("greenhousex2_1") || (u.id.includes("greenhousex2_2"))) && buildings.find(b => b.id === "greenhouse").owned >= 1) u.unlocked = !u.completed;
-    if ((u.id.includes("chipfactoryx2_1") || (u.id.includes("chipfactoryx2_2"))) && buildings.find(b => b.id === "chip_factory").owned >= 1) u.unlocked = !u.completed;
-    if ((u.id.includes("restaurantx2_1") || (u.id.includes("restaurantx2_2"))) && buildings.find(b => b.id === "restaurant").owned >= 1) u.unlocked = !u.completed;
-    if ((u.id.includes("supermarketx2_1") || (u.id.includes("supermarketx2_2"))) && buildings.find(b => b.id === "supermarket").owned >= 1) u.unlocked = !u.completed;
-    if ((u.id.includes("distillaryx2_1") || (u.id.includes("distillaryx2_2"))) && buildings.find(b => b.id === "distillary").owned >= 1) u.unlocked = !u.completed;
-    if ((u.id.includes("airportx2_1") || (u.id.includes("airportx2_2"))) && buildings.find(b => b.id === "airport").owned >= 1) u.unlocked = !u.completed;
-  
+    if (
+      (u.id.includes("peelerx2_1") || u.id.includes("peelerx2_2")) &&
+      buildings.find((b) => b.id === "cursor").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("farmerx2_1") || u.id.includes("farmerx2_2")) &&
+      buildings.find((b) => b.id === "farmer").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("tractorx2_1") || u.id.includes("tractorx2_2")) &&
+      buildings.find((b) => b.id === "tractor").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("greenhousex2_1") || u.id.includes("greenhousex2_2")) &&
+      buildings.find((b) => b.id === "greenhouse").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("chipfactoryx2_1") || u.id.includes("chipfactoryx2_2")) &&
+      buildings.find((b) => b.id === "chip_factory").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("restaurantx2_1") || u.id.includes("restaurantx2_2")) &&
+      buildings.find((b) => b.id === "restaurant").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("supermarketx2_1") || u.id.includes("supermarketx2_2")) &&
+      buildings.find((b) => b.id === "supermarket").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("distillaryx2_1") || u.id.includes("distillaryx2_2")) &&
+      buildings.find((b) => b.id === "distillary").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("airportx2_1") || u.id.includes("airportx2_2")) &&
+      buildings.find((b) => b.id === "airport").owned >= 1
+    )
+      u.unlocked = !u.completed;
+
     // Unlock after 10 Buildings
-    if (u.id.includes("peelerx2_3") && buildings.find(b => b.id === "cursor").owned >= 10) u.unlocked = !u.completed;
-    if (u.id.includes("farmerx2_3") && buildings.find(b => b.id === "farmer").owned >= 10) u.unlocked = !u.completed;
-    if (u.id.includes("tractorx2_3") && buildings.find(b => b.id === "tractor").owned >= 10) u.unlocked = !u.completed;
-    if (u.id.includes("greenhousex2_3") && buildings.find(b => b.id === "greenhouse").owned >= 10) u.unlocked = !u.completed;
-    if (u.id.includes("chipfactoryx2_3") && buildings.find(b => b.id === "chip_factory").owned >= 10) u.unlocked = !u.completed;
-    if (u.id.includes("restaurantx2_3") && buildings.find(b => b.id === "restaurant").owned >= 10) u.unlocked = !u.completed;
-    if (u.id.includes("supermarketx2_3") && buildings.find(b => b.id === "supermarket").owned >= 10) u.unlocked = !u.completed;
-    if (u.id.includes("distillaryx2_3") && buildings.find(b => b.id === "distillary").owned >= 10) u.unlocked = !u.completed;
-    if (u.id.includes("airportx2_3") && buildings.find(b => b.id === "airport").owned >= 10) u.unlocked = !u.completed;
+    if (
+      u.id.includes("peelerx2_3") &&
+      buildings.find((b) => b.id === "cursor").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("farmerx2_3") &&
+      buildings.find((b) => b.id === "farmer").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("tractorx2_3") &&
+      buildings.find((b) => b.id === "tractor").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("greenhousex2_3") &&
+      buildings.find((b) => b.id === "greenhouse").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("chipfactoryx2_3") &&
+      buildings.find((b) => b.id === "chip_factory").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("restaurantx2_3") &&
+      buildings.find((b) => b.id === "restaurant").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("supermarketx2_3") &&
+      buildings.find((b) => b.id === "supermarket").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("distillaryx2_3") &&
+      buildings.find((b) => b.id === "distillary").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("airportx2_3") &&
+      buildings.find((b) => b.id === "airport").owned >= 10
+    )
+      u.unlocked = !u.completed;
   });
 
-  const visible = upgrades.filter(u => u.unlocked && !u.completed).sort((a,b) => a.price - b.price);
+  const visible = upgrades
+    .filter((u) => u.unlocked && !u.completed)
+    .sort((a, b) => a.price - b.price);
 
-  visible.forEach(u => {
+  visible.forEach((u) => {
     const upgradeButton = document.createElement("button");
     upgradeButton.className = "upgrades-container";
 
@@ -702,12 +1036,15 @@ function renderUpgrades() {
     upgradeButton.style.opacity = potatoes >= u.price ? 1 : 0.5;
 
     upgradeButton.addEventListener("mouseenter", () => {
-      showTooltip(`
+      showTooltip(
+        `
         <div class="title">${u.name}</div>
         <div>${u.description}</div>
         <div class="effect">${u.effect}</div>
         <div class="price">Cost: ${formatNumber(u.price)} potatoes</div>
-      `, upgradeButton);
+      `,
+        upgradeButton,
+      );
     });
     upgradeButton.addEventListener("mouseleave", hideTooltip);
 
@@ -719,18 +1056,26 @@ function renderUpgrades() {
       totalUpgrades++;
 
       if (u.id.includes("peeler")) {
-        const peeler = buildings.find(b => b.id === "cursor");
+        const peeler = buildings.find((b) => b.id === "cursor");
         peeler.cpsMultiplier *= 2;
         potatoesPerClick *= 2;
       }
-      if (u.id.includes("farmer")) buildings.find(b => b.id === "farmer").cpsMultiplier *= 2;
-      if (u.id.includes("tractor")) buildings.find(b => b.id === "tractor").cpsMultiplier *= 2;
-      if (u.id.includes("greenhouse")) buildings.find(b => b.id === "greenhouse").cpsMultiplier *= 2;
-      if (u.id.includes("chipfactory")) buildings.find(b => b.id === "chip_factory").cpsMultiplier *= 2;
-      if (u.id.includes("restaurant")) buildings.find(b => b.id === "restaurant").cpsMultiplier *= 2;
-      if (u.id.includes("supermarket")) buildings.find(b => b.id === "supermarket").cpsMultiplier *= 2;
-      if (u.id.includes("distillary")) buildings.find(b => b.id === "distillary").cpsMultiplier *= 2;
-      if (u.id.includes("airport")) buildings.find(b => b.id === "airport").cpsMultiplier *= 2;
+      if (u.id.includes("farmer"))
+        buildings.find((b) => b.id === "farmer").cpsMultiplier *= 2;
+      if (u.id.includes("tractor"))
+        buildings.find((b) => b.id === "tractor").cpsMultiplier *= 2;
+      if (u.id.includes("greenhouse"))
+        buildings.find((b) => b.id === "greenhouse").cpsMultiplier *= 2;
+      if (u.id.includes("chipfactory"))
+        buildings.find((b) => b.id === "chip_factory").cpsMultiplier *= 2;
+      if (u.id.includes("restaurant"))
+        buildings.find((b) => b.id === "restaurant").cpsMultiplier *= 2;
+      if (u.id.includes("supermarket"))
+        buildings.find((b) => b.id === "supermarket").cpsMultiplier *= 2;
+      if (u.id.includes("distillary"))
+        buildings.find((b) => b.id === "distillary").cpsMultiplier *= 2;
+      if (u.id.includes("airport"))
+        buildings.find((b) => b.id === "airport").cpsMultiplier *= 2;
 
       calculateAutoClick();
       updatePotatoDisplay();
@@ -755,9 +1100,11 @@ function renderBuildings() {
   const container = document.getElementById("buildings");
   container.innerHTML = "";
 
-  const visible = buildings.filter(b => b.unlocked).sort((a, b) => a.sort - b.sort);
+  const visible = buildings
+    .filter((b) => b.unlocked)
+    .sort((a, b) => a.sort - b.sort);
 
-  visible.forEach(b => {
+  visible.forEach((b) => {
     const buildingButton = document.createElement("button");
     buildingButton.className = "building-container";
 
@@ -855,11 +1202,11 @@ function unlockBuilding(id) {
 
   b.unlocked = true;
   renderBuildings();
-  renderUpgrades()
+  renderUpgrades();
 }
 
 function calculateAutoClick() {
-  buildings.forEach(b => b.cps = b.baseCps * b.cpsMultiplier);
+  buildings.forEach((b) => (b.cps = b.baseCps * b.cpsMultiplier));
   autoClickAmount = buildings.reduce((total, b) => total + b.cps * b.owned, 0);
 }
 
@@ -995,7 +1342,7 @@ function autoClick() {
   potatoes += increment;
   allTimePotatoes += increment;
 
-  buildings.forEach(b => {
+  buildings.forEach((b) => {
     const incomeFromThisBuilding = (b.cps * b.owned) / 20;
     b.totalGenerated += incomeFromThisBuilding;
   });
@@ -1010,12 +1357,12 @@ function autoSave() {
 }
 
 function renderBuildingsRegular() {
-  renderBuildings()
+  renderBuildings();
   setTimeout(renderBuildingsRegular, 1000);
 }
 
 function renderUpgradesRegular() {
-  renderUpgrades()
+  renderUpgrades();
   setTimeout(renderUpgradesRegular, 1000);
 }
 
@@ -1025,7 +1372,7 @@ updatePotatoComments();
 updateStatsDisplay();
 autoClick();
 renderBuildingsRegular();
-renderUpgradesRegular()
+renderUpgradesRegular();
 autoSave();
 console.log(`
   ---------------------------------------------------------------
