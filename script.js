@@ -659,30 +659,43 @@ function rateCounter() {
 }
 
 function formatRunTime(seconds) {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
+  seconds = Math.floor(seconds);
 
-  const pad = (n) => n.toString().padStart(2, "0");
+  const YEAR = 365 * 24 * 3600;
+  const DAY = 24 * 3600;
+  const HOUR = 3600;
 
-  return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+  const years = Math.floor(seconds / YEAR);
+  seconds %= YEAR;
+
+  const days = Math.floor(seconds / DAY);
+  seconds %= DAY;
+
+  const hours = Math.floor(seconds / HOUR);
+
+  const parts = [];
+  if (years) parts.push(`${years} years`);
+  if (days || years) parts.push(`${days} days`);
+  parts.push(`${hours} hours`);
+
+  return parts.join(" ");
 }
 
 function updateStatsDisplay() {
   potatoesCountElement.innerText =
-    "Potatoes in bank: " + Math.floor(potatoes * 10) / 10;
+    "Potatoes in bank: " + formatNumber(Math.floor(potatoes * 10) / 10);
   allTimePotatoesElement.innerText =
-    "Potatoes gathered (all time): " + Math.floor(allTimePotatoes * 10) / 10;
+    "Potatoes gathered (all time): " + formatNumber(Math.floor(allTimePotatoes * 10) / 10);
   runDurationSeconds = Math.floor((Date.now() - runStartTime) / 1000);
   runStartTimeElement.innerText =
-    "Run started: " + formatRunTime(runDurationSeconds);
+    "Run started: " + formatRunTime(runDurationSeconds) + " ago";
   buildingsOwnedElement.innerText = "Buildings owned: " + buildingsOwned;
   potatoesPerSecondElement.innerText =
     "Potatoes per second: " + Math.floor(autoClickAmount * 10) / 10;
-  potatoesPerClickElement.innerText = "Potatoes per click: " + potatoesPerClick;
+  potatoesPerClickElement.innerText = "Potatoes per click: " + formatNumber(potatoesPerClick);
   potatoClicksElement.innerText = "Potato clicks: " + potatoClicks;
   handFarmedPotatoesElement.innerText =
-    "Hand-farmed potatoes: " + handFarmedPotatoes;
+    "Hand-farmed potatoes: " + formatNumber(handFarmedPotatoes);
   goldenPotatoClicksElement.innerText =
     "Golden potato clicks: " + goldenPotatoClicks;
   runningVersionElement.innerText = "Running version: " + runningVersion;

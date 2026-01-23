@@ -733,7 +733,7 @@ h3 {
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 1210px) {
   .modal-inner {
     width: 90%;
     padding: 15px;
@@ -841,6 +841,54 @@ h3 {
   text-align: center;
 }
 
+.general-stats-double {
+  border-top: 3px solid rgba(255, 255, 255, 0.685);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.685);
+  margin-bottom: 15px;
+  text-align: center;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: nowrap;
+  flex-shrink: 1;
+}
+
+@media (max-width: 650px) {
+  .general-stats-double {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+@media (max-width: 1307px) {
+  .general-section ul, .general-section div {
+    gap: 2px;
+    font-size: 11px;
+  }
+}
+
+@media (min-width: 1307px) and (max-width: 1580px) {
+  .general-section ul, .general-section div {
+    gap: 5px;
+    font-size: 12px;
+  }
+}
+
+.line {
+  border-right: 3px solid rgba(255, 255, 255, 0.685);
+  padding-right: 20px;
+}
+
+@media (max-width: 650px) {
+  .line {
+    border-right: none;
+    padding-right: 0px;
+  }
+}
+
+
+
 .general-text {
   color: rgb(128, 255, 244);
   text-align: left;
@@ -849,6 +897,12 @@ h3 {
   align-items: center;
   justify-content: center;
   display: flex;
+}
+
+@media (max-width: 700px) {
+  .general-section ul {
+    font-size: 15px;
+  }
 }
 
 .stats-ul {
@@ -1281,39 +1335,57 @@ h3 {
 .leaderboard {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px; /* slightly tighter for consistency */
   margin: 10px;
 }
 
+/* Common styling for all leaderboard entries */
 .first,
 .second,
 .third,
 .other {
   display: grid;
-  grid-template-columns: 100px 1fr minmax(100px, 220px);
+  grid-template-columns: 80px 1fr minmax(100px, 220px); /* slightly adjusted left column */
   align-items: center;
-
   border: rgb(0, 6, 19) solid 5px;
   border-radius: 20px;
   padding: 10px 16px;
-  overflow: hidden; /* important */
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2); /* subtle shadow for depth */
+  transition: transform 0.2s, box-shadow 0.2s; /* smooth hover effect */
 }
 
+/* Hover effect */
+.first:hover,
+.second:hover,
+.third:hover,
+.other:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.25);
+}
+
+/* Responsive font size */
 @media (max-width: 700px) {
   .first,
   .second,
   .third,
   .other {
     font-size: 12px;
+    padding: 8px 12px;
   }
 }
 
+/* Column alignment */
 .place {
   text-align: left;
+  font-weight: bold;
 }
 
 .username {
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .score {
@@ -1321,20 +1393,31 @@ h3 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 500;
 }
 
+/* Leaderboard colors */
 .first {
   background-color: rgb(142, 121, 4);
+  color: white;
 }
 
 .second {
   background-color: rgb(97, 97, 97);
+  color: white;
 }
 
 .third {
   background-color: rgb(116, 60, 4);
+  color: white;
 }
 
 .other {
-  background-color: none;
+  background-color: rgba(0,0,0,0.05);
+  color: rgb(148, 148, 148);
+}
+
+.scrolling-part {
+  overflow-y: auto;
+  max-height: 400px;
 }
