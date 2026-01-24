@@ -56,6 +56,8 @@ let runDurationSeconds;
 let totalUpgrades = 0;
 let frenzy = false;
 let half_price_amount = 1;
+let click_boost = false;
+
 
 // ================== BUILDINGS ==================
 let buildings = [
@@ -882,6 +884,10 @@ function loadV2(save) {
     u.completed = data.completed;
   });
 
+  if (potatoesPerClick === 0 || potatoesPerClick > 8) {
+    potatoesPerClick = 8;
+  }
+
   calculateAutoClick();
 }
 
@@ -952,7 +958,7 @@ const GOLDEN_VISIBLE_TIME = 10 * 1000;
 let spawnTimeout = null;
 let hideTimeout = null;
 
-let goldenPotatoVariants = ["normal", "frenzy", "half_price", "clicker"]
+let goldenPotatoVariants = ["normal", "frenzy", "half_price"];
 
 goldenPotatoImage.addEventListener("click", (e) => {
   let goldenPotatoVariant = goldenPotatoVariants[Math.floor(Math.random() * goldenPotatoVariants.length)]
@@ -973,13 +979,6 @@ goldenPotatoImage.addEventListener("click", (e) => {
     half_price_amount = 0.5;
     setTimeout(() => {
       half_price_amount = 1;
-    }, 3 * 60 * 1000);
-  } else if (goldenPotatoVariant == "clicker") {
-    text.textContent = `3 Minute boosted clicks per second!`;
-    let old_click = potatoesPerClick;
-    potatoesPerClick=potatoesPerSecond;
-    setTimeout(() => {
-      potatoesPerClick=old_click;
     }, 3 * 60 * 1000);
   }
   
