@@ -1422,3 +1422,15 @@ h3 {
   overflow-y: auto;
   max-height: 400px;
 }
+
+.dropdown-content {
+  display: flex;
+  flex-direction: column;
+}
+.versions {
+  display: flex;
+  flex-direction: column;
+}
+.versions a {
+  margin-bottom: 0.5em;
+}
