@@ -58,7 +58,6 @@ let frenzy = false;
 let half_price_amount = 1;
 let click_boost = false;
 
-
 // ================== BUILDINGS ==================
 let buildings = [
   {
@@ -656,7 +655,8 @@ function updatePotatoDisplay() {
 
 function rateCounter() {
   document.querySelector(".potato-amount-persecond").innerText =
-    "per second: " + (Math.floor(autoClickAmount * 10 * frenzy_amount) / 10).toLocaleString();
+    "per second: " +
+    (Math.floor(autoClickAmount * 10 * frenzy_amount) / 10).toLocaleString();
   setTimeout(rateCounter, 1000);
 }
 
@@ -687,14 +687,16 @@ function updateStatsDisplay() {
   potatoesCountElement.innerText =
     "Potatoes in bank: " + formatNumber(Math.floor(potatoes * 10) / 10);
   allTimePotatoesElement.innerText =
-    "Potatoes gathered (all time): " + formatNumber(Math.floor(allTimePotatoes * 10) / 10);
+    "Potatoes gathered (all time): " +
+    formatNumber(Math.floor(allTimePotatoes * 10) / 10);
   runDurationSeconds = Math.floor((Date.now() - runStartTime) / 1000);
   runStartTimeElement.innerText =
     "Run started: " + formatRunTime(runDurationSeconds) + " ago";
   buildingsOwnedElement.innerText = "Buildings owned: " + buildingsOwned;
   potatoesPerSecondElement.innerText =
     "Potatoes per second: " + Math.floor(autoClickAmount * 10) / 10;
-  potatoesPerClickElement.innerText = "Potatoes per click: " + formatNumber(potatoesPerClick);
+  potatoesPerClickElement.innerText =
+    "Potatoes per click: " + formatNumber(potatoesPerClick);
   potatoClicksElement.innerText = "Potato clicks: " + potatoClicks;
   handFarmedPotatoesElement.innerText =
     "Hand-farmed potatoes: " + formatNumber(handFarmedPotatoes);
@@ -961,7 +963,10 @@ let hideTimeout = null;
 let goldenPotatoVariants = ["normal", "frenzy", "half_price"];
 
 goldenPotatoImage.addEventListener("click", (e) => {
-  let goldenPotatoVariant = goldenPotatoVariants[Math.floor(Math.random() * goldenPotatoVariants.length)]
+  let goldenPotatoVariant =
+    goldenPotatoVariants[
+      Math.floor(Math.random() * goldenPotatoVariants.length)
+    ];
   const text = document.createElement("div");
   text.className = "text";
   let reward = 0;
@@ -971,17 +976,23 @@ goldenPotatoImage.addEventListener("click", (e) => {
   } else if (goldenPotatoVariant == "frenzy") {
     text.textContent = `3 Minute Frenzy!`;
     frenzy = true;
-    setTimeout(() => {
-      frenzy = false;
-    }, 3 * 60 * 1000);
+    setTimeout(
+      () => {
+        frenzy = false;
+      },
+      3 * 60 * 1000,
+    );
   } else if (goldenPotatoVariant == "half_price") {
     text.textContent = `3 Minute Half Price!`;
     half_price_amount = 0.5;
-    setTimeout(() => {
-      half_price_amount = 1;
-    }, 3 * 60 * 1000);
+    setTimeout(
+      () => {
+        half_price_amount = 1;
+      },
+      3 * 60 * 1000,
+    );
   }
-  
+
   text.style.left = e.clientX + (Math.random() * 40 - 20) + "px";
   text.style.top = e.clientY - 20 + "px";
   document.body.appendChild(text);
@@ -1161,7 +1172,8 @@ function renderUpgrades() {
     upgradeButton.className = "upgrades-container";
 
     upgradeButton.innerHTML = `<img src="${u.icon}" draggable="false" class="upgrade-button" width="70" />`;
-    upgradeButton.style.opacity = potatoes >= (u.price * half_price_amount) ? 1 : 0.5;
+    upgradeButton.style.opacity =
+      potatoes >= u.price * half_price_amount ? 1 : 0.5;
 
     upgradeButton.addEventListener("mouseenter", () => {
       showTooltip(
@@ -1169,7 +1181,7 @@ function renderUpgrades() {
         <div class="title">${u.name}</div>
         <div>${u.description}</div>
         <div class="effect">${u.effect}</div>
-        <div class="price">Cost: ${formatNumber(u.price*half_price_amount)} potatoes</div>
+        <div class="price">Cost: ${formatNumber(u.price * half_price_amount)} potatoes</div>
       `,
         upgradeButton,
       );
@@ -1177,8 +1189,8 @@ function renderUpgrades() {
     upgradeButton.addEventListener("mouseleave", hideTooltip);
 
     upgradeButton.addEventListener("click", () => {
-      if (potatoes < u.price*half_price_amount) return;
-      potatoes -= u.price*half_price_amount;
+      if (potatoes < u.price * half_price_amount) return;
+      potatoes -= u.price * half_price_amount;
       u.completed = true;
       u.unlocked = false;
       totalUpgrades++;
@@ -1275,7 +1287,10 @@ function renderBuildings() {
 
     const priceElement = buildingButton.querySelector(".building-price");
 
-    if (!isNaN(b.price * half_price_amount) && potatoes >= b.price * half_price_amount) {
+    if (
+      !isNaN(b.price * half_price_amount) &&
+      potatoes >= b.price * half_price_amount
+    ) {
       priceElement.style.color = "lightgreen";
       buildingButton.style.backgroundColor = "#37495a";
       buildingButton.style.cursor = "pointer";
@@ -1331,6 +1346,9 @@ function unlockBuilding(id) {
   b.unlocked = true;
   renderBuildings();
   renderUpgrades();
+
+  // Call the save function from the server.js file
+  window.authApi.save();
 }
 
 function calculateAutoClick() {
@@ -1468,8 +1486,12 @@ clickArea.addEventListener("click", (e) => {
 let frenzy_amount;
 
 function autoClick() {
-  if (frenzy === true) {frenzy_amount = 3;} else {frenzy_amount = 1;}
-  const increment = (autoClickAmount * frenzy_amount)/ 20;
+  if (frenzy === true) {
+    frenzy_amount = 3;
+  } else {
+    frenzy_amount = 1;
+  }
+  const increment = (autoClickAmount * frenzy_amount) / 20;
   console.log(increment);
   potatoes += increment;
   allTimePotatoes += increment;
@@ -1499,7 +1521,7 @@ async function autoSave() {
     console.warn("Autosave: remote sync failed", e);
   }
 
-  setTimeout(autoSave, 30000); // autosave every 30 seconds
+  setTimeout(autoSave, 10000); // autosave every 10 seconds
 }
 
 function renderBuildingsRegular() {
