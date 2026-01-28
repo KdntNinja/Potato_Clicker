@@ -92,6 +92,16 @@ app.post("/api/auth/signup", async (req, res) => {
       [username, email, hash]
     );
 
+    // Save user data to db
+    const saveData = {
+      username,
+      email
+    };
+    await pool.query(
+      "INSERT INTO saves (user_id, data) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET data = $2",
+      [insert.rows[0].id, saveData]
+    );
+
     // Create token
     const user = insert.rows[0];
     const token = createToken(user);
