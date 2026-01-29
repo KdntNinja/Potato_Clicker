@@ -28,6 +28,7 @@
           target="_blank"
           rel="noopener noreferrer"
           class="spinning-globe-container"
+          onclick="achievmentsAdd('developer')"
         >
           <img
             width="15"
@@ -57,19 +58,16 @@
         </a>
       </div>
       <div class="nav-box-right">
+        <div id="accountBox" class="nav-box" style="padding: 6px 10px">
+          <div
+            id="accountStatus"
+          >
+            &nbsp;
+          </div>
+          <span id="accountName">Not signed in</span>
+        </div>
         <div class="nav-box">
-          <div id="accountBox" style="padding: 6px 10px">
-            <span id="accountName">Not signed in</span>
-            <div
-              id="accountStatus"
-              style="font-size: 12px; color: #bfc9d3; margin-top: 2px"
-            >
-              &nbsp;
-            </div>
-          </div>
-          <div class="nav-box">
-            <button id="openModalOptionsv">Older versions</button>
-          </div>
+          <button id="openModalOptionsv">Older versions</button>
         </div>
       </div>
     </nav>
@@ -422,6 +420,33 @@
           <div class="modal-header">
             <h2 class="info-h2">Information</h2>
             <button class="closeButton" id="closeModal">&times;</button>
+          </div>
+          <div class="major-update">
+            <h2 class="major-h2">29/01/26: Achievements, Skins and Accounts Update v0.57!</h2>
+            <p class="major-p">
+              Long time no see! This update took a while because of all the bugs but here it is. Sorry for the account losses but it should be fine from now on...
+            </p>
+            <ul class="major-ul">
+              <li>Added an account system!</li>
+              <li>
+                Sign up and login to save your progress to the cloud.
+              </li>
+              <li>
+                Added <span class="flashing">15</span> new skins, try to
+                get them all!
+              </li>
+              <li>
+                Added <span class="flashing">17</span> achievements, try to
+                unlock them all!
+              </li>
+              <li>
+                Fixed tooltip issues on mobile devices.
+              </li>
+              <li>Fixed building multiplier issue.</li>
+              <li>Various bug fixes and optimizations.</li>
+              <li>Removed one of the golden potato variants.</li>
+              <li>Added a secret vault, try to find it!</li>
+            </ul>
           </div>
           <div class="minor-update">
             <h2 class="minor-h2">22/01/26: Golden Potato Update v0.48</h2>

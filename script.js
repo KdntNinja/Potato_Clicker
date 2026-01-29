@@ -46,6 +46,17 @@ const openStatsMobile = document.getElementById("openModalStats_mobile");
 const openInfoMobile = document.getElementById("openModalInfo_mobile");
 const accountStatus = document.getElementById("accountStatus"); // <-- added
 
+const Codeinput = document.getElementById("codeInput");
+const Codebutton = document.getElementById("redeemCodeButton");
+const isTouchDevice =
+  "ontouchstart" in window ||
+  navigator.maxTouchPoints > 0;
+
+const tooltip = document.getElementById("tooltip");
+
+let tooltipHideTimeout = null;
+let mobileAutoHideTimeout = null;
+
 let rawPotatoes = 0;
 let potatoes = 0;
 let potatoesPerSecond = 0;
@@ -58,7 +69,7 @@ let potatoesPerClick = 1;
 let potatoClicks = 0;
 let handFarmedPotatoes = 0;
 let goldenPotatoClicks = 0;
-let runningVersion = "v0.48";
+let runningVersion = "v0.57";
 let autoClickAmount = 0;
 let runDurationSeconds;
 let totalUpgrades = 0;
@@ -68,6 +79,8 @@ let click_boost = false;
 let storeCount = 0;
 let recentClicks = [];
 let lastUpgradeTime = Date.now();
+let idleTime = 0;
+let upgradeTime = 0;
 
 // ================== BUILDINGS ==================
 let buildings = [
@@ -75,6 +88,7 @@ let buildings = [
     id: "cursor",
     name: "Peeler",
     price: 15,
+    basePrice: 15,
     owned: 0,
     icon: "assets/cursor.png",
     realIcon: "assets/cursor.png",
@@ -90,6 +104,7 @@ let buildings = [
     id: "farmer",
     name: "Farmer",
     price: 100,
+    basePrice: 100,
     owned: 0,
     icon: "assets/farmer.png",
     realIcon: "assets/farmer.png",
@@ -105,6 +120,7 @@ let buildings = [
     id: "tractor",
     name: "Tractor",
     price: 1100,
+    basePrice: 1100,
     owned: 0,
     icon: "assets/tractor.png",
     realIcon: "assets/tractor.png",
@@ -120,6 +136,7 @@ let buildings = [
     id: "greenhouse",
     name: "Greenhouse",
     price: 12000,
+    basePrice: 12000,
     owned: 0,
     icon: "assets/greenhouse.png",
     realIcon: "assets/greenhouse.png",
@@ -135,6 +152,7 @@ let buildings = [
     id: "chip_factory",
     name: "Chip Factory",
     price: 150000,
+    basePrice: 150000,
     owned: 0,
     icon: "assets/chip_factory.png",
     realIcon: "assets/chip_factory.png",
@@ -150,6 +168,7 @@ let buildings = [
     id: "restaurant",
     name: "Restaurant",
     price: 1400000,
+    basePrice: 1400000,
     owned: 0,
     icon: "assets/restaurant.png",
     realIcon: "assets/restaurant.png",
@@ -165,6 +184,7 @@ let buildings = [
     id: "supermarket",
     name: "Supermarket",
     price: 20000000,
+    basePrice: 20000000,
     owned: 0,
     icon: "assets/supermarket.png",
     realIcon: "assets/supermarket.png",
@@ -180,6 +200,7 @@ let buildings = [
     id: "distillary",
     name: "Distillary",
     price: 330000000,
+    basePrice: 330000000,
     owned: 0,
     icon: "assets/distillary.png",
     realIcon: "assets/distillary.png",
@@ -195,6 +216,7 @@ let buildings = [
     id: "airport",
     name: "Airport",
     price: 5100000000,
+    basePrice: 5100000000,
     owned: 0,
     icon: "assets/airport.png",
     realIcon: "assets/airport.png",
@@ -525,7 +547,7 @@ let skins = [
   },
   {
     id: "monster",
-    name: "Monster",
+    name: "Potato Punch",
     image: "assets/variants/monster.png",
     unlocked: false,
     equipped: false,
@@ -561,7 +583,7 @@ let skins = [
     image: "assets/variants/realistic.png",
     unlocked: false,
     equipped: false,
-    description: "Start your run 25 days ago.",
+    description: "Start your run 5 days ago.",
   },
   {
     id: "rock",
@@ -618,41 +640,57 @@ function checkAchievements() {
     achievmentsAdd("first_click");
   }
 
-  if (allTimePotatoes >= 100) {
+  if (potatoes >= 100) {
     achievmentsAdd("hundred_potatoes");
   }
 
-  if (allTimePotatoes >= 1_000_000) {
+  if (potatoes >= 1_000_000) {
     achievmentsAdd("million_potatoes");
   }
 
-  if (allTimePotatoes >= 1_000_000_000) {
+  if (potatoes >= 1_000_000_000) {
     achievmentsAdd("billion_potatoes");
   }
 
-  if (potatoClicks === 666) {
+  if (potatoClicks >= 666) {
     achievmentsAdd("inverted_potatoes");
   }
 
-  // Neon: 200 clicks in 30 seconds
   if (clicksLast30Seconds >= 200) {
     achievmentsAdd("overclock");
   }
 
   // Rock skin: 100 buildings
   if (buildingsOwned >= 100) {
-    unlockSkin("rock");
+    achievmentsAdd("sturdy_as_a_rock");
   }
 
   // Pixel skin: 10 skins unlocked
   const unlockedSkins = skins.filter(s => s.unlocked).length;
   if (unlockedSkins >= 10) {
-    unlockSkin("pixel");
+    achievmentsAdd("4K");
+  }
+
+  if (idleTime >= 3600) {
+    achievmentsAdd("idle_master");
+  }
+
+  if (totalCollectedVariants.size >= 3) {
+    achievmentsAdd("variant_collector");
+  }
+
+  if (runStartTime <= Date.now() - 5 * 24 * 60 * 60 * 1000) {
+    achievmentsAdd("five_day_run");
+  }
+
+
+  if (getEquippedSkin().id === "blank" && upgradeTime >= 600) {
+    achievmentsAdd("monochrome_potatoes");
   }
 
   // Rainbow skin: all skins unlocked
   if (unlockedSkins === skins.length) {
-    unlockSkin("rainbow");
+    achievmentsAdd("collector");
   }
 }
 
@@ -712,7 +750,70 @@ let achievments = [
     description: "A secret is required to unlock this skin.",
     completed: false,
     skinReward: "face",
-  }
+  },
+  {
+    id: "sturdy_as_a_rock",
+    name: "Sturdy as a Rock",
+    description: "Buy 100 buildings.",
+    completed: false,
+    skinReward: "rock",
+  },
+  {
+    id: "idle_master",
+    name: "Idle Master",
+    description: "Idle for 1 hour.",
+    completed: false,
+    skinReward: "blank",
+  },
+  {
+    id: "developer",
+    name: "Developer",
+    description: "Click the github link in the navbar.",
+    completed: false,
+    skinReward: "code",
+  },
+  {
+    id: "variant_collector",
+    name: "Variant Collector",
+    description: "Use every golden potato variant at least once.",
+    completed: false,
+    skinReward: "golden",
+  },
+  {
+    id: "five_day_run",
+    name: "Five Day Run",
+    description: "Start your run 5 days ago.",
+    completed: false,
+    skinReward: "golden",
+  },
+  {
+    id: "monster",
+    name: "Potato Punch",
+    description: "A secret is required to unlock this skin.",
+    completed: false,
+    skinReward: "monster",
+  },
+  {
+    id: "synth_master",
+    name: "Synth Master",
+    description: "A secret is required to unlock this skin.",
+    completed: false,
+    skinReward: "synth",
+  },
+  {
+    id: "collector",
+    name: "Collector",
+    description: "Unlock every skin in the game..",
+    completed: false,
+    skinReward: "rainbow",
+  },
+  {
+    id: "4K",
+    name: "4K Resolution",
+    description: "Collect 10 different skins.",
+    completed: false,
+    skinReward: "pixel",
+  },
 ]
 
 let mysteryCount = 0;
@@ -762,6 +863,25 @@ const comment_names = [
   "Milo",
   "Rowan",
 ];
+
+Codebutton.addEventListener("click", () => {
+  const value = Codeinput.value;
+  if (value === "potatopunch") {
+    achievmentsAdd("monster");
+    Codeinput.value = "";
+    alert("Code redeemed! Achievement unlocked: Potato Punch");
+  }
+  if (value === "potatobeats") {
+    achievmentsAdd("synth_master");
+    Codeinput.value = "";
+    alert("Code redeemed! Achievement unlocked: Synth Master");
+  }
+  if (value === "canicomeingary") {
+    achievmentsAdd("you_look_like_a_potato");
+    Codeinput.value = "";
+    alert("Code redeemed! Achievement unlocked: You look like a potato");
+  }
+});
 
 function storeCounter() {
   storeCount++;
@@ -1133,7 +1253,7 @@ function saveGameManual() {
     const originalText = btn.innerHTML;
     btn.innerHTML = "<p>Saving...</p>";
     Promise.resolve(saveGame())
-      .catch(() => {}) // saveGame already handles feedback
+      .catch(() => {})
       .finally(() => {
         if (btn) {
           btn.disabled = false;
@@ -1143,33 +1263,53 @@ function saveGameManual() {
   }
 }
 
-function loadGame() {
-  // If logged in, attempt to load from server first
-  if (window.authApi && window.authApi.getToken()) {
-    window.authApi
-      .load()
-      .then((remoteSave) => {
-        if (remoteSave && remoteSave.stats) {
-          loadV2(remoteSave);
-        } else {
-          // fallback to local
-          const save = localStorage.getItem(SAVE_KEY_V2);
-          if (save) loadV2(JSON.parse(save));
-          else migrateOldSave();
-        }
-      })
-      .catch(() => {
-        // remote load failed -> fallback to local
-        const save = localStorage.getItem(SAVE_KEY_V2);
-        if (save) loadV2(JSON.parse(save));
-        else migrateOldSave();
-      });
-    return;
-  }
+async function loadGame() {
+  const localSaveRaw = localStorage.getItem(SAVE_KEY_V2);
+  const localSave = localSaveRaw ? JSON.parse(localSaveRaw) : null;
 
-  const save = localStorage.getItem(SAVE_KEY_V2);
-  if (save) loadV2(JSON.parse(save));
-  else migrateOldSave();
+  if (window.authApi && window.authApi.getToken()) {
+    try {
+      const remoteSave = await window.authApi.load();
+
+      if (remoteSave && remoteSave.stats) {
+        if (
+          localSave &&
+          localSave.stats.allTimePotatoes > remoteSave.stats.allTimePotatoes
+        ) {
+          console.log("Local save has more potatoes, saving to backend");
+          await window.authApi.save(localSave);
+          loadV2(localSave);
+        } else {
+          console.log("Loaded save from backend");
+          if (localSave) {
+            localStorage.setItem(SAVE_KEY_V2, JSON.stringify(remoteSave));
+          }
+          loadV2(remoteSave);
+        }
+      } else if (localSave) {
+        console.log("No backend save found, loading local save");
+        loadV2(localSave);
+        await window.authApi.save(localSave);
+      } else {
+        migrateOldSave();
+      }
+    } catch (err) {
+      console.log("Backend load failed, using local save", err);
+      if (localSave) loadV2(localSave);
+      else migrateOldSave();
+    }
+  } else {
+    if (localSave) loadV2(localSave);
+    else migrateOldSave();
+  }
+}
+
+function applyEquippedSkin() {
+  const equippedSkin = skins.find(s => s.equipped);
+  if (!equippedSkin) return;
+
+  const potatoImage = document.getElementById("potatoImage");
+  potatoImage.src = equippedSkin.image;
 }
 
 function loadV2(save) {
@@ -1191,7 +1331,7 @@ function loadV2(save) {
     if (!data) return;
     b.owned = data.owned;
     b.mystery = data.mystery;
-    b.price = Math.ceil(b.price * Math.pow(1.15, b.owned));
+    b.price = Math.ceil(b.basePrice * Math.pow(1.15, b.owned));
     b.totalGenerated = data.totalGenerated || 0;
     b.cpsMultiplier = data.cpsMultiplier || 1;
   });
@@ -1223,6 +1363,7 @@ function loadV2(save) {
   }
 
   calculateAutoClick();
+  applyEquippedSkin();
 }
 
 function migrateOldSave() {
@@ -1250,7 +1391,7 @@ function migrateOldSave() {
   buildings.forEach((b) => {
     b.owned = +localStorage.getItem(map[b.id]) || 0;
     b.mystery = JSON.parse(localStorage.getItem(`${b.id}_mystery`) || "true");
-    b.price = Math.ceil(b.price * Math.pow(1.15, b.owned));
+    b.price = Math.ceil(b.basePrice * Math.pow(1.15, b.owned));
     b.totalGenerated = 0;
     b.cpsMultiplier = 1;
   });
@@ -1285,7 +1426,7 @@ clickerButton.addEventListener("click", function () {
   handFarmedPotatoes += potatoesPerClick;
   allTimePotatoes += potatoesPerClick;
   potatoClicks++;
-
+  idleTime = 0;
   checkAchievements();
 
   updatePotatoDisplay();
@@ -1304,8 +1445,10 @@ let spawnTimeout = null;
 let hideTimeout = null;
 
 let goldenPotatoVariants = ["normal", "frenzy", "half_price"];
+let totalCollectedVariants = new Set();
 
 goldenPotatoImage.addEventListener("click", (e) => {
+  idleTime = 0;
   let goldenPotatoVariant =
     goldenPotatoVariants[
       Math.floor(Math.random() * goldenPotatoVariants.length)
@@ -1314,9 +1457,15 @@ goldenPotatoImage.addEventListener("click", (e) => {
   text.className = "text";
   let reward = 0;
   if (goldenPotatoVariant == "normal") {
+    if (!totalCollectedVariants.has("normal")) {
+      totalCollectedVariants.add("normal");
+    }
     text.textContent = `Lucky, ${autoClickAmount * 1000} Potatoes!`;
     reward = autoClickAmount * 1000;
   } else if (goldenPotatoVariant == "frenzy") {
+    if (!totalCollectedVariants.has("frenzy")) {
+      totalCollectedVariants.add("frenzy");
+    }
     text.textContent = `3 Minute Frenzy!`;
     frenzy = true;
     setTimeout(
@@ -1326,6 +1475,9 @@ goldenPotatoImage.addEventListener("click", (e) => {
       3 * 60 * 1000,
     );
   } else if (goldenPotatoVariant == "half_price") {
+    if (!totalCollectedVariants.has("half_price")) {
+      totalCollectedVariants.add("half_price");
+    }
     text.textContent = `3 Minute Half Price!`;
     half_price_amount = 0.5;
     setTimeout(
@@ -1380,9 +1532,10 @@ function scheduleNextGoldenPotato() {
   spawnTimeout = setTimeout(showGoldenPotato, GOLDEN_DELAY);
 }
 
-const tooltip = document.getElementById("tooltip");
-
 function showTooltip(html, anchorElement) {
+  clearTimeout(tooltipHideTimeout);
+  clearTimeout(mobileAutoHideTimeout);
+
   tooltip.innerHTML = html;
   tooltip.classList.remove("hidden");
   tooltip.classList.add("shown");
@@ -1399,6 +1552,21 @@ function showTooltip(html, anchorElement) {
 
   tooltip.style.left = left + "px";
   tooltip.style.top = top + "px";
+
+  // 📱 Mobile: auto-hide after 5 seconds
+  if (isTouchDevice) {
+    mobileAutoHideTimeout = setTimeout(() => {
+      hideTooltipImmediate();
+    }, 5000);
+  }
+}
+
+function hideTooltipImmediate() {
+  clearTimeout(tooltipHideTimeout);
+  clearTimeout(mobileAutoHideTimeout);
+
+  tooltip.classList.remove("shown");
+  tooltip.classList.add("hidden");
 }
 
 function hideTooltip() {
@@ -1518,20 +1686,42 @@ function renderUpgrades() {
     upgradeButton.style.opacity =
       potatoes >= u.price * half_price_amount ? 1 : 0.5;
 
-    upgradeButton.addEventListener("mouseenter", () => {
+    upgradeButton.addEventListener("click", (e) => {
+      if (!isTouchDevice) return;
+
+      e.stopPropagation();
       showTooltip(
         `
         <div class="title">${u.name}</div>
         <div>${u.description}</div>
         <div class="effect">${u.effect}</div>
         <div class="price">Cost: ${formatNumber(u.price * half_price_amount)} potatoes</div>
-      `,
-        upgradeButton,
+        `,
+        upgradeButton
       );
     });
-    upgradeButton.addEventListener("mouseleave", hideTooltip);
+
+    upgradeButton.addEventListener("mouseenter", () => {
+      if (isTouchDevice) return;
+      showTooltip(
+        `
+        <div class="title">${u.name}</div>
+        <div>${u.description}</div>
+        <div class="effect">${u.effect}</div>
+        <div class="price">Cost: ${formatNumber(u.price * half_price_amount)} potatoes</div>
+        `,
+        upgradeButton
+      );
+    });
+
+    upgradeButton.addEventListener("mouseleave", () => {
+      if (isTouchDevice) return;
+      hideTooltip();
+    });
 
     upgradeButton.addEventListener("click", () => {
+      idleTime = 0;
+      upgradeTime = 0;
       if (potatoes < u.price * half_price_amount) return;
       potatoes -= u.price * half_price_amount;
       u.completed = true;
@@ -1620,9 +1810,10 @@ function renderSkins() {
 
 function unlockSkin(id) {
   const skin = skins.find(s => s.id === id);
-  if (!skin || skin.unlocked) return;
+  if (!skin || skin.unlocked) return false;
+
   skin.unlocked = true;
-  showAchievementPopup(`Skin unlocked!`, skin.description, `Skin unlocked — ${skin.name}`);
+  return true;
 }
 
 function selectSkin(id) {
@@ -1743,6 +1934,7 @@ function renderBuildings() {
     buildingButton.addEventListener("mouseleave", hideTooltip);
 
     buildingButton.addEventListener("click", () => {
+      idleTime = 0;
       if (!b.mystery && potatoes >= b.price * half_price_amount) {
         buildingsOwned++;
         b.owned++;
@@ -1985,6 +2177,12 @@ renderBuildingsRegular();
 renderUpgradesRegular();
 autoSave();
 renderSkins()
+setInterval(() => {
+  idleTime++;
+}, 1000);
+setInterval(() => {
+  upgradeTime++;
+}, 1000);
 console.log(`
   ---------------------------------------------------------------
   Potato Clicker!
