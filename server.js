@@ -241,12 +241,13 @@ async function getRemoteSave(userId) {
   }
 }
 
-// method to solve conflicts between saves from different devies
+// helper to solve conflicts between saves from different devies
 function solveConflict(save1, save2) {
+  if (!save1 || !save2) return null;
   const conflictMetrics = ["runStartedAt", "totalUpgrades", "buildingsOwned", "allTimePotatoes"];
   let winner = save1;
   for (const metric of conflictMetrics) {
-    if (save2.stats[metric] > save1.stats[metric]) {
+    if (save1 && save2 && save2.stats[metric] > save1.stats[metric]) {
       winner = save2;
     }
   }
