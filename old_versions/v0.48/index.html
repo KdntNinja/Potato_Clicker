@@ -28,7 +28,6 @@
           target="_blank"
           rel="noopener noreferrer"
           class="spinning-globe-container"
-          onclick="achievmentsAdd('developer')"
         >
           <img
             width="15"
@@ -42,7 +41,7 @@
       </div>
       <div class="nav-box">
         <a
-          href="https://potionclicker.online/"
+          href="https://potatoclicker.online"
           target="_blank"
           rel="noopener noreferrer"
           class="spinning-globe-container"
@@ -58,16 +57,19 @@
         </a>
       </div>
       <div class="nav-box-right">
-        <div id="accountBox" class="nav-box" style="padding: 6px 10px">
-          <div
-            id="accountStatus"
-          >
-            &nbsp;
-          </div>
-          <span id="accountName">Not signed in</span>
-        </div>
         <div class="nav-box">
-          <button id="openModalOptionsv">Older versions</button>
+          <div id="accountBox" style="padding: 6px 10px">
+            <span id="accountName">Not signed in</span>
+            <div
+              id="accountStatus"
+              style="font-size: 12px; color: #bfc9d3; margin-top: 2px"
+            >
+              &nbsp;
+            </div>
+          </div>
+          <div class="nav-box">
+            <button id="openModalOptionsv">Older versions</button>
+          </div>
         </div>
       </div>
     </nav>
@@ -115,8 +117,7 @@
               <button id="potato-button" class="clicker-button">
                 <img
                   class="clicker-image"
-                  src="assets/potato.png" 
-                  id="potatoImage"
+                  src="assets/potato.png"
                   alt="Potato Image"
                   draggable="false"
                 />
@@ -124,19 +125,7 @@
             </div>
           </div>
           <div class="version-box-container">
-            <div>
-              <p id="version" class="version-text">v0.00</p>
-            </div>
-            <div class="skin-button-container">
-              <button id="openModalSkins" class="skin-button">
-                <img
-                  src="assets/skin_icon.png"
-                  alt="Default Skin"
-                  width="40"
-                  draggable="false"
-                />
-              </button>
-            </div>
+            <p id="version" class="version-text">v0.00</p>
           </div>
         </section>
 
@@ -159,9 +148,7 @@
         </section>
 
         <section class="upgrade-section">
-          <button class="store-title-button" onclick="storeCounter()">
-            <h1 class="store-title">Store</h1>
-          </button>
+          <h1 class="store-title">Store</h1>
           <div class="divider"></div>
           <div class="upgrades-container" id="upgrades">
             <!-- Upgrades will be dynamically added here -->
@@ -302,7 +289,6 @@
               Version select
               <div class="dropdown-content">
                 <a href="/index.html" class="selected-version">Current</a>
-                <a href="/old_versions/v0.48/index.html">v0.48</a>
                 <a href="/old_versions/v0.47/index.html">v0.47</a>
                 <a href="/old_versions/v0.43/index.html">v0.43</a>
                 <a href="/old_versions/v0.32/index.html">v0.32</a>
@@ -314,105 +300,63 @@
           </div>
         </div>
       </div>
-      <div class="modal" id="modalskins">
-        <div class="modal-inner">
-          <div class="modal-header">
-            <h2 class="info-h2">Skins</h2>
-            <button class="closeButton" id="closeModalSkins">&times;</button>
-          </div>
-          <div class="general-stats">
-            <h2 class="general-text">Choose your potato skin!</h2>
-            <div class="skins-container" id="skinsContainer">
-              <!-- Skins will be dynamically added here -->
-          </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal" id="modalcodes">
-        <div class="modal-inner">
-          <div class="modal-header">
-            <h2 class="info-h2">The Vault</h2>
-            <button class="closeButton" id="closeModalCodes">&times;</button>
-          </div>
-          <div class="general-stats">
-            <h2 class="general-text">Enter a unique code to unlock special rewards!</h2>
-            <input
-              id="codeInput"
-              class="code-input"
-              type="text"
-              placeholder="Enter your code here"
-            />
-            <button id="redeemCodeButton" class="redeem-code-button">
-              Redeem Code
-            </button>
-          </div>
-        </div>
-      </div>
       <div class="modal" id="modalstats">
         <div class="modal-inner">
           <div class="modal-header">
             <h2 class="info-h2">Statistics</h2>
             <button class="closeButton" id="closeModalStats">&times;</button>
           </div>
-
-          <div class="general-stats-double">
-            <!-- General stats section -->
-            <div class="general-section line">
-              <h2 class="general-text">General</h2>
-              <ul class="stats-ul">
-                <li id="potBank">Potatoes in bank:</li>
-                <li id="totPot">Potatoes gathered (all time):</li>
-                <li id="runStart">Run started:</li>
-                <li id="buildingsOwned">Buildings owned:</li>
-                <li id="potatoesPerSecond">Potatoes per second:</li>
-                <li id="potatoesPerClick">Potatoes per click:</li>
-                <li id="potatoClicks">Potato clicks:</li>
-                <li id="handFarmedPotatoes">Hand-farmed potatoes:</li>
-                <li id="goldenPotatoClicks">Golden potato clicks:</li>
-                <div class="space">&nbsp;</div>
-                <li id="runningVersion">Running version:</li>
-              </ul>
-            </div>
-
-            <!-- Leaderboard section -->
-            <div class="general-section scrolling-part">
-              <h2 class="general-text">Leaderboard</h2>
-              <div class="leaderboard">
-                <div class="first">
-                  <div class="place">1st</div>
-                  <div class="username">MaxTheRock</div>
-                  <div class="score">1 million potatoes</div>
-                </div>
-                <div class="second">
-                  <div class="place">2nd</div>
-                  <div class="username">KdntNinja</div>
-                  <div class="score">850,304 potatoes</div>
-                </div>
-                <div class="third">
-                  <div class="place">3rd</div>
-                  <div class="username">Arthur</div>
-                  <div class="score">25,403 potatoes</div>
-                </div>
-                <div class="other">
-                  <div class="place">4th</div>
-                  <div class="username">William</div>
-                  <div class="score">15,000 potatoes</div>
-                </div>
-                <div class="other">
-                  <div class="place">5th</div>
-                  <div class="username">Milo</div>
-                  <div class="score">12,943 potatoes</div>
-                </div>
-              </div>
-            </div>
+          <div class="general-stats">
+            <h2 class="general-text">General</h2>
+            <ul class="stats-ul">
+              <li id="potBank">Potatoes in bank:</li>
+              <li id="totPot">Potatoes gathered (all time):</li>
+              <li id="runStart">Run started:</li>
+              <li id="buildingsOwned">Buildings owned:</li>
+              <li id="potatoesPerSecond">Potatoes per second:</li>
+              <li id="potatoesPerClick">Potatoes per click:</li>
+              <li id="potatoClicks">Potato clicks:</li>
+              <li id="handFarmedPotatoes">Hand-farmed potatoes:</li>
+              <li id="goldenPotatoClicks">Golden potato clicks:</li>
+              <div class="space"></div>
+              <li id="runningVersion">Running version:</li>
+            </ul>
           </div>
-
-          <!-- Upgrades section -->
           <div class="general-stats">
             <h2 class="general-text">Upgrades</h2>
             <ul class="stats-ul">
               <li id="upgrades-text">Upgrades unlocked: 0/27 (0%)</li>
             </ul>
+          </div>
+          <div class="general-stats">
+            <h2 class="general-text">Leaderboard</h2>
+            <div class="leaderboard">
+              <div class="first">
+                <div class="place">1st</div>
+                <div class="username">MaxTheRock</div>
+                <div class="score">1,000,000 potatoes</div>
+              </div>
+              <div class="second">
+                <div class="place">2nd</div>
+                <div class="username">KdntNinja</div>
+                <div class="score">850,304 potatoes</div>
+              </div>
+              <div class="third">
+                <div class="place">3rd</div>
+                <div class="username">Arthur</div>
+                <div class="score">25,403 potatoes</div>
+              </div>
+              <div class="other">
+                <div class="place">4th</div>
+                <div class="username">William</div>
+                <div class="score">15,000 potatoes</div>
+              </div>
+              <div class="other">
+                <div class="place">5th</div>
+                <div class="username">Milo</div>
+                <div class="score">12,943 potatoes</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -422,47 +366,26 @@
             <h2 class="info-h2">Information</h2>
             <button class="closeButton" id="closeModal">&times;</button>
           </div>
-          <div class="major-update">
-            <h2 class="major-h2">29/01/26: Achievements, Skins and Accounts Update v0.57!</h2>
-            <p class="major-p">
-              Long time no see! This update took a while because of all the bugs but here it is. Sorry for the account losses but it should be fine from now on...
-            </p>
-            <ul class="major-ul">
-              <li>Added an account system!</li>
-              <li>
-                Sign up and login to save your progress to the cloud.
-              </li>
-              <li>
-                Added <span class="flashing">15</span> new skins, try to
-                get them all!
-              </li>
-              <li>
-                Added <span class="flashing">17</span> achievements, try to
-                unlock them all!
-              </li>
-              <li>
-                Fixed tooltip issues on mobile devices.
-              </li>
-              <li>Fixed building multiplier issue.</li>
-              <li>Various bug fixes and optimizations.</li>
-              <li>Removed one of the golden potato variants.</li>
-              <li>Added a secret vault, try to find it!</li>
-            </ul>
-          </div>
           <div class="minor-update">
-            <h2 class="minor-h2">22/01/26: Golden Potato Update v0.48</h2>
-            <p class="minor-p">Just some golden potato stuff...</p>
+            <h2 class="minor-h2">22/0126: Golden Potato Update v0.48</h2>
+            <p class="minor-p">
+              Just some golden potato stuff...
+            </p>
             <ul class="minor-ul">
-              <li>Added 4 types of golden potatoes:</li>
-              <li>Normal: Gives a huge amount of potatoes!</li>
+              <li>Added 4 types of golden potatos:</li>
+              <li>
+                Normal: Gives a huge amount of potatoes!
+              </li>
               <li>Frenzy: x3 Boost</li>
-              <li>Half Price: Everything is half price!</li>
-              <li>Clicks boost: You make more potatoes for every click!</li>
+              <li>
+                Half Price: Everything is half price!
+              </li>
+              <li>
+                Clicks boost: You make more potatoes for every click!
+              </li>
               <div class="space"></div>
               <li class="red">
-                <a href="https://github.com/KdntNinja">KdntNinja</a> is still
-                trying to figure out the accounts and leaderboard so that should
-                be ready by next update!
+                <a href="https://github.com/KdntNinja">KdntNinja</a> is still trying to figure out the accounts and leaderboard so that should be ready by next update!
               </li>
             </ul>
           </div>
@@ -576,7 +499,7 @@
                 font instead of the default
               </li>
               <li>
-                Made it so clicking isn't as fast as usual because the game
+                Made it so clicking isn't as fast as usuall because the game
                 would progress too fast then
               </li>
               <li>
@@ -602,7 +525,7 @@
                 They are dynamic (basically makes it easy to add more in future
                 updates)
               </li>
-              <li>Potatoes are actually useful now</li>
+              <li>Potatoes are actually usefull now</li>
               <li>
                 Made the golden glow animation better:
                 <span class="gold-text">insert_cool_animation</span>
@@ -651,17 +574,22 @@
               <li>Scrolling comments (the thing at the top)</li>
               <li>The <span class="gold-text">Golden</span> Potato</li>
               <li>Easy version control</li>
-              <li>
-                <span class="purple-text">Potion clicker</span> shout out!
-              </li>
+              <li><span class="purple-text">Potion clicker</span> shoutout!</li>
             </ul>
           </div>
         </div>
       </div>
     </main>
-    <div id="achievement-container"></div>
     <div id="tooltip" class="tooltip hidden"></div>
     <script src="script.js"></script>
     <script src="auth-client.js"></script>
+    <script>
+      window.va =
+        window.va ||
+        function () {
+          (window.vaq = window.vaq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
   </body>
 </html>
