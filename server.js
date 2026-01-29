@@ -177,28 +177,45 @@ function requireAuth(req, res, next) {
   }
 }
 
-// New: save game for authenticated user
+// Save game for authenticated user
 app.post("/api/auth/save", requireAuth, async (req, res) => {
   try {
     const userId = req.userId;
     const saveData = req.body; // expect full save object
     if (!saveData) return res.status(400).json({ error: "Missing save body" });
 
-    await pool.query(
-      `INSERT INTO saves (user_id, data, updated_at)
-       VALUES ($1, $2, now())
-       ON CONFLICT (user_id) DO UPDATE SET data = $2, updated_at = now()`,
-      [userId, saveData],
-    );
-
-    res.json({ ok: true });
+    const r = await pool.query("SELECT data FROM saves WHERE user_id = $1", [userId]);
+    if (r.rowCount) {
+      const currentSave = r.rows[0].data;
+      const currentAlltimePotatoes = currentSave.alltimePotatoes || 0;
+      const newAlltimePotatoes = saveData.alltimePotatoes || 0;
+      if (newAlltimePotatoes < currentAlltimePotatoes) {
+        res.json(currentSave);
+      } else {
+        await pool.query(
+          `INSERT INTO saves (user_id, data, updated_at)
+           VALUES ($1, $2, now())
+           ON CONFLICT (user_id) DO UPDATE SET data = $2, updated_at = now()`,
+          [userId, saveData],
+        );
+        res.json({ ok: true });
+      }
+    } else {
+      await pool.query(
+        `INSERT INTO saves (user_id, data, updated_at)
+         VALUES ($1, $2, now())`,
+        [userId, saveData],
+      );
+      res.json({ ok: true });
+    }
   } catch (e) {
     console.error("save error", e);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// New: load game for authenticated user
+
+// Load game for authenticated user
 app.get("/api/auth/load", requireAuth, async (req, res) => {
   try {
     const userId = req.userId;
