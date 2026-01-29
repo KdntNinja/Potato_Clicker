@@ -222,7 +222,9 @@ async function getLocalSave() {
   try {
     const r = await pool.query("SELECT data FROM saves WHERE user_id = 0");
     if (!r.rowCount) return null;
-    return r.rows[0].data;
+    const data = r.rows[0].data;
+    if (data === null) return null; // handle null value
+    return data;
   } catch (e) {
     console.error("getLocalSave error", e);
     return null;
@@ -234,7 +236,9 @@ async function getRemoteSave(userId) {
   try {
     const r = await pool.query("SELECT data FROM saves WHERE user_id = $1", [userId]);
     if (!r.rowCount) return null;
-    return r.rows[0].data;
+    const data = r.rows[0].data;
+    if (data === null) return null; // handle null value
+    return data;
   } catch (e) {
     console.error("getRemoteSave error", e);
     return null;
@@ -253,6 +257,7 @@ function solveConflict(save1, save2) {
   }
   return winner;
 }
+
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
