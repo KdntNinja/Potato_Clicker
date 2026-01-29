@@ -177,6 +177,22 @@ function requireAuth(req, res, next) {
   }
 }
 
+// New: load game for authenticated user
+app.get("/api/auth/load", requireAuth, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const r = await pool.query("SELECT data FROM saves WHERE user_id = $1", [userId]);
+    if (!r.rowCount) return res.status(404).json({ error: "No save found" });
+    const localSave = await getLocalSave();
+    const remoteSave = r.rows[0].data;
+    const activeSave = solveConflict(localSave, remoteSave);
+    res.json(activeSave);
+  } catch (e) {
+    console.error("load error", e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // New: save game for authenticated user
 app.post("/api/auth/save", requireAuth, async (req, res) => {
   try {
@@ -184,20 +200,14 @@ app.post("/api/auth/save", requireAuth, async (req, res) => {
     const saveData = req.body; // expect full save object
     if (!saveData) return res.status(400).json({ error: "Missing save body" });
 
-    const allTimePotatoes = saveData.stats.allTimePotatoes;
-    const r = await pool.query("SELECT data FROM saves WHERE user_id = $1", [userId]);
-    if (r.rowCount && r.rows[0].data.stats.allTimePotatoes > allTimePotatoes) {
-      const loadRes = await loadRemote(userId);
-      if (!loadRes.ok) return res.status(loadRes.status).json(loadRes.error);
-      Object.assign(saveData, loadRes.data);
-      saveData.stats.allTimePotatoes = allTimePotatoes;
-    }
-
+    const localSave = await getLocalSave();
+    const remoteSave = await getRemoteSave(userId);
+    const activeSave = solveConflict(localSave, remoteSave);
     await pool.query(
       `INSERT INTO saves (user_id, data, updated_at)
        VALUES ($1, $2, now())
        ON CONFLICT (user_id) DO UPDATE SET data = $2, updated_at = now()`,
-      [userId, saveData],
+      [userId, activeSave],
     );
 
     res.json({ ok: true });
@@ -207,20 +217,43 @@ app.post("/api/auth/save", requireAuth, async (req, res) => {
   }
 });
 
-// New: load game for authenticated user
-const loadRemote = async (userId) => {
+// helper to get local save
+async function getLocalSave() {
+  try {
+    const r = await pool.query("SELECT data FROM saves WHERE user_id = 0");
+    if (!r.rowCount) return null;
+    return r.rows[0].data;
+  } catch (e) {
+    console.error("getLocalSave error", e);
+    return null;
+  }
+}
+
+// helper to get remote save
+async function getRemoteSave(userId) {
   try {
     const r = await pool.query("SELECT data FROM saves WHERE user_id = $1", [userId]);
-    if (!r.rowCount) return { ok: false, status: 404, error: { error: "No save found" } };
-    return { ok: true, data: r.rows[0].data };
+    if (!r.rowCount) return null;
+    return r.rows[0].data;
   } catch (e) {
-    console.error("load error", e);
-    return { ok: false, status: 500, error: { error: "Server error" } };
+    console.error("getRemoteSave error", e);
+    return null;
   }
-};
+}
+
+// method to solve conflicts between saves from different devies
+function solveConflict(save1, save2) {
+  const conflictMetrics = ["runStartedAt", "totalUpgrades", "buildingsOwned", "allTimePotatoes"];
+  let winner = save1;
+  for (const metric of conflictMetrics) {
+    if (save2.stats[metric] > save1.stats[metric]) {
+      winner = save2;
+    }
+  }
+  return winner;
+}
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Auth server listening on ${PORT}`);
 });
-
