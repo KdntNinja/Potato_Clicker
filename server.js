@@ -184,11 +184,13 @@ app.post("/api/auth/save", requireAuth, async (req, res) => {
     const saveData = req.body; // expect full save object
     if (!saveData) return res.status(400).json({ error: "Missing save body" });
 
+    const allTimePotatoes = saveData.stats.allTimePotatoes;
     const r = await pool.query("SELECT data FROM saves WHERE user_id = $1", [userId]);
-    if (r.rowCount && r.rows[0].data.allTimePotatoes > saveData.allTimePotatoes) {
+    if (r.rowCount && r.rows[0].data.stats.allTimePotatoes > allTimePotatoes) {
       const loadRes = await loadRemote(userId);
       if (!loadRes.ok) return res.status(loadRes.status).json(loadRes.error);
       Object.assign(saveData, loadRes.data);
+      saveData.stats.allTimePotatoes = allTimePotatoes;
     }
 
     await pool.query(
@@ -204,6 +206,7 @@ app.post("/api/auth/save", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
 // New: load game for authenticated user
 const loadRemote = async (userId) => {
   try {
