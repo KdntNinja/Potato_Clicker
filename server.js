@@ -204,7 +204,6 @@ app.post("/api/auth/save", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
 // New: load game for authenticated user
 const loadRemote = async (userId) => {
   try {
@@ -215,7 +214,7 @@ const loadRemote = async (userId) => {
     console.error("load error", e);
     return { ok: false, status: 500, error: { error: "Server error" } };
   }
-});
+};
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
