@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -67,7 +67,7 @@
           <span id="accountName">Not signed in</span>
         </div>
         <div class="nav-box">
-          <button class="older-versions" id="openModalOptionsv">Older versions</button>
+          <button id="openModalOptionsv">Older versions</button>
         </div>
       </div>
     </nav>
@@ -85,14 +85,13 @@
     <main>
       <div class="main-inner">
         <section class="clicking-section">
-          <div id="nameBoxContainer" class="name-box-container">
+          <div class="name-box-container">
             <input
               id="nameInput"
               class="name-box"
               type="text"
-              value="Guest's Potato Farm"
+              value="My Potato Farm"
               placeholder="My Potato Farm"
-              disabled
             />
           </div>
           <div class="amount-box-container">
@@ -193,23 +192,6 @@
           />
         </section>
       </div>
-      <div class="modal" id="modalanouncements">
-        <div class="modal-inner">
-          <div class="modal-header">
-            <h2 class="info-h2">Anouncements</h2>
-            <button class="closeButton" id="closeModalAnouncements">&times;</button>
-          </div>
-          <div class="general-stats">
-            <img
-              src="assets/news.png"
-              alt="Anouncement Image"
-              class="anouncement-image"
-              draggable="false"
-              width="500"
-            />
-          </div>
-        </div>
-      </div>
       <div class="modal" id="modaloptions">
         <div class="modal-inner">
           <div class="modal-header">
@@ -231,7 +213,6 @@
             <button onclick="clearLocalData()" class="wipe-button">
               <p>Clear Local data</p>
             </button>
-            <button class="wipe-button" id="logoutButton">Logout</button>
           </div>
           <div class="general-stats">
             <h2 class="general-text">Account</h2>
@@ -267,22 +248,18 @@
                 <div class="auth-forms">
                   <form class="auth-form auth-form-login">
                     <h2 class="auth-title">Login</h2>
-                    <div id="loginStatus" class="auth-status"></div>
                     <input
                       id="loginUsername"
                       class="auth-input"
                       type="text"
                       placeholder="Username or Email"
                     />
-                    <div class="password-wrapper">
-                      <input
-                        id="loginPassword"
-                        class="auth-input"
-                        type="password"
-                        placeholder="Password"
-                      />
-                      <button class="toggle-eye" type="button" id="loginToggle">👁️</button>
-                    </div>
+                    <input
+                      id="loginPassword"
+                      class="auth-input"
+                      type="password"
+                      placeholder="Password"
+                    />
                     <button type="button" id="loginButton" class="auth-button">
                       Login
                     </button>
@@ -302,15 +279,12 @@
                       type="email"
                       placeholder="Email"
                     />
-                    <div class="password-wrapper">
-                      <input
-                        id="signupPassword"
-                        class="auth-input"
-                        type="password"
-                        placeholder="Password"
-                      />
-                      <button class="toggle-eye"type="button" id="signupToggle">👁️</button>
-                    </div>
+                    <input
+                      id="signupPassword"
+                      class="auth-input"
+                      type="password"
+                      placeholder="Password"
+                    />
                     <button type="button" id="signupButton" class="auth-button">
                       Create Account
                     </button>
@@ -328,8 +302,6 @@
               Version select
               <div class="dropdown-content">
                 <a href="/index.html" class="selected-version">Current</a>
-                <a href="/old_versions/v0.57/index.html">v0.57</a>
-                <a href="/old_versions/v0.48/index.html">v0.48</a>
                 <a href="/old_versions/v0.47/index.html">v0.47</a>
                 <a href="/old_versions/v0.43/index.html">v0.43</a>
                 <a href="/old_versions/v0.32/index.html">v0.32</a>
@@ -448,22 +420,6 @@
           <div class="modal-header">
             <h2 class="info-h2">Information</h2>
             <button class="closeButton" id="closeModal">&times;</button>
-          </div>
-          <div class="minor-update">
-            <h2 class="minor-h2">30/01/25: Bug fixes v0.58</h2>
-            <p class="minor-p">Fixed a couple of things.</p>
-            <ul class="minor-ul">
-              <li>Fixed buildings rendering issues</li>
-              <li>Added credits to some potato skins!</li>
-              <li>Fixed zoom issue on mobile devices</li>
-              <li>Added error messages to login</li>
-              <li>Added eye to check password before you submit</li>
-              <li>Changed farm name to Username.</li>
-              <li>
-                Thanks to <span class="flashing">Arthur</span> and <span class="flashing">William</span> for designing some of the skins!
-              </li>
-              <li>Added secret skin</li>
-            </ul>
           </div>
           <div class="major-update">
             <h2 class="major-h2">29/01/26: Achievements, Skins and Accounts Update v0.57!</h2>

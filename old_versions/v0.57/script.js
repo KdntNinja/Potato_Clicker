@@ -22,9 +22,6 @@ const modalsk = document.getElementById("modalskins");
 const closeBtncodes = document.getElementById("closeModalCodes");
 const modalcodes = document.getElementById("modalcodes");
 
-const closeModalAnouncements = document.getElementById("closeModalAnouncements");
-const modalanouncements = document.getElementById("modalanouncements");
-
 const potatoesCountElement = document.getElementById("potBank");
 const allTimePotatoesElement = document.getElementById("totPot");
 const runStartTimeElement = document.getElementById("runStart");
@@ -72,7 +69,7 @@ let potatoesPerClick = 1;
 let potatoClicks = 0;
 let handFarmedPotatoes = 0;
 let goldenPotatoClicks = 0;
-let runningVersion = "v0.58";
+let runningVersion = "v0.57";
 let autoClickAmount = 0;
 let runDurationSeconds;
 let totalUpgrades = 0;
@@ -555,7 +552,6 @@ let skins = [
     unlocked: false,
     equipped: false,
     description: "A secret is required to unlock this skin.",
-    credits: "Designed by Arthur Weedon.",
   },
   {
     id: "music",
@@ -633,15 +629,6 @@ let skins = [
     id: "face",
     name: "Face",
     image: "assets/variants/face.png",
-    unlocked: false,
-    equipped: false,
-    description: "A secret is required to unlock this skin.",
-    credits: "Designed by William Sheard.",
-  },
-  {
-    id: "menglish",
-    name: "Menglish",
-    image: "assets/variants/menglish.png",
     unlocked: false,
     equipped: false,
     description: "A secret is required to unlock this skin.",
@@ -827,13 +814,6 @@ let achievments = [
     completed: false,
     skinReward: "pixel",
   },
-  {
-    id: "dosser",
-    name: "Dosser",
-    description: "A secret is required to unlock this skin.",
-    completed: false,
-    skinReward: "menglish",
-  },
 ]
 
 let mysteryCount = 0;
@@ -901,15 +881,11 @@ Codebutton.addEventListener("click", () => {
     Codeinput.value = "";
     alert("Code redeemed! Achievement unlocked: You look like a potato");
   }
-  if (value === "dossersgames") {
-    achievmentsAdd("dosser");
-    Codeinput.value = "";
-    alert("Code redeemed! Achievement unlocked: Dosser");
-  }
 });
 
 function storeCounter() {
   storeCount++;
+  console.log(storeCount);
 }
 
 function random_name() {
@@ -1450,7 +1426,7 @@ clickerButton.addEventListener("click", function () {
   handFarmedPotatoes += potatoesPerClick;
   allTimePotatoes += potatoesPerClick;
   potatoClicks++;
-  markPlayerActivity();
+  idleTime = 0;
   checkAchievements();
 
   updatePotatoDisplay();
@@ -1472,7 +1448,7 @@ let goldenPotatoVariants = ["normal", "frenzy", "half_price"];
 let totalCollectedVariants = new Set();
 
 goldenPotatoImage.addEventListener("click", (e) => {
-  markPlayerActivity();
+  idleTime = 0;
   let goldenPotatoVariant =
     goldenPotatoVariants[
       Math.floor(Math.random() * goldenPotatoVariants.length)
@@ -1600,40 +1576,102 @@ function hideTooltip() {
 
 function renderUpgrades() {
   const container = document.getElementById("upgrades");
+  container.innerHTML = "";
 
-  const equippedSkin = getEquippedSkin(); // optional if needed
-
-  // Unlock upgrades based on building ownership
   upgrades.forEach((u) => {
-    const buildingUnlockMap = {
-      peeler: "cursor",
-      farmer: "farmer",
-      tractor: "tractor",
-      greenhouse: "greenhouse",
-      chipfactory: "chip_factory",
-      restaurant: "restaurant",
-      supermarket: "supermarket",
-      distillary: "distillary",
-      airport: "airport",
-    };
+    // Unlock based on building ownership
+    if (
+      (u.id.includes("peelerx2_1") || u.id.includes("peelerx2_2")) &&
+      buildings.find((b) => b.id === "cursor").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("farmerx2_1") || u.id.includes("farmerx2_2")) &&
+      buildings.find((b) => b.id === "farmer").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("tractorx2_1") || u.id.includes("tractorx2_2")) &&
+      buildings.find((b) => b.id === "tractor").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("greenhousex2_1") || u.id.includes("greenhousex2_2")) &&
+      buildings.find((b) => b.id === "greenhouse").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("chipfactoryx2_1") || u.id.includes("chipfactoryx2_2")) &&
+      buildings.find((b) => b.id === "chip_factory").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("restaurantx2_1") || u.id.includes("restaurantx2_2")) &&
+      buildings.find((b) => b.id === "restaurant").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("supermarketx2_1") || u.id.includes("supermarketx2_2")) &&
+      buildings.find((b) => b.id === "supermarket").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("distillaryx2_1") || u.id.includes("distillaryx2_2")) &&
+      buildings.find((b) => b.id === "distillary").owned >= 1
+    )
+      u.unlocked = !u.completed;
+    if (
+      (u.id.includes("airportx2_1") || u.id.includes("airportx2_2")) &&
+      buildings.find((b) => b.id === "airport").owned >= 1
+    )
+      u.unlocked = !u.completed;
 
-    for (const key in buildingUnlockMap) {
-      const b = buildings.find((b) => b.id === buildingUnlockMap[key]);
-      if (!b) continue;
-
-      // First tier unlock (owned >= 1)
-      if (
-        u.id.includes(`${key}x2_1`) ||
-        u.id.includes(`${key}x2_2`)
-      ) {
-        u.unlocked = !u.completed && b.owned >= 1;
-      }
-
-      // Second tier unlock (owned >= 10)
-      if (u.id.includes(`${key}x2_3`)) {
-        u.unlocked = !u.completed && b.owned >= 10;
-      }
-    }
+    // Unlock after 10 Buildings
+    if (
+      u.id.includes("peelerx2_3") &&
+      buildings.find((b) => b.id === "cursor").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("farmerx2_3") &&
+      buildings.find((b) => b.id === "farmer").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("tractorx2_3") &&
+      buildings.find((b) => b.id === "tractor").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("greenhousex2_3") &&
+      buildings.find((b) => b.id === "greenhouse").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("chipfactoryx2_3") &&
+      buildings.find((b) => b.id === "chip_factory").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("restaurantx2_3") &&
+      buildings.find((b) => b.id === "restaurant").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("supermarketx2_3") &&
+      buildings.find((b) => b.id === "supermarket").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("distillaryx2_3") &&
+      buildings.find((b) => b.id === "distillary").owned >= 10
+    )
+      u.unlocked = !u.completed;
+    if (
+      u.id.includes("airportx2_3") &&
+      buildings.find((b) => b.id === "airport").owned >= 10
+    )
+      u.unlocked = !u.completed;
   });
 
   const visible = upgrades
@@ -1641,94 +1679,84 @@ function renderUpgrades() {
     .sort((a, b) => a.price - b.price);
 
   visible.forEach((u) => {
-    let upgradeButton = document.getElementById(`upgrade-${u.id}`);
+    const upgradeButton = document.createElement("button");
+    upgradeButton.className = "upgrades-container";
 
-    // If it doesn't exist yet, create it
-    if (!upgradeButton) {
-      upgradeButton = document.createElement("button");
-      upgradeButton.className = "upgrades-container";
-      upgradeButton.id = `upgrade-${u.id}`;
-      container.appendChild(upgradeButton);
-
-      // Event listeners only once
-      const showUpgradeTooltip = () => {
-        if (isTouchDevice) return;
-        showTooltip(
-          `
-          <div class="title">${u.name}</div>
-          <div>${u.description}</div>
-          <div class="effect">${u.effect}</div>
-          <div class="price">Cost: ${formatNumber(u.price * half_price_amount)} potatoes</div>
-          `,
-          upgradeButton
-        );
-      };
-
-      upgradeButton.addEventListener("mouseenter", showUpgradeTooltip);
-      upgradeButton.addEventListener("mouseleave", () => {
-        if (isTouchDevice) return;
-        hideTooltip();
-      });
-
-      upgradeButton.addEventListener("click", (e) => {
-        markPlayerActivity();
-        upgradeTime = 0;
-
-        // Show tooltip on touch devices
-        if (isTouchDevice) {
-          e.stopPropagation();
-          showTooltip(
-            `
-            <div class="title">${u.name}</div>
-            <div>${u.description}</div>
-            <div class="effect">${u.effect}</div>
-            <div class="price">Cost: ${formatNumber(u.price * half_price_amount)} potatoes</div>
-            `,
-            upgradeButton
-          );
-          return;
-        }
-
-        if (potatoes < u.price * half_price_amount) return;
-
-        // Apply upgrade
-        potatoes -= u.price * half_price_amount;
-        u.completed = true;
-        u.unlocked = false;
-        totalUpgrades++;
-
-        const buildingMap = {
-          peeler: "cursor",
-          farmer: "farmer",
-          tractor: "tractor",
-          greenhouse: "greenhouse",
-          chipfactory: "chip_factory",
-          restaurant: "restaurant",
-          supermarket: "supermarket",
-          distillary: "distillary",
-          airport: "airport",
-        };
-
-        for (const key in buildingMap) {
-          if (u.id.includes(key)) {
-            const b = buildings.find((b) => b.id === buildingMap[key]);
-            if (b) b.cpsMultiplier *= 2;
-          }
-        }
-
-        if (u.id.includes("peeler")) potatoesPerClick *= 2;
-
-        calculateAutoClick();
-        updatePotatoDisplay();
-        renderBuildings();
-        renderUpgrades();
-      });
-    }
-
-    // Update the upgrade button dynamically
     upgradeButton.innerHTML = `<img src="${u.icon}" draggable="false" class="upgrade-button" width="70" />`;
     upgradeButton.style.opacity =
-      potatoes >= u.price * half_price_amount ? "1" : "0.5";
+      potatoes >= u.price * half_price_amount ? 1 : 0.5;
+
+    upgradeButton.addEventListener("click", (e) => {
+      if (!isTouchDevice) return;
+
+      e.stopPropagation();
+      showTooltip(
+        `
+        <div class="title">${u.name}</div>
+        <div>${u.description}</div>
+        <div class="effect">${u.effect}</div>
+        <div class="price">Cost: ${formatNumber(u.price * half_price_amount)} potatoes</div>
+        `,
+        upgradeButton
+      );
+    });
+
+    upgradeButton.addEventListener("mouseenter", () => {
+      if (isTouchDevice) return;
+      showTooltip(
+        `
+        <div class="title">${u.name}</div>
+        <div>${u.description}</div>
+        <div class="effect">${u.effect}</div>
+        <div class="price">Cost: ${formatNumber(u.price * half_price_amount)} potatoes</div>
+        `,
+        upgradeButton
+      );
+    });
+
+    upgradeButton.addEventListener("mouseleave", () => {
+      if (isTouchDevice) return;
+      hideTooltip();
+    });
+
+    upgradeButton.addEventListener("click", () => {
+      idleTime = 0;
+      upgradeTime = 0;
+      if (potatoes < u.price * half_price_amount) return;
+      potatoes -= u.price * half_price_amount;
+      u.completed = true;
+      u.unlocked = false;
+      totalUpgrades++;
+
+      if (u.id.includes("peeler")) {
+        const peeler = buildings.find((b) => b.id === "cursor");
+        peeler.cpsMultiplier *= 2;
+        potatoesPerClick *= 2;
+      }
+      if (u.id.includes("farmer"))
+        buildings.find((b) => b.id === "farmer").cpsMultiplier *= 2;
+      if (u.id.includes("tractor"))
+        buildings.find((b) => b.id === "tractor").cpsMultiplier *= 2;
+      if (u.id.includes("greenhouse"))
+        buildings.find((b) => b.id === "greenhouse").cpsMultiplier *= 2;
+      if (u.id.includes("chipfactory"))
+        buildings.find((b) => b.id === "chip_factory").cpsMultiplier *= 2;
+      if (u.id.includes("restaurant"))
+        buildings.find((b) => b.id === "restaurant").cpsMultiplier *= 2;
+      if (u.id.includes("supermarket"))
+        buildings.find((b) => b.id === "supermarket").cpsMultiplier *= 2;
+      if (u.id.includes("distillary"))
+        buildings.find((b) => b.id === "distillary").cpsMultiplier *= 2;
+      if (u.id.includes("airport"))
+        buildings.find((b) => b.id === "airport").cpsMultiplier *= 2;
+
+      calculateAutoClick();
+      updatePotatoDisplay();
+      renderBuildings();
+      renderUpgrades();
+    });
+
+    container.appendChild(upgradeButton);
   });
 }
 
@@ -1754,18 +1782,10 @@ function renderSkins() {
     `;
 
     skinDiv.addEventListener("mouseenter", () => {
-      if (s.unlocked && s.credits) {
+      if (s.unlocked) {
         const html = `
           <div class="title">${s.name}</div>
           <div>${s.description}</div>
-          <div class="credits">${s.credits}</div>
-        `;
-        showTooltip(html, skinDiv);
-      } else if (s.credits) {
-        const html = `
-          <div class="title">???</div>
-          <div>${s.description}</div>
-          <div class="credits">Designed by: **********</div>
         `;
         showTooltip(html, skinDiv);
       } else {
@@ -1828,63 +1848,18 @@ function getEquippedSkin() {
 function renderBuildings() {
   enforceMysteryLimit();
   const container = document.getElementById("buildings");
+  container.innerHTML = "";
+
   const equippedSkin = getEquippedSkin();
 
-  // Only show unlocked buildings, sorted
   const visible = buildings
     .filter((b) => b.unlocked)
     .sort((a, b) => a.sort - b.sort);
 
   visible.forEach((b) => {
-    // Give each building a persistent ID
-    let buildingButton = document.getElementById(`building-${b.id}`);
+    const buildingButton = document.createElement("button");
+    buildingButton.className = "building-container";
 
-    // If it doesn't exist yet, create it
-    if (!buildingButton) {
-      buildingButton = document.createElement("button");
-      buildingButton.className = "building-container";
-      buildingButton.id = `building-${b.id}`;
-      container.appendChild(buildingButton);
-
-      // Event listeners only added once
-      buildingButton.addEventListener("mouseenter", () => {
-        if (!b.mystery) {
-          const html = `
-            <div class="title">${b.name}</div>
-            <div>Price: ${formatNumber(b.price)} potatoes</div>
-            <div>Owned: ${b.owned}</div>
-            <div>Total income generated: ${Math.floor(b.totalGenerated)}</div>
-            <div>Income per second: ${Math.floor(b.cps * b.owned * 10) / 10}</div>
-          `;
-          showTooltip(html, buildingButton);
-        } else {
-          const html = `
-            <div class="title">???</div>
-            <div>Price: ${formatNumber(b.price)} potatoes</div>
-          `;
-          showTooltip(html, buildingButton);
-        }
-      });
-
-      buildingButton.addEventListener("mouseleave", hideTooltip);
-
-      buildingButton.addEventListener("click", () => {
-        markPlayerActivity();
-        if (!b.mystery && potatoes >= b.price * half_price_amount) {
-          buildingsOwned++;
-          b.owned++;
-          potatoes -= b.price * half_price_amount;
-          b.price = Math.ceil(b.price * 1.15);
-
-          calculateAutoClick();
-          updatePotatoDisplay();
-          renderBuildings(); // only updates content
-          renderUpgrades();
-        }
-      });
-    }
-
-    // Update display info dynamically
     let displayName = b.name;
     let displayPrice = b.price * half_price_amount;
     let displayIcon = b.realIcon;
@@ -1892,37 +1867,42 @@ function renderBuildings() {
     if (b.mystery) {
       if (potatoes < b.price * half_price_amount) {
         displayName = "???";
+        displayPrice = b.price * half_price_amount;
         displayIcon = "assets/mystery.png";
       } else {
         b.mystery = false;
         displayName = b.name;
+        displayPrice = b.price;
         displayIcon = b.realIcon;
       }
     }
 
     buildingButton.innerHTML = `
       <div class="building-icon">
-        <img src="${displayIcon}" class="building-image" draggable="false" width="60">
+      <img src="${displayIcon}" class="building-image" draggable="false" width="60"">
       </div>
 
       <div class="building-info">
-        <div class="building-name-price">
-          <h4 class="building-name">${displayName}</h4>
-          <p class="building-price">
-            <img src="${equippedSkin.image}" class="potato-icon" draggable="false" width="15">
-            <span class="price-value">${formatNumber(displayPrice)}</span>
-          </p>
-        </div>
+      <div class="building-name-price">
+        <h4 class="building-name">${displayName}</h4>
+        <p class="building-price">
+        <img src="${equippedSkin.image}" class="potato-icon" draggable="false" width="15">
+        <span class="price-value">${formatNumber(displayPrice)}</span>
+        </p>
+      </div>
 
-        <div class="building-amount">
-          <p class="amount-owned">${b.owned}</p>
-        </div>
+      <div class="building-amount">
+        <p class="amount-owned">${b.owned}</p>
+      </div>
       </div>
     `;
 
-    // Update button styles
     const priceElement = buildingButton.querySelector(".building-price");
-    if (!isNaN(displayPrice) && potatoes >= displayPrice) {
+
+    if (
+      !isNaN(b.price * half_price_amount) &&
+      potatoes >= b.price * half_price_amount
+    ) {
       priceElement.style.color = "lightgreen";
       buildingButton.style.backgroundColor = "#37495a";
       buildingButton.style.cursor = "pointer";
@@ -1931,6 +1911,44 @@ function renderBuildings() {
       buildingButton.style.backgroundColor = "#212d38";
       buildingButton.style.cursor = "default";
     }
+
+    buildingButton.addEventListener("mouseenter", () => {
+      if (!b.mystery) {
+        const html = `
+          <div class="title">${b.name}</div>
+          <div>Price: ${formatNumber(b.price)} potatoes</div>
+          <div>Owned: ${b.owned}</div>
+          <div>Total income generated: ${Math.floor(b.totalGenerated)}</div>
+          <div>Income per second: ${Math.floor(b.cps * b.owned * 10) / 10}</div>
+        `;
+        showTooltip(html, buildingButton);
+      } else {
+        const html = `
+          <div class="title">???</div>
+          <div>Price: ${formatNumber(b.price)} potatoes</div>
+        `;
+        showTooltip(html, buildingButton);
+      }
+    });
+
+    buildingButton.addEventListener("mouseleave", hideTooltip);
+
+    buildingButton.addEventListener("click", () => {
+      idleTime = 0;
+      if (!b.mystery && potatoes >= b.price * half_price_amount) {
+        buildingsOwned++;
+        b.owned++;
+        potatoes -= b.price * half_price_amount;
+        b.price = Math.ceil(b.price * 1.15);
+
+        calculateAutoClick();
+        updatePotatoDisplay();
+        renderBuildings();
+        renderUpgrades();
+      }
+    });
+
+    container.appendChild(buildingButton);
   });
 }
 
@@ -1953,6 +1971,14 @@ function calculateAutoClick() {
 
 goldenPotatoImage.classList.add("hidden");
 scheduleNextGoldenPotato();
+
+input.addEventListener("blur", () => {
+  if (!input.value) {
+    input.value = "My Potato Farm";
+  } else if (!input.value.endsWith("’s Potato Farm")) {
+    input.value = input.value.trim() + "’s Potato Farm";
+  }
+});
 
 openBtn.addEventListener("click", () => {
   modal.classList.add("open");
@@ -2028,11 +2054,6 @@ closeBtncodes.addEventListener("click", () => {
   modalcodes.style.display = "none";
 });
 
-closeModalAnouncements.addEventListener("click", () => {
-  modalanouncements.classList.remove("open");
-  modalanouncements.style.display = "none";
-});
-
 clickArea.addEventListener("click", (e) => {
   const rect = clickArea.getBoundingClientRect();
   const equippedSkin = getEquippedSkin();
@@ -2093,28 +2114,6 @@ clickArea.addEventListener("click", (e) => {
 
 let frenzy_amount;
 
-async function handleLogin() {
-  lBtn.disabled = true;
-  try {
-    const res = await login(lUser.value.trim(), lPass.value);
-    setToken(res.token);
-    showMsg(lUser, "Logged in");
-    showMsg(lPass, "");
-    await updateAccountUI();
-  } catch (e) {
-    showMsg(lUser, "Login failed");
-    console.error(e);
-  } finally {
-    lBtn.disabled = false;
-  }
-}
-
-document.getElementById("logoutButton")?.addEventListener("click", () => {
-  setToken(null);
-  updateAccountUI();
-  if (window.resetGame) window.resetGame(); // clear local game if needed
-});
-
 function autoClick() {
   if (frenzy === true) {
     frenzy_amount = 3;
@@ -2122,6 +2121,7 @@ function autoClick() {
     frenzy_amount = 1;
   }
   const increment = (autoClickAmount * frenzy_amount) / 20;
+  console.log(increment);
   potatoes += increment;
   allTimePotatoes += increment;
 
@@ -2138,18 +2138,6 @@ function autoClick() {
   updatePotatoDisplay();
   setTimeout(autoClick, 50);
 }
-
-function setupPasswordToggle(inputId, toggleId) {
-  const input = document.getElementById(inputId);
-  const toggle = document.getElementById(toggleId);
-  if (!input || !toggle) return;
-  toggle.addEventListener("click", () => {
-    input.type = input.type === "password" ? "text" : "password";
-  });
-}
-
-setupPasswordToggle("loginPassword", "loginToggle");
-setupPasswordToggle("signupPassword", "signupToggle");
 
 // autosave: persist locally and sync to DB when signed in (awaited, logged)
 async function autoSave() {
@@ -2180,15 +2168,6 @@ function renderUpgradesRegular() {
   setTimeout(renderUpgradesRegular, 1000);
 }
 
-let lastPlayerAction = Date.now();
-
-function markPlayerActivity() {
-  lastPlayerAction = Date.now();
-}
-
-modalanouncements.classList.add("open");
-modalanouncements.style.display = "flex";
-
 loadGame();
 rateCounter();
 updatePotatoComments();
@@ -2199,8 +2178,7 @@ renderUpgradesRegular();
 autoSave();
 renderSkins()
 setInterval(() => {
-  idleTime = Math.floor((Date.now() - lastPlayerAction) / 1000);
-  console.log("idleTime:", idleTime);
+  idleTime++;
 }, 1000);
 setInterval(() => {
   upgradeTime++;

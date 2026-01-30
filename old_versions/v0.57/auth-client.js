@@ -35,25 +35,21 @@ async function me() {
 // New: update account display in nav
 async function updateAccountUI() {
   const el = document.getElementById("accountName");
-  const farm_name = document.getElementById("nameInput");
   if (!el) return;
   const token = getToken();
   if (!token) {
     el.textContent = "Not signed in";
-    farm_name.value = "Guest";
     return;
   }
   try {
     const user = await me();
     el.textContent = user.username || user.email || "Account";
-    farm_name.value = `${user.username || "Player"}'s Potato Farm`;
     // auto-load remote save when signed in
     if (window.loadGame && typeof window.loadGame === "function") {
       try { window.loadGame(); } catch (e) { console.warn("autoload failed", e); }
     }
   } catch (e) {
     el.textContent = "Not signed in";
-    farm_name.value = "Guest";
     setToken(null);
   }
 }
@@ -67,51 +63,49 @@ async function loadRemote() {
 
 window.authApi = { signup, login, me, save: saveRemote, load: loadRemote, setToken, getToken, updateAccountUI };
 
+// UI wiring
 document.addEventListener("DOMContentLoaded", () => {
   const lUser = document.getElementById("loginUsername");
   const lPass = document.getElementById("loginPassword");
   const lBtn = document.getElementById("loginButton");
+  const sUser = document.getElementById("signupUsername");
+  const sEmail = document.getElementById("signupEmail");
+  const sPass = document.getElementById("signupPassword");
+  const sBtn = document.getElementById("signupButton");
 
-  const loginStatus = document.getElementById("loginStatus");
-
-  function setStatus(el, msg, type = "error") {
+  function showMsg(el, msg) {
     if (!el) return;
-    el.textContent = msg;
-    el.classList.toggle("success", type === "success");
-    el.classList.toggle("error", type === "error");
+    el.value = "";
+    el.placeholder = msg;
   }
 
   lBtn && lBtn.addEventListener("click", async () => {
-    setStatus(loginStatus, ""); // clear previous
-    const username = lUser.value.trim();
-    const password = lPass.value;
-
-    if (!username || !password) {
-      setStatus(loginStatus, "Please enter both username/email and password.", "error");
-      return;
-    }
-
     try {
-      const res = await authApi.login(username, password);
-      authApi.setToken(res.token);
-      setStatus(loginStatus, "Logged in successfully!", "success");
-      authApi.updateAccountUI(); // auto-loads game if available
+      const res = await login(lUser.value.trim(), lPass.value);
+      setToken(res.token);
+      showMsg(lUser, "Logged in");
+      showMsg(lPass, "");
+      updateAccountUI(); // will trigger autoload
     } catch (e) {
-      // Specific feedback
-      let msg = "Login failed";
-      if (e.error) {
-        if (e.error.toLowerCase().includes("user not found")) {
-          msg = "Username/email not found.";
-        } else if (e.error.toLowerCase().includes("invalid credentials")) {
-          msg = "Password incorrect. Please check and try again.";
-        } else {
-          msg = e.error;
-        }
-      }
-      setStatus(loginStatus, msg, "error");
+      showMsg(lUser, "Login failed");
       console.error("login error", e);
     }
   });
+
+  sBtn && sBtn.addEventListener("click", async () => {
+    try {
+      const res = await signup(sUser.value.trim(), sEmail.value.trim(), sPass.value);
+      setToken(res.token);
+      showMsg(sUser, "Account created");
+      updateAccountUI(); // will trigger autoload
+    } catch (e) {
+      showMsg(sUser, "Sign up failed");
+      console.error("signup error", e);
+    }
+  });
+
+  // try to fetch current user and update UI
+  updateAccountUI();
 });
 
 // expose for other scripts
