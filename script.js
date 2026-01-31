@@ -2033,6 +2033,27 @@ let storeCount = 0;
     }
   }
 
+  // attempt to sync the current local save to the remote server (if logged in)
+  async function syncLocalToServer() {
+    if (!(window.authApi && window.authApi.getToken())) return;
+    try {
+      const localSaveRaw = localStorage.getItem(SAVE_KEY_V2);
+      const save = localSaveRaw ? JSON.parse(localSaveRaw) : getSaveObject();
+      await window.authApi.save(save);
+      if (accountStatus) {
+        accountStatus.textContent = `Last saved: ${new Date().toLocaleTimeString()}`;
+        setTimeout(() => { if (accountStatus) accountStatus.textContent = " "; }, 4000);
+      }
+      console.log('syncLocalToServer: remote sync successful');
+    } catch (e) {
+      console.warn('syncLocalToServer: remote sync failed', e);
+      if (accountStatus) {
+        accountStatus.textContent = 'Save failed (network)';
+        setTimeout(() => { if (accountStatus) accountStatus.textContent = " "; }, 4000);
+      }
+    }
+  }
+
   // Manual save wrapper for button (gives immediate feedback)
   
 
@@ -2206,29 +2227,33 @@ let storeCount = 0;
   }
 
   clickerButton.addEventListener("click", function () {
-    const now = Date.now();
-    recentClicks.push(now);
-
-    // keep last 30 seconds
-    recentClicks = recentClicks.filter(t => now - t <= 30000);
-    window.clicksLast30Seconds = recentClicks.length;
-
     clickerButton.disabled = true;
-    potatoes += Math.floor(potatoesPerClick * 10) / 10;
-    rawPotatoes += potatoesPerClick;
-    handFarmedPotatoes += potatoesPerClick;
-    allTimePotatoes += potatoesPerClick;
-    potatoClicks++;
-    markPlayerActivity();
-    checkAchievements();
+    try {
+      const now = Date.now();
+      recentClicks.push(now);
 
-    updatePotatoDisplay();
-    renderBuildings();
-    renderUpgrades();
+      // keep last 30 seconds
+      recentClicks = recentClicks.filter(t => now - t <= 30000);
+      window.clicksLast30Seconds = recentClicks.length;
 
-    setTimeout(() => {
-      clickerButton.disabled = false;
-    }, 85);
+      potatoes += Math.floor(potatoesPerClick * 10) / 10;
+      rawPotatoes += potatoesPerClick;
+      handFarmedPotatoes += potatoesPerClick;
+      allTimePotatoes += potatoesPerClick;
+      potatoClicks++;
+      markPlayerActivity();
+      checkAchievements();
+
+      updatePotatoDisplay();
+      renderBuildings();
+      renderUpgrades();
+    } catch (err) {
+      console.error('click handler error', err);
+    } finally {
+      setTimeout(() => {
+        clickerButton.disabled = false;
+      }, 85);
+    }
   });
 
   const GOLDEN_DELAY = 1000 * 1000;
@@ -2891,8 +2916,8 @@ let storeCount = 0;
     renderBuildings();
     renderUpgrades();
 
-    // Call the save function from the server.js file
-    window.authApi.save();
+    // Call the save function (sync local save to server)
+    syncLocalToServer();
   }
 
   function calculateAutoClick() {
