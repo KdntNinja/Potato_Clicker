@@ -1711,6 +1711,54 @@
     });
   }
 
+  function renderSkins() {
+    const container = document.getElementById("skinsContainer");
+    container.innerHTML = "";
+
+    skins.forEach((s) => {
+      const skinDiv = document.createElement("button");
+      skinDiv.className = `skin-div ${s.equipped ? "selected-skin" : ""}`;
+      if (!s.unlocked) skinDiv.classList.add("locked-skin");
+
+      skinDiv.innerHTML = `
+        <img
+          src="${s.unlocked ? s.image : 'assets/mystery_potato.png'}"
+          alt="${s.name}"
+          width="100"
+          class="skin-option"
+          data-skin="${s.id}"
+          draggable="false"
+        />
+        <p class="skin-label">${s.unlocked ? s.name : '???'}</p>
+      `;
+
+      skinDiv.addEventListener("mouseenter", () => {
+        if (s.unlocked) {
+          const html = `
+            <div class="title">${s.name}</div>
+            <div>${s.description}</div>
+          `;
+          showTooltip(html, skinDiv);
+        } else {
+          const html = `
+            <div class="title">???</div>
+            <div>${s.description}</div>
+          `;
+          showTooltip(html, skinDiv);
+        }
+      });
+      skinDiv.addEventListener("mouseleave", hideTooltip);
+
+      skinDiv.addEventListener("click", () => {
+        if (!s.unlocked) return; // Prevent selecting locked skins
+        selectSkin(s.id);
+        updatePotatoDisplay();
+      });
+
+      container.appendChild(skinDiv);
+    });
+  }
+
     function unlockSkin(id) {
       const skin = skins.find(s => s.id === id);
       if (!skin || skin.unlocked) return false;
@@ -2189,6 +2237,19 @@ function clearLocalData() {
   if (
     confirm(
       "Are you sure you want to erase your current save (this change cannot by reverted)?",
+    )
+  ) {
+    localStorage.clear();
+    location.reload();
+  } else {
+    console.log("DEBUG: Canceled");
+  }
+}
+
+function clearLocalDataLogout() {
+  if (
+    confirm(
+      "Are you sure you want to logout?",
     )
   ) {
     localStorage.clear();
