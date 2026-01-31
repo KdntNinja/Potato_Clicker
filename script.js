@@ -45,6 +45,7 @@
   const goldenPotatoImage = document.getElementById("golden-potato");
   const SAVE_KEY_V2 = "potato_clicker_save_v2";
   const upgradeTotalElement = document.getElementById("upgrades-text");
+  const achievmentTotalElement = document.getElementById("achievments-text");
   const openOptionsMobile = document.getElementById("openModalOptions_mobile");
   const openStatsMobile = document.getElementById("openModalStats_mobile");
   const openInfoMobile = document.getElementById("openModalInfo_mobile");
@@ -73,7 +74,7 @@
   let potatoClicks = 0;
   let handFarmedPotatoes = 0;
   let goldenPotatoClicks = 0;
-  let runningVersion = "v0.58";
+  let runningVersion = "v0.60";
   let autoClickAmount = 0;
   let runDurationSeconds;
   let totalUpgrades = 0;
@@ -1891,7 +1892,8 @@
       "Golden potato clicks: " + goldenPotatoClicks;
     runningVersionElement.innerText = "Running version: " + runningVersion;
     versionElement.innerText = runningVersion;
-    upgradeTotalElement.innerText = `Upgrades unlocked: ${totalUpgrades}/27 (${Math.floor((totalUpgrades / 27) * 100 * 10) / 10}%)`;
+    upgradeTotalElement.innerText = `Upgrades unlocked: ${upgrades.filter(u => u.completed).length}/54 (${Math.floor((upgrades.filter(u => u.completed).length / 54) * 100 * 10) / 10}%)`;
+    achievmentTotalElement.innerText = `Total Upgrades: ${achievments.filter(a => a.completed).length}/48 (${Math.floor((achievments.filter(a => a.completed).length / 48) * 100 * 10) / 10}%)`;
     setTimeout(updateStatsDisplay, 1000);
   }
 
@@ -2816,28 +2818,47 @@
         }
       }
 
-      buildingButton.innerHTML = `
-        <div class="building-icon">
-          <img src="${displayIcon}" class="building-image" draggable="false" width="60">
+      // Only update the image src if it has changed
+      let buildingIconDiv = buildingButton.querySelector(".building-icon");
+      let buildingImage;
+      if (!buildingIconDiv) {
+        buildingIconDiv = document.createElement("div");
+        buildingIconDiv.className = "building-icon";
+        buildingImage = document.createElement("img");
+        buildingImage.className = "building-image";
+        buildingImage.setAttribute("draggable", "false");
+        buildingImage.setAttribute("width", "60");
+        buildingIconDiv.appendChild(buildingImage);
+        buildingButton.appendChild(buildingIconDiv);
+      } else {
+        buildingImage = buildingIconDiv.querySelector(".building-image");
+      }
+      if (buildingImage.src !== location.origin + "/" + displayIcon) {
+        buildingImage.src = displayIcon;
+      }
+
+      // Update info section
+      let infoDiv = buildingButton.querySelector(".building-info");
+      if (!infoDiv) {
+        infoDiv = document.createElement("div");
+        infoDiv.className = "building-info";
+        buildingButton.appendChild(infoDiv);
+      }
+      infoDiv.innerHTML = `
+        <div class="building-name-price">
+          <h4 class="building-name">${displayName}</h4>
+          <p class="building-price">
+            <img src="${equippedSkin.image}" class="potato-icon" draggable="false" width="15">
+            <span class="price-value">${formatNumber(displayPrice)}</span>
+          </p>
         </div>
-
-        <div class="building-info">
-          <div class="building-name-price">
-            <h4 class="building-name">${displayName}</h4>
-            <p class="building-price">
-              <img src="${equippedSkin.image}" class="potato-icon" draggable="false" width="15">
-              <span class="price-value">${formatNumber(displayPrice)}</span>
-            </p>
-          </div>
-
-          <div class="building-amount">
-            <p class="amount-owned">${b.owned}</p>
-          </div>
+        <div class="building-amount">
+          <p class="amount-owned">${b.owned}</p>
         </div>
       `;
 
       // Update button styles
-      const priceElement = buildingButton.querySelector(".building-price");
+      const priceElement = infoDiv.querySelector(".building-price");
       if (!isNaN(displayPrice) && potatoes >= displayPrice) {
         priceElement.style.color = "lightgreen";
         buildingButton.style.backgroundColor = "#37495a";
