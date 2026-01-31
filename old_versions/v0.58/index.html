@@ -42,7 +42,6 @@
       </div>
       <div class="nav-box">
         <a
-          onclick="achievmentsAdd('potion_clicker')"
           href="https://potionclicker.online/"
           target="_blank"
           rel="noopener noreferrer"
@@ -232,7 +231,7 @@
             <button onclick="clearLocalData()" class="wipe-button">
               <p>Clear Local data</p>
             </button>
-            <button onclick="clearLocalDataLogout()" class="wipe-button" id="logoutButton">Logout</button>
+            <button class="wipe-button" id="logoutButton">Logout</button>
           </div>
           <div class="general-stats">
             <h2 class="general-text">Account</h2>
@@ -328,16 +327,15 @@
             <div class="dropdown">
               Version select
               <div class="dropdown-content">
-                <a onclick="achievmentsAdd('time_traveler')" href="/index.html" class="selected-version">Current</a>
-                <a onclick="achievmentsAdd('time_traveler')" href="/old_versions/v0.58/index.html">v0.58</a>
-                <a onclick="achievmentsAdd('time_traveler')" href="/old_versions/v0.57/index.html">v0.57</a>
-                <a onclick="achievmentsAdd('time_traveler')" href="/old_versions/v0.48/index.html">v0.48</a>
-                <a onclick="achievmentsAdd('time_traveler')" href="/old_versions/v0.47/index.html">v0.47</a>
-                <a onclick="achievmentsAdd('time_traveler')" href="/old_versions/v0.43/index.html">v0.43</a>
-                <a onclick="achievmentsAdd('time_traveler')" href="/old_versions/v0.32/index.html">v0.32</a>
-                <a onclick="achievmentsAdd('time_traveler')" href="/old_versions/v0.27/index.html">v0.27</a>
-                <a onclick="achievmentsAdd('time_traveler')" href="/old_versions/v0.21/index.html">v0.21</a>
-                <a onclick="achievmentsAdd('time_traveler')" href="/old_versions/v0.11/index.html">v0.11</a>
+                <a href="/index.html" class="selected-version">Current</a>
+                <a href="/old_versions/v0.57/index.html">v0.57</a>
+                <a href="/old_versions/v0.48/index.html">v0.48</a>
+                <a href="/old_versions/v0.47/index.html">v0.47</a>
+                <a href="/old_versions/v0.43/index.html">v0.43</a>
+                <a href="/old_versions/v0.32/index.html">v0.32</a>
+                <a href="/old_versions/v0.27/index.html">v0.27</a>
+                <a href="/old_versions/v0.21/index.html">v0.21</a>
+                <a href="/old_versions/v0.11/index.html">v0.11</a>
               </div>
             </div>
           </div>
@@ -440,13 +438,7 @@
           <div class="general-stats">
             <h2 class="general-text">Upgrades</h2>
             <ul class="stats-ul">
-              <li id="upgrades-text">Upgrades unlocked: 0/56 (0%)</li>
-            </ul>
-          </div>
-          <div class="general-stats">
-            <h2 class="general-text">Achievments</h2>
-            <ul class="stats-ul">
-              <li id="achievments-text">Total achievments: 0/48 (0%)</li>
+              <li id="upgrades-text">Upgrades unlocked: 0/27 (0%)</li>
             </ul>
           </div>
         </div>
@@ -456,21 +448,6 @@
           <div class="modal-header">
             <h2 class="info-h2">Information</h2>
             <button class="closeButton" id="closeModal">&times;</button>
-          </div>
-          <div class="minor-update">
-            <h2 class="minor-h2">31/01/25: Progression Update v0.60</h2>
-            <p class="minor-p">Fixed a couple of things.</p>
-            <ul class="minor-ul">
-              <li>Added 5 new buildings.</li>
-              <li>Total Upgrades: 56</li>
-              <li>Total Achievments: 48</li>
-              <li>22 Total skins to collect!</li>
-              <li>Fixed upgrades glitch</li>
-              <li>Anti cheat added!</li>
-              <li>
-                Thanks to <span class="flashing">Rohan</span> for designing one of the skins!
-              </li>
-            </ul>
           </div>
           <div class="minor-update">
             <h2 class="minor-h2">30/01/25: Bug fixes v0.58</h2>

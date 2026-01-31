@@ -1,3 +1,4 @@
+let storeCount = 0;
 (() => {
   const clickerButton = document.getElementById("potato-button");
   const clickerCountDisplay = document.getElementById("potato-amount");
@@ -45,6 +46,7 @@
   const goldenPotatoImage = document.getElementById("golden-potato");
   const SAVE_KEY_V2 = "potato_clicker_save_v2";
   const upgradeTotalElement = document.getElementById("upgrades-text");
+  const achievmentTotalElement = document.getElementById("achievments-text");
   const openOptionsMobile = document.getElementById("openModalOptions_mobile");
   const openStatsMobile = document.getElementById("openModalStats_mobile");
   const openInfoMobile = document.getElementById("openModalInfo_mobile");
@@ -73,18 +75,19 @@
   let potatoClicks = 0;
   let handFarmedPotatoes = 0;
   let goldenPotatoClicks = 0;
-  let runningVersion = "v0.58";
+  let runningVersion = "v0.60";
   let autoClickAmount = 0;
   let runDurationSeconds;
   let totalUpgrades = 0;
   let frenzy = false;
   let half_price_amount = 1;
   let click_boost = false;
-  let storeCount = 0;
   let recentClicks = [];
   let lastUpgradeTime = Date.now();
   let idleTime = 0;
   let upgradeTime = 0;
+  let totalAchievments = 0;
+
   // ================== BUILDINGS ==================
   let buildings = [
     {
@@ -231,6 +234,86 @@
       mystery: true,
       totalGenerated: 0,
     },
+    {
+      id: "space_station",
+      name: "Space Station",
+      price: 75000000000,
+      basePrice: 75000000000,
+      owned: 0,
+      icon: "assets/space_station.png",
+      realIcon: "assets/space_station.png",
+      baseCps: 1600000,
+      cpsMultiplier: 1,
+      cps: 1600000,
+      unlocked: false,
+      sort: 10,
+      mystery: true,
+      totalGenerated: 0,
+    },
+    {
+      id: "planet",
+      name: "Planet",
+      price: 1000000000000,
+      basePrice: 1000000000000,
+      owned: 0,
+      icon: "assets/planet.png",
+      realIcon: "assets/planet.png",
+      baseCps: 10000000,
+      cpsMultiplier: 1,
+      cps: 10000000,
+      unlocked: false,
+      sort: 11,
+      mystery: true,
+      totalGenerated: 0,
+    },
+    {
+      id: "intergalactic_farm",
+      name: "Intergalactic Farm",
+      price: 14000000000000,
+      basePrice: 14000000000000,
+      owned: 0,
+      icon: "assets/intergalactic_farm.png",
+      realIcon: "assets/intergalactic_farm.png",
+      baseCps: 65000000,
+      cpsMultiplier: 1,
+      cps: 65000000,
+      unlocked: false,
+      sort: 12,
+      mystery: true,
+      totalGenerated: 0,
+    },
+    {
+      id: "time_machine",
+      name: "Time Machine",
+      price: 170000000000000,
+      basePrice: 170000000000000,
+      owned: 0,
+      icon: "assets/time_machine.png",
+      realIcon: "assets/time_machine.png",
+      baseCps: 430000000,
+      cpsMultiplier: 1,
+      cps: 430000000,
+      unlocked: false,
+      sort: 13,
+      mystery: true,
+      totalGenerated: 0,
+    },
+    {
+      id: "quantum_reactor",
+      name: "Quantum Reactor",
+      price: 2100000000000000,
+      basePrice: 2100000000000000,
+      owned: 0,
+      icon: "assets/quantum_reactor.png",
+      realIcon: "assets/quantum_reactor.png",
+      baseCps: 2900000000,
+      cpsMultiplier: 1,
+      cps: 2900000000,
+      unlocked: false,
+      sort: 14,
+      mystery: true,
+      totalGenerated: 0,
+    },
   ];
 
   // ================== UPGRADES ==================
@@ -266,6 +349,16 @@
       completed: false,
     },
     {
+      id: "peelerx2_4",
+      name: "Double edged peeler",
+      description: "Each peeler is now double sided",
+      effect: "x2 Potatoes per click & x2 Peeler Building power.",
+      price: 100000,
+      icon: "assets/upgrades/peelerx2_4.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
       id: "farmerx2_1",
       name: "Farming Aprentiships",
       description: "Your farmers are more experienced",
@@ -292,6 +385,16 @@
       effect: "x2 Farmer Potatoes",
       price: 100000,
       icon: "assets/upgrades/farmerx2_3.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "farmerx2_4",
+      name: "PhD in Farming",
+      description: "Your farmers are the best in the world",
+      effect: "x2 Farmer Potatoes",
+      price: 1000000,
+      icon: "assets/upgrades/farmerx2_4.png",
       unlocked: false,
       completed: false,
     },
@@ -326,6 +429,16 @@
       completed: false,
     },
     {
+      id: "tractorx2_4",
+      name: "Latest Model",
+      description: "The best tractor money can buy.",
+      effect: "x2 Tractor Potatoes",
+      price: 10000000,
+      icon: "assets/upgrades/tractorx2_4.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
       id: "greenhousex2_1",
       name: "Tempered glass windows",
       description: "Greenhouses are safer and more productive",
@@ -352,6 +465,16 @@
       effect: "x2 Greenhouse Potatoes",
       price: 12000000,
       icon: "assets/upgrades/greenhousex2_3.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "greenhousex2_4",
+      name: "The Ultimate Greenhouse",
+      description: "The most advanced greenhouse in the world!",
+      effect: "x2 Greenhouse Potatoes",
+      price: 120000000,
+      icon: "assets/upgrades/greenhousex2_4.png",
       unlocked: false,
       completed: false,
     },
@@ -386,6 +509,16 @@
       completed: false,
     },
     {
+      id: "chipfactoryx2_4",
+      name: "The Ultimate Chip Factory",
+      description: "The most advanced chip factory in the world!",
+      effect: "x2 Chip Factory Potatoes",
+      price: 1200000000,
+      icon: "assets/upgrades/chipfactoryx2_4.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
       id: "restaurantx2_1",
       name: "Cleaning staff",
       description: "People are more likely to have a meal here.",
@@ -412,6 +545,16 @@
       effect: "x2 Restaurant Potatoes",
       price: 1400000000,
       icon: "assets/upgrades/restaurantx2_3.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "restaurantx2_4",
+      name: "The Ultimate Restaurant",
+      description: "The most advanced restaurant in the world!",
+      effect: "x2 Restaurant Potatoes",
+      price: 14000000000,
+      icon: "assets/upgrades/restaurantx2_4.png",
       unlocked: false,
       completed: false,
     },
@@ -446,6 +589,16 @@
       completed: false,
     },
     {
+      id: "supermarketx2_4",
+      name: "The Ultimate Supermarket",
+      description: "The most advanced supermarket in the world!",
+      effect: "x2 Supermarket Potatoes.",
+      price: 8000000000000,
+      icon: "assets/upgrades/supermarketx2_4.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
       id: "distillaryx2_1",
       name: "Larger Capacity",
       description: "Can hold double the load.",
@@ -472,6 +625,16 @@
       effect: "x2 Distillary Potatoes.",
       price: 50000000000000,
       icon: "assets/upgrades/distillaryx2_3.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "distillaryx2_4",
+      name: "The Ultimate Distillery",
+      description: "The most advanced distillery in the world!",
+      effect: "x2 Distillary Potatoes.",
+      price: 500000000000000,
+      icon: "assets/upgrades/distillaryx2_4.png",
       unlocked: false,
       completed: false,
     },
@@ -505,6 +668,212 @@
       unlocked: false,
       completed: false,
     },
+    {
+      id: "airportx2_4",
+      name: "The Ultimate Airport",
+      description: "The most advanced airport in the world!",
+      effect: "x2 Airport Potatoes",
+      price: 4000000000000000,
+      icon: "assets/upgrades/airportx2_4.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "spacestationx2_1",
+      name: "More docking bays",
+      description: "Can now dock more ships.",
+      effect: "x2 Space Station Potatoes",
+      price: 3000000000000,
+      icon: "assets/upgrades/spacestationx2_1.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "spacestationx2_2",
+      name: "Improved technology",
+      description: "Better tech means more efficiency.",
+      effect: "x2 Space Station Potatoes",
+      price: 15000000000000,
+      icon: "assets/upgrades/spacestationx2_2.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "spacestationx2_3",
+      name: "Advanced AI",
+      description: "AI runs the station more efficiently.",
+      effect: "x2 Space Station Potatoes",
+      price: 3000000000000000,
+      icon: "assets/upgrades/spacestationx2_3.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "spacestationx2_4",
+      name: "The Ultimate Space Station",
+      description: "The most advanced space station in the world!",
+      effect: "x2 Space Station Potatoes",
+      price: 30000000000000000,
+      icon: "assets/upgrades/spacestationx2_4.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "planetx2_1",
+      name: "Increased gravity",
+      description: "Stronger gravity means more potatoes.",
+      effect: "x2 Planet Potatoes",
+      price: 20000000000000,
+      icon: "assets/upgrades/planetx2_1.png",
+      unlocked: false,
+    },
+    {
+      id: "planetx2_2",
+      name: "Better atmosphere",
+      description: "A better atmosphere means more life.",
+      effect: "x2 Planet Potatoes",
+      price: 100000000000000,
+      icon: "assets/upgrades/planetx2_2.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "planetx2_3",
+      name: "Advanced ecosystems",
+      description: "More advanced ecosystems mean more potatoes.",
+      effect: "x2 Planet Potatoes",
+      price: 20000000000000000,
+      icon: "assets/upgrades/planetx2_3.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "planetx2_4",
+      name: "The Ultimate Planet",
+      description: "The most advanced planet in the universe!",
+      effect: "x2 Planet Potatoes",
+      price: 200000000000000000,
+      icon: "assets/upgrades/planetx2_4.png",
+      unlocked: false,
+      completed: false,
+    }, {
+      id: "intergalacticfarmx2_1",
+      name: "Expanded Fields",
+      description: "More space to grow potatoes.",
+      effect: "x2 Intergalactic Farm Potatoes",
+      price: 150000000000000,
+      icon: "assets/upgrades/intergalacticfarmx2_1.png",
+      unlocked: false,
+      completed: false,
+    }, {
+      id: "intergalacticfarmx2_2",
+      name: "Advanced Irrigation",
+      description: "Better watering systems for your crops.",
+      effect: "x2 Intergalactic Farm Potatoes",
+      price: 750000000000000,
+      icon: "assets/upgrades/intergalacticfarmx2_2.png",
+      unlocked: false,
+      completed: false,
+    }, 
+    {
+      id: "intergalacticfarmx2_3",
+      name: "Genetic Modification",
+      description: "Stronger, faster-growing potatoes.",
+      effect: "x2 Intergalactic Farm Potatoes",
+      price: 150000000000000000,
+      icon: "assets/upgrades/intergalacticfarmx2_3.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "intergalacticfarmx2_4",
+      name: "The Ultimate Intergalactic Farm",
+      description: "The most advanced intergalactic farm in the universe!",
+      effect: "x2 Intergalactic Farm Potatoes",
+      price: 1500000000000000000,
+      icon: "assets/upgrades/intergalacticfarmx2_4.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "timemachinex2_1",
+      name: "Temporal Efficiency",
+      description: "Time machines operate more efficiently.",
+      effect: "x2 Time Machine Potatoes",
+      price: 1200000000000000,
+      icon: "assets/upgrades/timemachinex2_1.png",
+      unlocked: false,
+      completed: false,
+    }, 
+    {
+      id: "timemachinex2_2",
+      name: "Chrono Boosters",
+      description: "Boosters that enhance time travel capabilities.",
+      effect: "x2 Time Machine Potatoes",
+      price: 6000000000000000,
+      icon: "assets/upgrades/timemachinex2_2.png",
+      unlocked: false,
+    }, 
+    {
+      id: "timemachinex2_3",
+      name: "Quantum Stabilizers",
+      description: "Stabilizers that improve temporal navigation.",
+      effect: "x2 Time Machine Potatoes",
+      price: 1200000000000000000,
+      icon: "assets/upgrades/timemachinex2_3.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "timemachinex2_4",
+      name: "The Ultimate Time Machine",
+      description: "The most advanced time machine in the universe!",
+      effect: "x2 Time Machine Potatoes",
+      price: 12000000000000000000,
+      icon: "assets/upgrades/timemachinex2_4.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "quantumreactorx2_1",
+      name: "Enhanced Quantum Fields",
+      description: "Quantum reactors operate with enhanced fields.",
+      effect: "x2 Quantum Reactor Potatoes",
+      price: 17000000000000000,
+      icon: "assets/upgrades/quantumreactorx2_1.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "quantumreactorx2_2",
+      name: "Superposition Amplifiers",
+      description: "Amplifiers that boost quantum superposition effects.",
+      effect: "x2 Quantum Reactor Potatoes",
+      price: 85000000000000000,
+      icon: "assets/upgrades/quantumreactorx2_2.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "quantumreactorx2_3",
+      name: "Entanglement Enhancers",
+      description: "Enhancers that improve quantum entanglement processes.",
+      effect: "x2 Quantum Reactor Potatoes",
+      price: 17000000000000000000,
+      icon: "assets/upgrades/quantumreactorx2_3.png",
+      unlocked: false,
+      completed: false,
+    },
+    {
+      id: "quantumreactorx2_4",
+      name: "The Ultimate Quantum Reactor",
+      description: "The most advanced quantum reactor in the universe!",
+      effect: "x2 Quantum Reactor Potatoes",
+      price: 170000000000000000000,
+      icon: "assets/upgrades/quantumreactorx2_4.png",
+      unlocked: false,
+      completed: false,
+    }
   ];
 
   let skins = [
@@ -556,14 +925,6 @@
       equipped: false,
       description: "A secret is required to unlock this skin.",
       credits: "Designed by Arthur Weedon.",
-    },
-    {
-      id: "music",
-      name: "Music",
-      image: "assets/variants/music.png",
-      unlocked: false,
-      equipped: false,
-      description: "Listen to every sound in the game at least once.",
     },
     {
       id: "pixel",
@@ -646,6 +1007,55 @@
       equipped: false,
       description: "A secret is required to unlock this skin.",
     },
+    {
+      id: "glass",
+      name: "Glass",
+      image: "assets/variants/glass.png",
+      unlocked: false,
+      equipped: false,
+      description: "Purchase 20 greenhouses.",
+    },
+    {
+      id: "peeled",
+      name: "Peeled",
+      image: "assets/variants/peeled.png",
+      unlocked: false,
+      equipped: false,
+      description: "Purchase 100 peelers.",
+    },
+    {
+      id: "puzzle",
+      name: "Puzzle",
+      image: "assets/variants/puzzle.png",
+      unlocked: false,
+      equipped: false,
+      description: "Find all the secrets in the game.",
+    },
+    {
+      id: "sweet",
+      name: "Sweet",
+      image: "assets/variants/sweet.png",
+      unlocked: false,
+      equipped: false,
+      description: "Purchase 50 chip factories.",
+    },
+    {
+      id: "upside-down",
+      name: "Upside Down",
+      image: "assets/variants/upside-down.png",
+      unlocked: false,
+      equipped: false,
+      description: "Travel back to a different version of the game.",
+    },
+    {
+      id: "potion",
+      name: "Potion",
+      image: "assets/variants/potion.png",
+      unlocked: false,
+      equipped: false,
+      description: "Check out Potion Clicker!",
+      credits: "Designed by Rohan Launer.",
+    }
   ];
 
   function checkAchievements() {
@@ -665,8 +1075,60 @@
       achievmentsAdd("billion_potatoes");
     }
 
+    if (potatoes >= 1_000_000_000_000) {
+      achievmentsAdd("trillion_potatoes");
+    }
+
+    if (potatoes >= 1_000_000_000_000_000) {
+      achievmentsAdd("quadrillion_potatoes");
+    }
+
+    if (potatoes >= 1_000_000_000_000_000_000) {
+      achievmentsAdd("quintillion_potatoes");
+    }
+
+    if (potatoes >= 1_000_000_000_000_000_000_000) {
+      achievmentsAdd("sextillion_potatoes");
+    }
+
+    if (potatoes >= 1_000_000_000_000_000_000_000_000) {
+      achievmentsAdd("septillion_potatoes");
+    }
+
+    if (potatoes >= 1_000_000_000_000_000_000_000_000_000) {
+      achievmentsAdd("octillion_potatoes");
+    }
+
+    if (potatoes >= 1_000_000_000_000_000_000_000_000_000_000) {
+      achievmentsAdd("nonillion_potatoes");
+    }
+
+    if (potatoes >= 1_000_000_000_000_000_000_000_000_000_000_000) {
+      achievmentsAdd("decillion_potatoes");
+    }
+
     if (potatoClicks >= 666) {
       achievmentsAdd("inverted_potatoes");
+    }
+
+    if (potatoClicks >= 10000) {
+      achievmentsAdd("pro_clicker");
+    }
+
+    if (potatoClicks >= 1000) {
+      achievmentsAdd("click_frenzy");
+    }
+
+    if (potatoClicks >= 5000) {
+      achievmentsAdd("click_marathon");
+    }
+
+    if (potatoClicks >= 100000) {
+      achievmentsAdd("click_insanity");
+    }
+
+    if (potatoClicks >= 1000000) {
+      achievmentsAdd("click_legend");
     }
 
     if (clicksLast30Seconds >= 200) {
@@ -674,8 +1136,41 @@
     }
 
     // Rock skin: 100 buildings
+    if (buildingsOwned >= 10) {
+      achievmentsAdd("buidling_enthusiast");
+    }
+    if (buildingsOwned >= 50) {
+      achievmentsAdd("building_tycoon");
+    }
     if (buildingsOwned >= 100) {
       achievmentsAdd("sturdy_as_a_rock");
+    }
+    if (buildingsOwned >= 200) {
+      achievmentsAdd("building_mogul");
+    }
+    if (buildingsOwned >= 500) {
+      achievmentsAdd("building_king");
+    }
+    if (buildingsOwned >= 1000) {
+      achievmentsAdd("building_legend");
+    }
+
+    // Upgrades
+    if (totalUpgrades >= 1) {
+      achievmentsAdd("upgrade_novice");
+    }
+    if (totalUpgrades >= 5) {
+      achievmentsAdd("upgrade_intermediate");
+    }
+    if (totalUpgrades >= 10) {
+      achievmentsAdd("upgrade_expert");
+    }
+    if (totalUpgrades >= 30) {
+      achievmentsAdd("upgrade_advanced");
+    }
+    if (totalUpgrades >= 50) {
+      achievmentsAdd("upgrade_professional");
+      achievmentsAdd("upgrade_master");
     }
 
     // Pixel skin: 10 skins unlocked
@@ -696,14 +1191,51 @@
       achievmentsAdd("five_day_run");
     }
 
-
     if (getEquippedSkin().id === "blank" && upgradeTime >= 600) {
       achievmentsAdd("monochrome_potatoes");
     }
 
     // Rainbow skin: all skins unlocked
-    if (unlockedSkins === skins.length) {
+    if (unlockedSkins === (skins.length-1)) {
       achievmentsAdd("collector");
+    }
+
+    // Check if all secret codes have been redeemed
+    const secretAchievements = [
+      "monster",
+      "synth_master",
+      "you_look_like_a_potato",
+      "dosser"
+    ];
+    const allSecretsRedeemed = secretAchievements.every(id => {
+      const a = achievments.find(a => a.id === id);
+      return a && a.completed;
+    });
+    if (allSecretsRedeemed) {
+      achievmentsAdd("let_me_in");
+    }
+
+    // Smash achievement (20 greenhouses)
+    const greenhouse = buildings.find(b => b.id === "greenhouse");
+    if (greenhouse && greenhouse.owned >= 20) {
+      achievmentsAdd("smash");
+    }
+
+    // Peel Master (100 peelers)
+    const peeler = buildings.find(b => b.id === "cursor");
+    if (peeler && peeler.owned >= 100) {
+      achievmentsAdd("peel_master");
+    }
+
+    // Ewww (50 chip factories)
+    const chipFactory = buildings.find(b => b.id === "chip_factory");
+    if (chipFactory && chipFactory.owned >= 50) {
+      achievmentsAdd("ewww");
+    }
+
+    // Time Traveler (version change)
+    if (window.versionTraveled) {
+      achievmentsAdd("time_traveler");
     }
   }
 
@@ -733,6 +1265,174 @@
       id: "billion_potatoes",
       name: "Billionaire",
       description: "Collect 1 billion potatoes.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "trillion_potatoes",
+      name: "Trillionaire",
+      description: "Collect 1 trillion potatoes.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "quadrillion_potatoes",
+      name: "Quadrillionaire",
+      description: "Collect 1 quadrillion potatoes.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "quintillion_potatoes",
+      name: "Quintillionaire",
+      description: "Collect 1 quintillion potatoes.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "sextillion_potatoes",
+      name: "Sextillionaire",
+      description: "Collect 1 sextillion potatoes.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "septillion_potatoes",
+      name: "Septillionaire",
+      description: "Collect 1 septillion potatoes.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "octillion_potatoes",
+      name: "Octillionaire",
+      description: "Collect 1 octillion potatoes.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "nonillion_potatoes",
+      name: "Nonillionaire",
+      description: "Collect 1 nonillion potatoes.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "decillion_potatoes",
+      name: "Decillionaire",
+      description: "Collect 1 decillion potatoes.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "pro_clicker",
+      name: "Pro Clicker",
+      description: "Click 10,000 times in total.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "click_frenzy",
+      name: "Click Frenzy",
+      description: "Click 1,000 times in one session.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "click_marathon",
+      name: "Click Marathon",
+      description: "Click 5,000 times in one session.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "click_insanity",
+      name: "Click Insanity",
+      description: "Click 100,000 times in one session.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "click_legend",
+      name: "Click Legend",
+      description: "Click 1,000,000 times in total.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "buidling_enthusiast",
+      name: "Building Enthusiast",
+      description: "Buy 10 buildings.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "building_tycoon",
+      name: "Building Tycoon",
+      description: "Buy 50 buildings.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "building_mogul",
+      name: "Building Mogul",
+      description: "Buy 200 buildings.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "building_king",
+      name: "Building King",
+      description: "Buy 500 buildings.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "building_legend",
+      name: "Building Legend",
+      description: "Buy 1000 buildings.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "upgrade_novice",
+      name: "Upgrade Novice",
+      description: "Purchase 1 upgrade.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "upgrade_intermediate",
+      name: "Upgrade Intermediate",
+      description: "Purchase 5 upgrades.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "upgrade_advanced",
+      name: "Upgrade Advanced",
+      description: "Purchase 30 upgrades.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "upgrade_professional",
+      name: "Upgrade Professional",
+      description: "Purchase 50 upgrades.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "upgrade_expert",
+      name: "Upgrade Expert",
+      description: "Purchase 10 upgrades.",
+      completed: false,
+      skinReward: null,
+    },
+    {
+      id: "upgrade_master",
+      name: "Upgrade Master",
+      description: "Purchase 50 upgrades.",
       completed: false,
       skinReward: null,
     },
@@ -797,7 +1497,7 @@
       name: "Five Day Run",
       description: "Start your run 5 days ago.",
       completed: false,
-      skinReward: "golden",
+      skinReward: "realistic",
     },
     {
       id: "monster",
@@ -834,6 +1534,48 @@
       completed: false,
       skinReward: "menglish",
     },
+    {
+      id: "smash",
+      name: "Smash!",
+      description: "Purchase 20 greenhouses.",
+      completed: false,
+      skinReward: "glass",
+    },
+    {
+      id: "peel_master",
+      name: "Peel Master",
+      description: "Purchase 100 peelers.",
+      completed: false,
+      skinReward: "peeled",
+    },
+    {
+      id: "let_me_in",
+      name: "Let me in",
+      description: "Find all the secrets in the game.",
+      completed: false,
+      skinReward: "puzzle",
+    },
+    {
+      id: "ewww",
+      name: "Ewww!",
+      description: "Purchase 50 chip factories.",
+      completed: false,
+      skinReward: "sweet",
+    },
+    {
+      id: "time_traveler",
+      name: "Time Traveler",
+      description: "Travel back to a different version of the game.",
+      completed: false,
+      skinReward: "upside-down",
+    },
+    {
+      id: "potion_clicker",
+      name: "Potion Clicker",
+      description: "Check out Potion Clicker!.",
+      completed: false,
+      skinReward: "potion",
+    }
   ]
 
   let mysteryCount = 0;
@@ -1044,17 +1786,26 @@
   }
 
   function formatNumber(num) {
-    if (num >= 1_000_000_000_000) {
-      return (
-        (num / 1_000_000_000_000).toFixed(2).replace(/\.?0+$/, "") + " trillion"
-      );
-    } else if (num >= 1_000_000_000) {
-      return (num / 1_000_000_000).toFixed(2).replace(/\.?0+$/, "") + " billion";
-    } else if (num >= 1_000_000) {
-      return (num / 1_000_000).toFixed(2).replace(/\.?0+$/, "") + " million";
-    } else {
-      return num.toLocaleString();
+    const units = [
+      { value: 1_000_000_000_000_000_000_000_000_000_000_000, label: "decillion" },
+      { value: 1_000_000_000_000_000_000_000_000_000_000, label: "nonillion" },
+      { value: 1_000_000_000_000_000_000_000_000_000, label: "octillion" },
+      { value: 1_000_000_000_000_000_000_000_000, label: "septillion" },
+      { value: 1_000_000_000_000_000_000_000, label: "sextillion" },
+      { value: 1_000_000_000_000_000_000, label: "quintillion" },
+      { value: 1_000_000_000_000_000, label: "quadrillion" },
+      { value: 1_000_000_000_000, label: "trillion" },
+      { value: 1_000_000_000, label: "billion" },
+      { value: 1_000_000, label: "million" }
+    ];
+    for (const unit of units) {
+      if (num >= unit.value) {
+        return (
+          (num / unit.value).toFixed(2).replace(/\.?0+$/, "") + " " + unit.label
+        );
+      }
     }
+    return num.toLocaleString();
   }
 
   function updatePotatoDisplay() {
@@ -1121,7 +1872,9 @@
       "Golden potato clicks: " + goldenPotatoClicks;
     runningVersionElement.innerText = "Running version: " + runningVersion;
     versionElement.innerText = runningVersion;
-    upgradeTotalElement.innerText = `Upgrades unlocked: ${totalUpgrades}/27 (${Math.floor((totalUpgrades / 27) * 100 * 10) / 10}%)`;
+    upgradeTotalElement.innerText = `Upgrades unlocked: ${totalUpgrades}/56 (${Math.floor((totalUpgrades / 56) * 100 * 10) / 10}%)`;
+    totalAchievments = achievments.filter(a => a.completed).length;
+    achievmentTotalElement.innerText = `Total achievments: ${totalAchievments}/48 (${Math.floor((totalAchievments / 48) * 100 * 10) / 10}%)`;
     setTimeout(updateStatsDisplay, 1000);
   }
 
@@ -1312,6 +2065,7 @@
     goldenPotatoClicks = s.goldenPotatoClicks;
     buildingsOwned = s.buildingsOwned;
     totalUpgrades = s.totalUpgrades;
+    totalAchievments = s.totalAchievments;
 
     buildings.forEach((b) => {
       const data = save.buildings[b.id];
@@ -1373,6 +2127,11 @@
       supermarket: "supermarkets",
       distillary: "distillarys",
       airport: "airports",
+      space_station: "space_stations",
+      planet: "planets",
+      intergalactic_farm: "intergalactic_farms",
+      time_machine: "time_machines",
+      quantum_reactor: "quantum_reactors", 
     };
 
     buildings.forEach((b) => {
@@ -1595,8 +2354,28 @@
       )
         u.unlocked = !u.completed;
       if (
-        (u.id.includes("airportx2_1") || u.id.includes("airportx2_2")) &&
-        buildings.find((b) => b.id === "airport").owned >= 1
+        (u.id.includes("spacestationx2_1") || u.id.includes("spacestationx2_2")) &&
+        buildings.find((b) => b.id === "space_station").owned >= 1
+      )
+        u.unlocked = !u.completed;
+      if (
+        (u.id.includes("planetx2_1") || u.id.includes("planetx2_2")) &&
+        buildings.find((b) => b.id === "planet").owned >= 1
+      )
+        u.unlocked = !u.completed;
+      if (
+        (u.id.includes("intergalacticfarmx2_1") || u.id.includes("intergalacticfarmx2_2")) &&
+        buildings.find((b) => b.id === "intergalactic_farm").owned >= 1
+      )
+        u.unlocked = !u.completed;
+      if (
+        (u.id.includes("timemachinex2_1") || u.id.includes("timemachinex2_2")) &&
+        buildings.find((b) => b.id === "time_machine").owned >= 1
+      )
+        u.unlocked = !u.completed;
+      if (
+        (u.id.includes("quantumreactorx2_1") || u.id.includes("quantumreactorx2_2")) &&
+        buildings.find((b) => b.id === "quantum_reactor").owned >= 1
       )
         u.unlocked = !u.completed;
 
@@ -1646,6 +2425,102 @@
         buildings.find((b) => b.id === "airport").owned >= 10
       )
         u.unlocked = !u.completed;
+      if (
+        u.id.includes("spacestationx2_3") &&
+        buildings.find((b) => b.id === "space_station").owned >= 10
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("planetx2_3") &&
+        buildings.find((b) => b.id === "planet").owned >= 10
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("intergalacticfarmx2_3") &&
+        buildings.find((b) => b.id === "intergalactic_farm").owned >= 10
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("timemachinex2_3") &&
+        buildings.find((b) => b.id === "time_machine").owned >= 10
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("quantumreactorx2_3") &&
+        buildings.find((b) => b.id === "quantum_reactor").owned >= 10
+      )
+        u.unlocked = !u.completed;
+      // Unlock after 20 Buildings
+      if (
+        u.id.includes("peelerx2_4") &&
+        buildings.find((b) => b.id === "cursor").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("farmerx2_4") &&
+        buildings.find((b) => b.id === "farmer").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("tractorx2_4") &&
+        buildings.find((b) => b.id === "tractor").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("greenhousex2_4") &&
+        buildings.find((b) => b.id === "greenhouse").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("chipfactoryx2_4") &&
+        buildings.find((b) => b.id === "chip_factory").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("restaurantx2_4") &&
+        buildings.find((b) => b.id === "restaurant").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("supermarketx2_4") &&
+        buildings.find((b) => b.id === "supermarket").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("distillaryx2_4") &&
+        buildings.find((b) => b.id === "distillary").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("airportx2_4") &&
+        buildings.find((b) => b.id === "airport").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("spacestationx2_4") &&
+        buildings.find((b) => b.id === "space_station").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("planetx2_4") &&
+        buildings.find((b) => b.id === "planet").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("intergalacticfarmx2_4") &&
+        buildings.find((b) => b.id === "intergalactic_farm").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("timemachinex2_4") &&
+        buildings.find((b) => b.id === "time_machine").owned >= 20
+      )
+        u.unlocked = !u.completed;
+      if (
+        u.id.includes("quantumreactorx2_4") &&
+        buildings.find((b) => b.id === "quantum_reactor").owned >= 20
+      )
+        u.unlocked = !u.completed;
     });
 
     const visible = upgrades
@@ -1673,6 +2548,7 @@
       upgradeButton.addEventListener("mouseleave", hideTooltip);
 
       upgradeButton.addEventListener("click", () => {
+        upgradeTime = 0;
         if (potatoes < u.price*half_price_amount) return;
         potatoes -= u.price*half_price_amount;
         u.completed = true;
@@ -1700,11 +2576,21 @@
           buildings.find((b) => b.id === "distillary").cpsMultiplier *= 2;
         if (u.id.includes("airport"))
           buildings.find((b) => b.id === "airport").cpsMultiplier *= 2;
-
+        if (u.id.includes("spacestation"))
+          buildings.find((b) => b.id === "space_station").cpsMultiplier *= 2;
+        if (u.id.includes("planet"))
+          buildings.find((b) => b.id === "planet").cpsMultiplier *= 2;
+        if (u.id.includes("intergalacticfarm"))
+          buildings.find((b) => b.id === "intergalactic_farm").cpsMultiplier *= 2;
+        if (u.id.includes("timemachine"))
+          buildings.find((b) => b.id === "time_machine").cpsMultiplier *= 2;
+        if (u.id.includes("quantumreactor"))
+          buildings.find((b) => b.id === "quantum_reactor").cpsMultiplier *= 2;
         calculateAutoClick();
         updatePotatoDisplay();
         renderBuildings();
         renderUpgrades();
+        checkAchievements();
       });
 
       container.appendChild(upgradeButton);
@@ -1733,19 +2619,38 @@
       `;
 
       skinDiv.addEventListener("mouseenter", () => {
-        if (s.unlocked) {
-          const html = `
-            <div class="title">${s.name}</div>
-            <div>${s.description}</div>
-          `;
-          showTooltip(html, skinDiv);
+        if (s.credits) {
+          if (s.unlocked) {
+            const html = `
+              <div class="title">${s.name}</div>
+              <div>${s.description}</div>
+              <div class="credits">${s.credits}</div>
+            `;
+            showTooltip(html, skinDiv);
+          } else {
+            const html = `
+              <div class="title">???</div>
+              <div>${s.description}</div>
+              <div class="credits">Designed by: *********</div>
+            `;
+            showTooltip(html, skinDiv);
+          }
         } else {
-          const html = `
-            <div class="title">???</div>
-            <div>${s.description}</div>
-          `;
-          showTooltip(html, skinDiv);
+          if (s.unlocked) {
+            const html = `
+              <div class="title">${s.name}</div>
+              <div>${s.description}</div>
+            `;
+            showTooltip(html, skinDiv);
+          } else {
+            const html = `
+              <div class="title">???</div>
+              <div>${s.description}</div>
+            `;
+            showTooltip(html, skinDiv);
+          }
         }
+        
       });
       skinDiv.addEventListener("mouseleave", hideTooltip);
 
@@ -1851,6 +2756,7 @@
             updatePotatoDisplay();
             renderBuildings(); // only updates content
             renderUpgrades();
+            checkAchievements();
           }
         });
       }
@@ -1869,6 +2775,18 @@
           displayName = b.name;
           displayIcon = b.realIcon;
         }
+      }
+
+      if (b.id === "peeler" && b.owned >= 100) {
+        achievmentsAdd("peel_master")
+      }
+
+      if (b.id === "greenhouse" && b.owned >= 20) {
+        achievmentsAdd("smash")
+      }
+
+      if (b.id === "chip_factory" && b.owned >= 50) {
+        achievmentsAdd("ewww")
       }
 
       buildingButton.innerHTML = `
@@ -2194,7 +3112,7 @@ function achievmentsAdd(id) {
   if (!a || a.completed) return;
 
   a.completed = true;
-
+  totalAchievments++;
   let rewardText = null;
 
   if (a.skinReward) {
