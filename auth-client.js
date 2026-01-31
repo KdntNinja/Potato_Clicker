@@ -166,6 +166,43 @@
 
     // auto-load on page load
     updateAccountUI();
+
+    const sUser = document.getElementById("signupUsername");
+    const sEmail = document.getElementById("signupEmail");
+    const sPass = document.getElementById("signupPassword");
+    const sBtn = document.getElementById("signupButton");
+    const signupStatus = document.getElementById("signupStatus");
+
+    sBtn && sBtn.addEventListener("click", async () => {
+      setStatus(signupStatus, "");
+      const username = sUser.value.trim();
+      const email = sEmail.value.trim();
+      const password = sPass.value;
+
+      if (!username || !email || !password) {
+        setStatus(signupStatus, "Please fill in all fields.", "error");
+        return;
+      }
+
+      try {
+        const res = await signup(username, email, password);
+        setToken(res.token);
+        setStatus(signupStatus, "Account created successfully!", "success");
+        sUser.value = "";
+        sEmail.value = "";
+        sPass.value = "";
+        await updateAccountUI();
+      } catch (e) {
+        let msg = "Sign up failed";
+        if (e.error) {
+          if (e.error.toLowerCase().includes("already exists")) msg = "Username or email already exists.";
+          else if (e.error.toLowerCase().includes("invalid email")) msg = "Please enter a valid email address.";
+          else msg = e.error;
+        }
+        setStatus(signupStatus, msg, "error");
+        console.error("signup error", e);
+      }
+    });
   });
 
   // Expose API for other scripts

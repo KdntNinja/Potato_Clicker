@@ -1,5 +1,4 @@
-let storeCount = 0;
-(() => {
+//(() => {
   const clickerButton = document.getElementById("potato-button");
   const clickerCountDisplay = document.getElementById("potato-amount");
   const titleElement = document.getElementById("title");
@@ -46,7 +45,6 @@ let storeCount = 0;
   const goldenPotatoImage = document.getElementById("golden-potato");
   const SAVE_KEY_V2 = "potato_clicker_save_v2";
   const upgradeTotalElement = document.getElementById("upgrades-text");
-  const achievmentTotalElement = document.getElementById("achievments-text");
   const openOptionsMobile = document.getElementById("openModalOptions_mobile");
   const openStatsMobile = document.getElementById("openModalStats_mobile");
   const openInfoMobile = document.getElementById("openModalInfo_mobile");
@@ -75,19 +73,18 @@ let storeCount = 0;
   let potatoClicks = 0;
   let handFarmedPotatoes = 0;
   let goldenPotatoClicks = 0;
-  let runningVersion = "v0.60";
+  let runningVersion = "v0.58";
   let autoClickAmount = 0;
   let runDurationSeconds;
   let totalUpgrades = 0;
   let frenzy = false;
   let half_price_amount = 1;
   let click_boost = false;
+  let storeCount = 0;
   let recentClicks = [];
   let lastUpgradeTime = Date.now();
   let idleTime = 0;
   let upgradeTime = 0;
-  let totalAchievments = 0;
-
   // ================== BUILDINGS ==================
   let buildings = [
     {
@@ -1733,6 +1730,28 @@ let storeCount = 0;
     }, 400);
   }
 
+  function achievmentsAdd(id) {
+    const a = achievments.find(a => a.id === id);
+    if (!a || a.completed) return;
+
+    a.completed = true;
+
+    let rewardText = null;
+
+    if (a.skinReward) {
+      unlockSkin(a.skinReward);
+
+      const skin = skins.find(s => s.id === a.skinReward);
+      if (skin) {
+        rewardText = `Skin unlocked — ${skin.name}`;
+      }
+    }
+
+    showAchievementPopup(a.name, a.description, rewardText);
+    console.log(`Achievement unlocked: ${a.name}`);
+
+    saveGame();
+  }
   async function updatePotatoComments() {
     setTimeout(updatePotatoComments, 10000);
 
@@ -1872,9 +1891,7 @@ let storeCount = 0;
       "Golden potato clicks: " + goldenPotatoClicks;
     runningVersionElement.innerText = "Running version: " + runningVersion;
     versionElement.innerText = runningVersion;
-    upgradeTotalElement.innerText = `Upgrades unlocked: ${totalUpgrades}/56 (${Math.floor((totalUpgrades / 56) * 100 * 10) / 10}%)`;
-    totalAchievments = achievments.filter(a => a.completed).length;
-    achievmentTotalElement.innerText = `Total achievments: ${totalAchievments}/48 (${Math.floor((totalAchievments / 48) * 100 * 10) / 10}%)`;
+    upgradeTotalElement.innerText = `Upgrades unlocked: ${totalUpgrades}/27 (${Math.floor((totalUpgrades / 27) * 100 * 10) / 10}%)`;
     setTimeout(updateStatsDisplay, 1000);
   }
 
@@ -1967,40 +1984,7 @@ let storeCount = 0;
   async function saveGame() {
     const save = getSaveObject();
     // persist locally
-    try {
-      const existingRaw = localStorage.getItem(SAVE_KEY_V2);
-      if (existingRaw) {
-        try {
-          const existing = JSON.parse(existingRaw);
-          // Don't overwrite a richer existing local save with an empty/zeroed one
-          if (
-            existing &&
-            existing.stats &&
-            existing.stats.allTimePotatoes > (save.stats.allTimePotatoes || 0) &&
-            (save.stats.allTimePotatoes || 0) === 0
-          ) {
-            console.warn('saveGame: preventing overwrite of richer local save with empty save');
-            // still attempt remote sync below but do not clobber local
-          } else {
-            // create a timestamped backup before overwriting
-            try {
-              const backupKey = `${SAVE_KEY_V2}_backup_${Date.now()}`;
-              localStorage.setItem(backupKey, existingRaw);
-            } catch (be) {
-              console.warn('saveGame: backup failed', be);
-            }
-            localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
-          }
-        } catch (e) {
-          // if parse fails, overwrite with new save
-          localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
-        }
-      } else {
-        localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
-      }
-    } catch (e) {
-      console.warn('saveGame: localStorage set failed', e);
-    }
+    localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
 
     // if logged in, attempt server sync and show status
     if (window.authApi && window.authApi.getToken()) {
@@ -2033,29 +2017,23 @@ let storeCount = 0;
     }
   }
 
-  // attempt to sync the current local save to the remote server (if logged in)
-  async function syncLocalToServer() {
-    if (!(window.authApi && window.authApi.getToken())) return;
-    try {
-      const localSaveRaw = localStorage.getItem(SAVE_KEY_V2);
-      const save = localSaveRaw ? JSON.parse(localSaveRaw) : getSaveObject();
-      await window.authApi.save(save);
-      if (accountStatus) {
-        accountStatus.textContent = `Last saved: ${new Date().toLocaleTimeString()}`;
-        setTimeout(() => { if (accountStatus) accountStatus.textContent = " "; }, 4000);
-      }
-      console.log('syncLocalToServer: remote sync successful');
-    } catch (e) {
-      console.warn('syncLocalToServer: remote sync failed', e);
-      if (accountStatus) {
-        accountStatus.textContent = 'Save failed (network)';
-        setTimeout(() => { if (accountStatus) accountStatus.textContent = " "; }, 4000);
-      }
+  // Manual save wrapper for button (gives immediate feedback)
+  function saveGameManual() {
+    const btn = document.getElementById("saveButton");
+    if (btn) {
+      btn.disabled = true;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = "<p>Saving...</p>";
+      Promise.resolve(saveGame())
+        .catch(() => {})
+        .finally(() => {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          }
+        });
     }
   }
-
-  // Manual save wrapper for button (gives immediate feedback)
-  
 
   async function loadGame() {
     const localSaveRaw = localStorage.getItem(SAVE_KEY_V2);
@@ -2119,7 +2097,6 @@ let storeCount = 0;
     goldenPotatoClicks = s.goldenPotatoClicks;
     buildingsOwned = s.buildingsOwned;
     totalUpgrades = s.totalUpgrades;
-    totalAchievments = s.totalAchievments;
 
     buildings.forEach((b) => {
       const data = save.buildings[b.id];
@@ -2181,79 +2158,56 @@ let storeCount = 0;
       supermarket: "supermarkets",
       distillary: "distillarys",
       airport: "airports",
-      space_station: "space_stations",
-      planet: "planets",
-      intergalactic_farm: "intergalactic_farms",
-      time_machine: "time_machines",
-      quantum_reactor: "quantum_reactors", 
     };
 
-    let foundAny = false;
     buildings.forEach((b) => {
-      const owned = +localStorage.getItem(map[b.id]) || 0;
-      if (owned > 0) foundAny = true;
-      b.owned = owned;
-      const mysteryRaw = localStorage.getItem(`${b.id}_mystery`);
-      if (mysteryRaw !== null) {
-        try {
-          b.mystery = JSON.parse(mysteryRaw);
-          foundAny = true;
-        } catch (e) {
-          b.mystery = true;
-        }
-      } else {
-        b.mystery = true;
-      }
+      b.owned = +localStorage.getItem(map[b.id]) || 0;
+      b.mystery = JSON.parse(localStorage.getItem(`${b.id}_mystery`) || "true");
       b.price = Math.ceil(b.basePrice * Math.pow(1.15, b.owned));
       b.totalGenerated = 0;
       b.cpsMultiplier = 1;
     });
 
-    // Also check core stats for evidence of an old save
-    if (
-      potatoes > 0 ||
-      allTimePotatoes > 0 ||
-      potatoClicks > 0 ||
-      buildingsOwned > 0
-    ) {
-      foundAny = true;
-    }
+    saveGame();
+  }
 
-    if (foundAny) {
-      saveGame();
+  function clearLocalData() {
+    if (
+      confirm(
+        "Are you sure you want to erase your current save (this change cannot by reverted)?",
+      )
+    ) {
+      localStorage.clear();
+      location.reload();
     } else {
-      console.log('migrateOldSave: no old save data found — not creating a new save');
+      console.log("DEBUG: Canceled");
     }
   }
 
   clickerButton.addEventListener("click", function () {
+    const now = Date.now();
+    recentClicks.push(now);
+
+    // keep last 30 seconds
+    recentClicks = recentClicks.filter(t => now - t <= 30000);
+    window.clicksLast30Seconds = recentClicks.length;
+
     clickerButton.disabled = true;
-    try {
-      const now = Date.now();
-      recentClicks.push(now);
+    potatoes += Math.floor(potatoesPerClick * 10) / 10;
+    rawPotatoes += potatoesPerClick;
+    handFarmedPotatoes += potatoesPerClick;
+    allTimePotatoes += potatoesPerClick;
+    potatoClicks++;
+    markPlayerActivity();
+    checkAchievements();
 
-      // keep last 30 seconds
-      recentClicks = recentClicks.filter(t => now - t <= 30000);
-      window.clicksLast30Seconds = recentClicks.length;
+    updatePotatoDisplay();
+    renderBuildings();
+    renderUpgrades();
 
-      potatoes += Math.floor(potatoesPerClick * 10) / 10;
-      rawPotatoes += potatoesPerClick;
-      handFarmedPotatoes += potatoesPerClick;
-      allTimePotatoes += potatoesPerClick;
-      potatoClicks++;
-      markPlayerActivity();
-      checkAchievements();
-
-      updatePotatoDisplay();
-      renderBuildings();
-      renderUpgrades();
-    } catch (err) {
-      console.error('click handler error', err);
-    } finally {
-      setTimeout(() => {
-        clickerButton.disabled = false;
-      }, 85);
-    }
+    setTimeout(() => {
+      clickerButton.disabled = false;
+    }, 85);
   });
 
   const GOLDEN_DELAY = 1000 * 1000;
@@ -2682,72 +2636,73 @@ let storeCount = 0;
     });
   }
 
-  function renderSkins() {
-    const container = document.getElementById("skinsContainer");
-    container.innerHTML = "";
 
-    skins.forEach((s) => {
-      const skinDiv = document.createElement("button");
-      skinDiv.className = `skin-div ${s.equipped ? "selected-skin" : ""}`;
-      if (!s.unlocked) skinDiv.classList.add("locked-skin");
+    function renderSkins() {
+      const container = document.getElementById("skinsContainer");
+      container.innerHTML = "";
 
-      skinDiv.innerHTML = `
-        <img
-          src="${s.unlocked ? s.image : 'assets/mystery_potato.png'}"
-          alt="${s.name}"
-          width="100"
-          class="skin-option"
-          data-skin="${s.id}"
-          draggable="false"
-        />
-        <p class="skin-label">${s.unlocked ? s.name : '???'}</p>
-      `;
+      skins.forEach((s) => {
+        const skinDiv = document.createElement("button");
+        skinDiv.className = `skin-div ${s.equipped ? "selected-skin" : ""}`;
+        if (!s.unlocked) skinDiv.classList.add("locked-skin");
 
-      skinDiv.addEventListener("mouseenter", () => {
-        if (s.credits) {
-          if (s.unlocked) {
-            const html = `
-              <div class="title">${s.name}</div>
-              <div>${s.description}</div>
-              <div class="credits">${s.credits}</div>
-            `;
-            showTooltip(html, skinDiv);
+        skinDiv.innerHTML = `
+          <img
+            src="${s.unlocked ? s.image : 'assets/mystery_potato.png'}"
+            alt="${s.name}"
+            width="100"
+            class="skin-option"
+            data-skin="${s.id}"
+            draggable="false"
+          />
+          <p class="skin-label">${s.unlocked ? s.name : '???'}</p>
+        `;
+
+        skinDiv.addEventListener("mouseenter", () => {
+          if (s.credits) {
+            if (s.unlocked) {
+              const html = `
+                <div class="title">${s.name}</div>
+                <div>${s.description}</div>
+                <div class="credits">${s.credits}</div>
+              `;
+              showTooltip(html, skinDiv);
+            } else {
+              const html = `
+                <div class="title">???</div>
+                <div>${s.description}</div>
+                <div class="credits">Designed by: *********</div>
+              `;
+              showTooltip(html, skinDiv);
+            }
           } else {
-            const html = `
-              <div class="title">???</div>
-              <div>${s.description}</div>
-              <div class="credits">Designed by: *********</div>
-            `;
-            showTooltip(html, skinDiv);
+            if (s.unlocked) {
+              const html = `
+                <div class="title">${s.name}</div>
+                <div>${s.description}</div>
+              `;
+              showTooltip(html, skinDiv);
+            } else {
+              const html = `
+                <div class="title">???</div>
+                <div>${s.description}</div>
+              `;
+              showTooltip(html, skinDiv);
+            }
           }
-        } else {
-          if (s.unlocked) {
-            const html = `
-              <div class="title">${s.name}</div>
-              <div>${s.description}</div>
-            `;
-            showTooltip(html, skinDiv);
-          } else {
-            const html = `
-              <div class="title">???</div>
-              <div>${s.description}</div>
-            `;
-            showTooltip(html, skinDiv);
-          }
-        }
-        
-      });
-      skinDiv.addEventListener("mouseleave", hideTooltip);
+          
+        });
+        skinDiv.addEventListener("mouseleave", hideTooltip);
 
-      skinDiv.addEventListener("click", () => {
-        if (!s.unlocked) return; // Prevent selecting locked skins
-        selectSkin(s.id);
-        updatePotatoDisplay();
-      });
+        skinDiv.addEventListener("click", () => {
+          if (!s.unlocked) return; // Prevent selecting locked skins
+          selectSkin(s.id);
+          updatePotatoDisplay();
+        });
 
-      container.appendChild(skinDiv);
-    });
-  }
+        container.appendChild(skinDiv);
+      });
+    }
 
     function unlockSkin(id) {
       const skin = skins.find(s => s.id === id);
@@ -2841,7 +2796,6 @@ let storeCount = 0;
             updatePotatoDisplay();
             renderBuildings(); // only updates content
             renderUpgrades();
-            checkAchievements();
           }
         });
       }
@@ -2860,18 +2814,6 @@ let storeCount = 0;
           displayName = b.name;
           displayIcon = b.realIcon;
         }
-      }
-
-      if (b.id === "peeler" && b.owned >= 100) {
-        achievmentsAdd("peel_master")
-      }
-
-      if (b.id === "greenhouse" && b.owned >= 20) {
-        achievmentsAdd("smash")
-      }
-
-      if (b.id === "chip_factory" && b.owned >= 50) {
-        achievmentsAdd("ewww")
       }
 
       buildingButton.innerHTML = `
@@ -2916,8 +2858,8 @@ let storeCount = 0;
     renderBuildings();
     renderUpgrades();
 
-    // Call the save function (sync local save to server)
-    syncLocalToServer();
+    // Call the save function from the server.js file
+    window.authApi.save();
   }
 
   function calculateAutoClick() {
@@ -3190,74 +3132,9 @@ let storeCount = 0;
   `);
 
   document.addEventListener("contextmenu", e => e.preventDefault());
-})();
 
-function achievmentsAdd(id) {
-  const a = achievments.find(a => a.id === id);
-  if (!a || a.completed) return;
-
-  a.completed = true;
-  totalAchievments++;
-  let rewardText = null;
-
-  if (a.skinReward) {
-    unlockSkin(a.skinReward);
-
-    const skin = skins.find(s => s.id === a.skinReward);
-    if (skin) {
-      rewardText = `Skin unlocked — ${skin.name}`;
-    }
-  }
-
-  showAchievementPopup(a.name, a.description, rewardText);
-  console.log(`Achievement unlocked: ${a.name}`);
-
-  saveGame();
-}
-
-function storeCounter() {
-  storeCount++;
-}
-
-function saveGameManual() {
-  const btn = document.getElementById("saveButton");
-  if (btn) {
-    btn.disabled = true;
-    const originalText = btn.innerHTML;
-    btn.innerHTML = "<p>Saving...</p>";
-    Promise.resolve(saveGame())
-      .catch(() => {})
-      .finally(() => {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = originalText;
-        }
-      });
-  }
-}
-
-function clearLocalData() {
-  if (
-    confirm(
-      "Are you sure you want to erase your current save (this change cannot by reverted)?",
-    )
-  ) {
-    localStorage.clear();
-    location.reload();
-  } else {
-    console.log("DEBUG: Canceled");
-  }
-}
-
-function clearLocalDataLogout() {
-  if (
-    confirm(
-      "Are you sure you want to logout?",
-    )
-  ) {
-    localStorage.clear();
-    location.reload();
-  } else {
-    console.log("DEBUG: Canceled");
-  }
-}
+  // Expose functions to global scope for onclick handlers in HTML
+  window.achievmentsAdd = achievmentsAdd;
+  window.clearLocalData = clearLocalData;
+  window.storeCounter = storeCounter;
+//})();
