@@ -1967,7 +1967,40 @@ let storeCount = 0;
   async function saveGame() {
     const save = getSaveObject();
     // persist locally
-    localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
+    try {
+      const existingRaw = localStorage.getItem(SAVE_KEY_V2);
+      if (existingRaw) {
+        try {
+          const existing = JSON.parse(existingRaw);
+          // Don't overwrite a richer existing local save with an empty/zeroed one
+          if (
+            existing &&
+            existing.stats &&
+            existing.stats.allTimePotatoes > (save.stats.allTimePotatoes || 0) &&
+            (save.stats.allTimePotatoes || 0) === 0
+          ) {
+            console.warn('saveGame: preventing overwrite of richer local save with empty save');
+            // still attempt remote sync below but do not clobber local
+          } else {
+            // create a timestamped backup before overwriting
+            try {
+              const backupKey = `${SAVE_KEY_V2}_backup_${Date.now()}`;
+              localStorage.setItem(backupKey, existingRaw);
+            } catch (be) {
+              console.warn('saveGame: backup failed', be);
+            }
+            localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
+          }
+        } catch (e) {
+          // if parse fails, overwrite with new save
+          localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
+        }
+      } else {
+        localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
+      }
+    } catch (e) {
+      console.warn('saveGame: localStorage set failed', e);
+    }
 
     // if logged in, attempt server sync and show status
     if (window.authApi && window.authApi.getToken()) {
@@ -2134,15 +2167,42 @@ let storeCount = 0;
       quantum_reactor: "quantum_reactors", 
     };
 
+    let foundAny = false;
     buildings.forEach((b) => {
-      b.owned = +localStorage.getItem(map[b.id]) || 0;
-      b.mystery = JSON.parse(localStorage.getItem(`${b.id}_mystery`) || "true");
+      const owned = +localStorage.getItem(map[b.id]) || 0;
+      if (owned > 0) foundAny = true;
+      b.owned = owned;
+      const mysteryRaw = localStorage.getItem(`${b.id}_mystery`);
+      if (mysteryRaw !== null) {
+        try {
+          b.mystery = JSON.parse(mysteryRaw);
+          foundAny = true;
+        } catch (e) {
+          b.mystery = true;
+        }
+      } else {
+        b.mystery = true;
+      }
       b.price = Math.ceil(b.basePrice * Math.pow(1.15, b.owned));
       b.totalGenerated = 0;
       b.cpsMultiplier = 1;
     });
 
-    saveGame();
+    // Also check core stats for evidence of an old save
+    if (
+      potatoes > 0 ||
+      allTimePotatoes > 0 ||
+      potatoClicks > 0 ||
+      buildingsOwned > 0
+    ) {
+      foundAny = true;
+    }
+
+    if (foundAny) {
+      saveGame();
+    } else {
+      console.log('migrateOldSave: no old save data found — not creating a new save');
+    }
   }
 
   clickerButton.addEventListener("click", function () {
