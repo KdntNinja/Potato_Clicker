@@ -1,4 +1,4 @@
-//(() => {
+(() => {
   const clickerButton = document.getElementById("potato-button");
   const clickerCountDisplay = document.getElementById("potato-amount");
   const titleElement = document.getElementById("title");
@@ -1081,8 +1081,40 @@
       unlocked: false,
       equipped: false,
       description: "Click 100,000 times.",
+    },
+    {
+      id: "computato",
+      name: "Computato",
+      image: "assets/variants/computato.png",
+      unlocked: false,
+      equipped: false,
+      description: "Play on a Computer!",
+      credits: "Designed by Arthur Weedon."
+    },
+    {
+      id: "astronaut",
+      name: "Astronaut",
+      image: "assets/variants/astronaut.png",
+      unlocked: false,
+      equipped: false,
+      description: "Purchase 1 space related building.",
+    },
+    {
+      id: "sus",
+      name: "Sus",
+      image: "assets/variants/sus.png",
+      unlocked: false,
+      equipped: false,
+      description: "Purchase 10 space related building.",
+      credits: "Designed by Elliot Sturges."
     }
   ];
+
+  function isPC() {
+    const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const hasFinePointer = window.matchMedia("(pointer:fine)").matches;
+    return hasFinePointer && !isMobileUA;
+  }
 
   function checkAchievements() {
     if (potatoes >= 100000000000000) {
@@ -1274,6 +1306,20 @@
 
     if (potatoClicks >= 100000) {
       achievmentsAdd("finger");
+    }
+
+    if (isPC()) {
+      achievmentsAdd("computato");
+    }
+
+    const space_station = buildings.find(b => b.id === "space_station");
+    const planet = buildings.find(b => b.id === "planet");
+    const inter = buildings.find(b => b.id === "intergalactic_farm");
+    if ((space_station && space_station.owned >= 1) || (planet && planet.owned >= 1) || (inter && planet.owned >= 1)){
+      achievmentsAdd("astronaut");
+    }
+    if (((space_station.owned) + (planet.owned) + (inter.owned)) >= 10) {
+      achievmentsAdd("sus");
     }
   }
 
@@ -1634,6 +1680,27 @@
       description: "Click 100,000 times in total.",
       completed: false,
       skinReward: "finger",
+    },
+    {
+      id: "computato",
+      name: "On the big screen!",
+      description: "Play on a computer.",
+      completed: false,
+      skinReward: "computato",
+    },
+    {
+      id: "astronaut",
+      name: "We are going up!",
+      description: "Purchase 1 space related building.",
+      completed: false,
+      skinReward: "astronaut",
+    },
+    {
+      id: "sus",
+      name: "Wait a second...",
+      description: "Purchase 10 space related building.",
+      completed: false,
+      skinReward: "sus",
     }
   ]
 
@@ -1905,6 +1972,11 @@
       titleElement.innerText =
         formatNumber(Math.floor(potatoes)) + " potatoes - Potato Clicker";
     }
+    if (frenzy || (half_price_amount === 0.5)) {
+      clickerCountDisplay.style.color = "gold";
+    } else {
+      clickerCountDisplay.style.color = "white";
+    }
   }
 
   function rateCounter() {
@@ -1912,6 +1984,19 @@
       "per second: " +
       (Math.floor(autoClickAmount * 10 * frenzy_amount) / 10).toLocaleString();
     setTimeout(rateCounter, 1000);
+    if (frenzy || (half_price_amount === 0.5)) {
+      document.querySelector(".potato-amount-persecond").style.color = "gold";
+    } else {
+      document.querySelector(".potato-amount-persecond").style.color = "white";
+    }
+
+    if (frenzy || (half_price_amount === 0.5)) {
+      document.querySelector(".shine").style.filter = "sepia(1) saturate(8) hue-rotate(38deg) brightness(1.25) contrast(1.4)";
+      document.querySelector(".shine2").style.filter = "sepia(1) saturate(80) hue-rotate(360deg) brightness(1.25) contrast(1.4)";
+    } else {
+      document.querySelector(".shine").style.filter = "none";
+      document.querySelector(".shine2").style.filter = "none";
+    }
   }
 
   function formatRunTime(seconds) {
@@ -2295,7 +2380,11 @@
     }, 85);
   });
 
-  const GOLDEN_DELAY = 1000 * 1000;
+  function randomMinutes(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  const GOLDEN_DELAY = randomMinutes(10, 20) * 60_000;
   const GOLDEN_VISIBLE_TIME = 10 * 1000;
 
   let spawnTimeout = null;
@@ -2317,8 +2406,8 @@
       if (!totalCollectedVariants.has("normal")) {
         totalCollectedVariants.add("normal");
       }
-      text.textContent = `Lucky, ${autoClickAmount * 1000} Potatoes!`;
-      reward = autoClickAmount * 1000;
+      text.textContent = `Lucky, ${formatNumber(autoClickAmount * 2000)} Potatoes!`;
+      reward = autoClickAmount * 2000;
     } else if (goldenPotatoVariant == "frenzy") {
       if (!totalCollectedVariants.has("frenzy")) {
         totalCollectedVariants.add("frenzy");
@@ -3034,7 +3123,7 @@
 
   function autoClick() {
     if (frenzy === true) {
-      frenzy_amount = 3;
+      frenzy_amount = 6;
     } else {
       frenzy_amount = 1;
     }
@@ -3136,4 +3225,4 @@
   window.achievmentsAdd = achievmentsAdd;
   window.clearLocalData = clearLocalData;
   window.storeCounter = storeCounter;
-//})();
+})();
