@@ -2052,6 +2052,12 @@
         await window.authApi.save(save);
         lastDbSaveTime = Date.now();
         console.log("DB save successful");
+        
+        // Update leaderboard after successful save
+        if (window.authApi.updateLeaderboardUI) {
+          window.authApi.updateLeaderboardUI();
+        }
+        
         if (showStatus && accountStatus) {
           accountStatus.textContent = `Last saved: ${new Date().toLocaleTimeString()}`;
           setTimeout(() => {
