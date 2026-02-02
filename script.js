@@ -86,6 +86,8 @@
   let lastUpgradeTime = Date.now();
   let idleTime = 0;
   let upgradeTime = 0;
+  let lastDbSaveTime = Date.now();
+  const DB_SAVE_INTERVAL_MS = 20 * 60 * 1000; // 20 minutes
   // ================== BUILDINGS ==================
   let buildings = [
     {
@@ -1815,7 +1817,7 @@
     showAchievementPopup(a.name, a.description, rewardText);
     console.log(`Achievement unlocked: ${a.name}`);
 
-    saveGame();
+    saveGame(true); // Major change: achievement unlocked
   }
   async function updatePotatoComments() {
     setTimeout(updatePotatoComments, 10000);
@@ -2046,39 +2048,54 @@
     return save;
   }
 
-  // existing saveGame now uses helper
-  async function saveGame() {
+  // Save to localStorage only (fast, continuous)
+  function saveLocal() {
     const save = getSaveObject();
-    // persist locally
     localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
+  }
 
-    // if logged in, attempt server sync and show status
+  // Save to database (slower, less frequent)
+  async function saveToDb(showStatus = false) {
+    const save = getSaveObject();
+    
     if (window.authApi && window.authApi.getToken()) {
       try {
         await window.authApi.save(save);
-        if (accountStatus) {
+        lastDbSaveTime = Date.now();
+        console.log("DB save successful");
+        if (showStatus && accountStatus) {
           accountStatus.textContent = `Last saved: ${new Date().toLocaleTimeString()}`;
           setTimeout(() => {
             if (accountStatus) accountStatus.textContent = " ";
           }, 4000);
         }
-        console.log("saveGame: remote sync successful");
       } catch (e) {
-        console.warn("saveGame: remote sync failed", e);
-        if (accountStatus) {
+        console.warn("DB save failed", e);
+        if (showStatus && accountStatus) {
           accountStatus.textContent = "Save failed (network)";
           setTimeout(() => {
             if (accountStatus) accountStatus.textContent = " ";
           }, 4000);
         }
       }
-    } else {
-      // not logged in - indicate local save
-      if (accountStatus) {
-        accountStatus.textContent = "Saved locally";
-        setTimeout(() => {
-          if (accountStatus) accountStatus.textContent = " ";
-        }, 2000);
+    }
+  }
+
+  // Save both local and DB (for major changes)
+  async function saveGame(majorChange = false) {
+    // Always save locally
+    saveLocal();
+    
+    // Save to DB on major changes or every 20 minutes
+    if (majorChange) {
+      console.log("Major change detected - saving to DB");
+      await saveToDb(true);
+    } else if (window.authApi && window.authApi.getToken()) {
+      // Check if it's been 20 minutes since last DB save
+      const timeSinceLastDbSave = Date.now() - lastDbSaveTime;
+      if (timeSinceLastDbSave >= DB_SAVE_INTERVAL_MS) {
+        console.log("20 minutes elapsed - saving to DB");
+        await saveToDb(false);
       }
     }
   }
@@ -2090,7 +2107,9 @@
       btn.disabled = true;
       const originalText = btn.innerHTML;
       btn.innerHTML = "<p>Saving...</p>";
-      Promise.resolve(saveGame())
+      // Manual save always saves to DB
+      saveLocal();
+      Promise.resolve(saveToDb(true))
         .catch(() => {})
         .finally(() => {
           if (btn) {
@@ -2533,6 +2552,7 @@
           renderBuildings();
           renderUpgrades();
           checkAchievements();
+          saveGame(true); // Major change: upgrade bought
         });
 
         renderedUpgrades.set(u.id, upgradeButton);
@@ -2635,6 +2655,7 @@
       }
       renderSkins();
       renderBuildings();
+      saveGame(true); // Major change: skin equipped
     }
 
     function unlockUpgrade(id) {
@@ -3047,23 +3068,21 @@
   setupPasswordToggle("loginPassword", "loginToggle");
   setupPasswordToggle("signupPassword", "signupToggle");
 
-  // autosave: persist locally and sync to DB when signed in (awaited, logged)
+  // autosave: continuously save locally, check DB save interval
   async function autoSave() {
-    const save = getSaveObject();
-    // persist locally
-    localStorage.setItem(SAVE_KEY_V2, JSON.stringify(save));
-
-    // if logged in, attempt server sync and log errors
-    try {
-      if (window.authApi && window.authApi.getToken()) {
-        await window.authApi.save(save);
-        console.log("Autosave: remote sync successful");
+    // Always save locally for quick recovery
+    saveLocal();
+    
+    // Check if we need to save to DB (20 minutes elapsed)
+    if (window.authApi && window.authApi.getToken()) {
+      const timeSinceLastDbSave = Date.now() - lastDbSaveTime;
+      if (timeSinceLastDbSave >= DB_SAVE_INTERVAL_MS) {
+        console.log("AFK save: 20 minutes elapsed - saving to DB");
+        await saveToDb(false);
       }
-    } catch (e) {
-      console.warn("Autosave: remote sync failed", e);
     }
 
-    setTimeout(autoSave, 10000); // autosave every 10 seconds
+    setTimeout(autoSave, 10000); // check every 10 seconds
   }
 
   function renderBuildingsRegular() {
