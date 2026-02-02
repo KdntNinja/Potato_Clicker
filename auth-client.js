@@ -135,6 +135,31 @@
     leaderboardContainer.innerHTML = html;
   }
 
+  // Core: load saved game state
+  async function loadGame() {
+    const token = getToken();
+    let saveObj = null;
+    if (token) {
+      try {
+        saveObj = await loadRemote();
+      } catch (e) {
+        console.warn("Failed to load remote save, using localStorage", e);
+        saveObj = loadLocal();
+      }
+    } else {
+      saveObj = loadLocal();
+    }
+
+    if (saveObj) {
+      window.potatoes = saveObj.potatoes || 0;
+      window.allTimePotatoes = saveObj.allTimePotatoes || 0;
+      window.buildings = saveObj.buildings || {};
+      window.upgrades = saveObj.upgrades || {};
+      window.skins = saveObj.skins || {};
+    }
+  }
+
+
   // Update account display
   async function updateAccountUI() {
     const el = document.getElementById("accountName");
