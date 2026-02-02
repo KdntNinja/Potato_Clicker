@@ -1,6 +1,6 @@
 (() => {
   const AUTH_API_BASE = "/api/auth";
-  const tokenKey = "pc_auth_token";
+  const tokenKey = "auth_token";
   const LOCAL_SAVE_KEY = "potatoFarmSave";
 
   function setToken(t) {
@@ -28,7 +28,7 @@
     return apiFetch("/signup", { method: "POST", body: JSON.stringify({ username, email, password }) });
   }
   async function login(identifier, password) {
-    return apiFetch("/login", { method: "POST", body: JSON.stringify({ identifier, password }) });
+    return apiFetch("/login", { method: "POST", body: JSON.stringify({ identifier, password }) });no 
   }
   async function me() {
     return apiFetch("/me", { method: "GET" });
@@ -159,6 +159,24 @@
     }
   }
 
+  function saveGame() {
+    const saveObj = {
+      potatoes: window.potatoes,
+      allTimePotatoes: window.allTimePotatoes,
+      buildings: window.buildings,
+      upgrades: window.upgrades,
+      skins: window.skins,
+    };
+
+    // always save locally
+    localStorage.setItem(LOCAL_SAVE_KEY, JSON.stringify(saveObj));
+
+    // save to remote if logged in
+    const token = getToken();
+    if (token) {
+      saveRemote(saveObj).catch((e) => console.warn("Failed to save remotely", e));
+    }
+  }
 
   // Update account display
   async function updateAccountUI() {
