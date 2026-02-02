@@ -1350,7 +1350,7 @@ h3 {
 .leaderboard {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* slightly tighter for consistency */
+  gap: 16px;
   margin: 10px;
 }
 
@@ -1360,16 +1360,16 @@ h3 {
 .third,
 .other {
   display: grid;
-  grid-template-columns: 80px 1fr minmax(100px, 220px); /* slightly adjusted left column */
+  grid-template-columns: 80px auto 100px; /* flexible middle column */
   align-items: center;
   border: rgb(0, 6, 19) solid 5px;
   border-radius: 20px;
   padding: 10px 16px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* subtle shadow for depth */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   transition:
     transform 0.2s,
-    box-shadow 0.2s; /* smooth hover effect */
+    box-shadow 0.2s;
 }
 
 /* Hover effect */
@@ -1381,7 +1381,7 @@ h3 {
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
 }
 
-/* Responsive font size */
+/* Responsive adjustments */
 @media (max-width: 700px) {
   .first,
   .second,
@@ -1389,6 +1389,20 @@ h3 {
   .other {
     font-size: 12px;
     padding: 8px 12px;
+    grid-template-columns: 60px 1fr 60px; /* smaller columns on mobile */
+  }
+
+  .username {
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+  }
+
+  .score {
+    text-align: right;
+    font-size: 12px;
   }
 }
 
@@ -1400,38 +1414,37 @@ h3 {
 
 .username {
   text-align: center;
+  white-space: normal;   /* allow wrapping */
+  overflow-wrap: anywhere; /* wrap long words if needed */
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: ellipsis; /* only used if it still overflows */
+  line-height: 1.2;
 }
 
 .score {
   text-align: right;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;  /* remove hidden so dots disappear */
+  text-overflow: clip; /* don’t show ellipsis */
   font-weight: 500;
 }
 
-/* Leaderboard colors */
-.first {
-  background-color: rgb(142, 121, 4);
-  color: white;
-}
+/* Responsive adjustments */
+@media (max-width: 700px) {
+  .first,
+  .second,
+  .third,
+  .other {
+    font-size: 12px;
+    padding: 8px 12px;
+    grid-template-columns: 50px 1fr 50px; /* smaller side columns for more username space */
+  }
 
-.second {
-  background-color: rgb(97, 97, 97);
-  color: white;
-}
-
-.third {
-  background-color: rgb(116, 60, 4);
-  color: white;
-}
-
-.other {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: rgb(148, 148, 148);
+  .username {
+    font-size: 12px;
+    white-space: normal;   /* wrap on mobile */
+    overflow-wrap: anywhere;
+  }
 }
 
 .scrolling-part {
