@@ -44,6 +44,122 @@
     return apiFetch("/load", { method: "GET" });
   }
 
+  // Fetch leaderboard data
+  async function fetchLeaderboard() {
+    try {
+      const headers = { "Content-Type": "application/json" };
+      const token = getToken();
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      
+      const res = await fetch("/api/leaderboard", {
+        method: "GET",
+        headers
+      });
+      if (!res.ok) throw new Error("Failed to fetch leaderboard");
+      return res.json();
+    } catch (e) {
+      console.error("leaderboard fetch error", e);
+      return { topPlayers: [], userRank: null };
+    }
+  }
+
+  // Update leaderboard UI
+  async function updateLeaderboardUI() {
+    const leaderboardContainer = document.querySelector(".leaderboard");
+    if (!leaderboardContainer) return;
+
+    const data = await fetchLeaderboard();
+    const topPlayers = data.topPlayers || [];
+    const userRank = data.userRank;
+    
+    if (!topPlayers || topPlayers.length === 0) {
+      leaderboardContainer.innerHTML = '<div class="other"><div class="place">—</div><div class="username">No players yet</div><div class="score">0 potatoes</div></div>';
+      return;
+    }
+
+    // Helper to format numbers with commas
+    const formatScore = (num) => {
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + ' million';
+      }
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
+    // Helper to format rank suffix
+    const getRankSuffix = (rank) => {
+      const j = rank % 10;
+      const k = rank % 100;
+      if (j === 1 && k !== 11) return rank + 'st';
+      if (j === 2 && k !== 12) return rank + 'nd';
+      if (j === 3 && k !== 13) return rank + 'rd';
+      return rank + 'th';
+    };
+
+    // Generate HTML for each entry
+    let html = '';
+    topPlayers.forEach((entry, index) => {
+      const rank = index + 1;
+      let className = 'other';
+      let place = getRankSuffix(rank);
+      
+      if (rank === 1) {
+        className = 'first';
+      } else if (rank === 2) {
+        className = 'second';
+      } else if (rank === 3) {
+        className = 'third';
+      }
+
+      html += `
+        <div class="${className}">
+          <div class="place">${place}</div>
+          <div class="username">${entry.username}</div>
+          <div class="score">${formatScore(entry.all_time_potatoes)} potatoes</div>
+        </div>
+      `;
+    });
+
+    // Add user's rank if they're not in top 10
+    if (userRank) {
+      html += `
+        <div class="other" style="margin-top: 10px; border-top: 2px solid rgba(255, 255, 255, 0.2); padding-top: 10px;">
+          <div class="place">${getRankSuffix(userRank.rank)}</div>
+          <div class="username">${userRank.username} (You)</div>
+          <div class="score">${formatScore(userRank.all_time_potatoes)} potatoes</div>
+        </div>
+      `;
+    }
+
+    leaderboardContainer.innerHTML = html;
+  }
+
+  // Core: load saved game state
+  async function loadGame() {
+    const token = getToken();
+    let saveObj = null;
+    if (token) {
+      try {
+        saveObj = await loadRemote();
+      } catch (e) {
+        console.warn("Failed to load remote save, using localStorage", e);
+        saveObj = loadLocal();
+      }
+    } else {
+      saveObj = loadLocal();
+    }
+
+    if (saveObj) {
+      window.potatoes = saveObj.potatoes || 0;
+      window.allTimePotatoes = saveObj.allTimePotatoes || 0;
+      window.buildings = saveObj.buildings || {};
+      window.upgrades = saveObj.upgrades || {};
+      window.skins = saveObj.skins || {};
+    }
+  }
+
+
   // Update account display
   async function updateAccountUI() {
     const el = document.getElementById("accountName");
@@ -113,6 +229,7 @@
 
     // auto-load on page load
     updateAccountUI();
+    updateLeaderboardUI(); // Load leaderboard on page load
 
     const sUser = document.getElementById("signupUsername");
     const sEmail = document.getElementById("signupEmail");
@@ -162,5 +279,7 @@
     setToken,
     getToken,
     updateAccountUI,
+    fetchLeaderboard,
+    updateLeaderboardUI,
   };
 })();

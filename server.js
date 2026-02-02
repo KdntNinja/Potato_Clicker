@@ -44,6 +44,16 @@ async function ensureTables() {
       updated_at TIMESTAMPTZ DEFAULT now()
     )
   `);
+
+  // Leaderboard table
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS leaderboard (
+      user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      username TEXT NOT NULL,
+      all_time_potatoes BIGINT NOT NULL DEFAULT 0,
+      updated_at TIMESTAMPTZ DEFAULT now()
+    )
+  `);
 }
 ensureTables().catch((e) => {
   console.error("Failed to ensure tables", e);
@@ -182,6 +192,17 @@ app.post("/api/auth/save", requireAuth, async (req, res) => {
       [userId, saveData],
     );
 
+    // Update leaderboard with allTimePotatoes if available
+    if (saveData.stats && saveData.stats.allTimePotatoes !== undefined) {
+      const user = await getUserById(userId);
+      await pool.query(
+        `INSERT INTO leaderboard (user_id, username, all_time_potatoes, updated_at)
+         VALUES ($1, $2, $3, now())
+         ON CONFLICT (user_id) DO UPDATE SET all_time_potatoes = $3, updated_at = now()`,
+        [userId, user.username, Math.floor(saveData.stats.allTimePotatoes)],
+      );
+    }
+
     res.json({ ok: true });
   } catch (e) {
     console.error("save error", e);
@@ -198,6 +219,58 @@ app.get("/api/auth/load", requireAuth, async (req, res) => {
     res.json(r.rows[0].data);
   } catch (e) {
     console.error("load error", e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get leaderboard (top 10 players + user's rank if not in top 10)
+app.get("/api/leaderboard", async (req, res) => {
+  try {
+    // Get top 10
+    const topPlayers = await pool.query(
+      `SELECT username, all_time_potatoes, updated_at 
+       FROM leaderboard 
+       ORDER BY all_time_potatoes DESC 
+       LIMIT 10`
+    );
+
+    let userRank = null;
+    
+    // If user is authenticated, get their rank
+    const auth = req.headers.authorization;
+    if (auth) {
+      try {
+        const token = auth.replace("Bearer ", "");
+        const payload = jwt.verify(token, JWT_SECRET);
+        const userId = payload.userId;
+        
+        // Get user's rank and score
+        const rankQuery = await pool.query(
+          `SELECT 
+            (SELECT COUNT(*) + 1 FROM leaderboard WHERE all_time_potatoes > l.all_time_potatoes) as rank,
+            username,
+            all_time_potatoes
+           FROM leaderboard l
+           WHERE user_id = $1`,
+          [userId]
+        );
+        
+        if (rankQuery.rowCount > 0) {
+          const userInfo = rankQuery.rows[0];
+          // Only include user rank if they're not in top 10
+          if (userInfo.rank > 10) {
+            userRank = userInfo;
+          }
+        }
+      } catch (e) {
+        // Invalid token or user not found, just return top 10
+        console.log("Could not get user rank:", e.message);
+      }
+    }
+
+    res.json({ topPlayers: topPlayers.rows, userRank });
+  } catch (e) {
+    console.error("leaderboard error", e);
     res.status(500).json({ error: "Server error" });
   }
 });
