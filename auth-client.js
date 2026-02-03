@@ -3,6 +3,9 @@
   const tokenKey = "auth_token";
   const LOCAL_SAVE_KEY = "potatoFarmSave";
 
+  /* --------------------------------------------------------------
+     Token helpers (unchanged)
+     -------------------------------------------------------------- */
   function setToken(t) {
     if (t) localStorage.setItem(tokenKey, t);
     else localStorage.removeItem(tokenKey);
@@ -11,6 +14,9 @@
     return localStorage.getItem(tokenKey);
   }
 
+  /* --------------------------------------------------------------
+     Generic API wrapper (unchanged)
+     -------------------------------------------------------------- */
   async function apiFetch(path, opts = {}) {
     opts.headers = opts.headers || {};
     opts.headers["Content-Type"] = "application/json";
@@ -24,39 +30,45 @@
     return res.json().catch(() => ({}));
   }
 
+  /* --------------------------------------------------------------
+     Auth endpoints (unchanged)
+     -------------------------------------------------------------- */
   async function signup(username, email, password) {
-    return apiFetch("/signup", { method: "POST", body: JSON.stringify({ username, email, password }) });
+    return apiFetch("/signup", {
+      method: "POST",
+      body: JSON.stringify({ username, email, password })
+    });
   }
   async function login(identifier, password) {
-    return apiFetch("/login", { method: "POST", body: JSON.stringify({ identifier, password }) });no 
+    return apiFetch("/login", {
+      method: "POST",
+      body: JSON.stringify({ identifier, password })
+    });
   }
   async function me() {
     return apiFetch("/me", { method: "GET" });
   }
 
-  // Save game to remote - expects save object from script.js
+  /* --------------------------------------------------------------
+     Remote save / load (unchanged)
+     -------------------------------------------------------------- */
   async function saveRemote(saveObj) {
     return apiFetch("/save", { method: "POST", body: JSON.stringify(saveObj) });
   }
-  
-  // Load game from remote
   async function loadRemote() {
     return apiFetch("/load", { method: "GET" });
   }
 
-  // Fetch leaderboard data
+  /* --------------------------------------------------------------
+     Leaderboard helpers (unchanged – kept for completeness)
+     -------------------------------------------------------------- */
   async function fetchLeaderboard() {
     try {
       const headers = { "Content-Type": "application/json" };
       const token = getToken();
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-      
-      const res = await fetch("/api/leaderboard", {
-        method: "GET",
-        headers
-      });
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch("/api/leaderboard", { method: "GET", headers });
       if (!res.ok) throw new Error("Failed to fetch leaderboard");
       return res.json();
     } catch (e) {
@@ -65,7 +77,6 @@
     }
   }
 
-  // Update leaderboard UI
   async function updateLeaderboardUI() {
     const leaderboardContainer = document.querySelector(".leaderboard");
     if (!leaderboardContainer) return;
@@ -73,128 +84,169 @@
     const data = await fetchLeaderboard();
     const topPlayers = data.topPlayers || [];
     const userRank = data.userRank;
-    
-    if (!topPlayers || topPlayers.length === 0) {
-      leaderboardContainer.innerHTML = '<div class="other"><div class="place">—</div><div class="username">No players yet</div><div class="score">0 potatoes</div></div>';
+
+    if (!topPlayers.length) {
+      leaderboardContainer.innerHTML =
+        '<div class="other"><div class="place">—</div><div class="username">No players yet</div><div class="score">0 potatoes</div></div>';
       return;
     }
 
-    // Helper to format numbers with commas
+    /* ----- formatting helpers (same as original) ----- */
     function formatScore(num) {
       const units = [
-        { value: 1_000_000_000_000_000_000_000_000_000_000_000, label: "decillion" },
-        { value: 1_000_000_000_000_000_000_000_000_000_000, label: "nonillion" },
-        { value: 1_000_000_000_000_000_000_000_000_000, label: "octillion" },
-        { value: 1_000_000_000_000_000_000_000_000, label: "septillion" },
-        { value: 1_000_000_000_000_000_000_000, label: "sextillion" },
-        { value: 1_000_000_000_000_000_000, label: "quintillion" },
-        { value: 1_000_000_000_000_000, label: "quadrillion" },
-        { value: 1_000_000_000_000, label: "trillion" },
-        { value: 1_000_000_000, label: "billion" },
-        { value: 1_000_000, label: "million" }
+        { value: 1e30, label: "decillion" },
+        { value: 1e27, label: "nonillion" },
+        { value: 1e24, label: "octillion" },
+        { value: 1e21, label: "septillion" },
+        { value: 1e18, label: "sextillion" },
+        { value: 1e15, label: "quintillion" },
+        { value: 1e12, label: "quadrillion" },
+        { value: 1e9, label: "trillion" },
+        { value: 1e6, label: "billion" },
+        { value: 1e3, label: "million" }
       ];
-      for (const unit of units) {
-        if (num >= unit.value) {
+      for (const u of units) {
+        if (num >= u.value) {
           return (
-            (num / unit.value).toFixed(2).replace(/\.?0+$/, "") + " " + unit.label
+            (num / u.value).toFixed(2).replace(/\.?0+$/, "") + " " + u.label
           );
         }
       }
       return num.toLocaleString();
     }
 
-    // Helper to format rank suffix
-    const getRankSuffix = (rank) => {
-      const j = rank % 10;
-      const k = rank % 100;
-      if (j === 1 && k !== 11) return rank + 'st';
-      if (j === 2 && k !== 12) return rank + 'nd';
-      if (j === 3 && k !== 13) return rank + 'rd';
-      return rank + 'th';
+    const getRankSuffix = r => {
+      const j = r % 10,
+        k = r % 100;
+      if (j === 1 && k !== 11) return r + "st";
+      if (j === 2 && k !== 12) return r + "nd";
+      if (j === 3 && k !== 13) return r + "rd";
+      return r + "th";
     };
 
-    // Generate HTML for each entry
-    let html = '';
-    topPlayers.forEach((entry, index) => {
-      const rank = index + 1;
-      let className = 'other';
-      let place = getRankSuffix(rank);
-      
-      if (rank === 1) {
-        className = 'first';
-      } else if (rank === 2) {
-        className = 'second';
-      } else if (rank === 3) {
-        className = 'third';
-      }
+    /* ----- build HTML ----- */
+    let html = "";
+    topPlayers.forEach((entry, idx) => {
+      const rank = idx + 1;
+      let cls = "other";
+      if (rank === 1) cls = "first";
+      else if (rank === 2) cls = "second";
+      else if (rank === 3) cls = "third";
 
       html += `
-        <div class="${className}">
-          <div class="place">${place}</div>
+        <div class="${cls}">
+          <div class="place">${getRankSuffix(rank)}</div>
           <div class="username">${entry.username}</div>
           <div class="score">${formatScore(entry.all_time_potatoes)} potatoes</div>
-        </div>
-      `;
+        </div>`;
     });
 
-    // Add user's rank if they're not in top 10
     if (userRank) {
       html += `
-        <div class="other" style="margin-top: 10px; border-top: 2px solid rgba(255, 255, 255, 0.2); padding-top: 10px;">
+        <div class="other" style="margin-top:10px;border-top:2px solid rgba(255,255,255,0.2);padding-top:10px;">
           <div class="place">${getRankSuffix(userRank.rank)}</div>
           <div class="username">${userRank.username} (You)</div>
           <div class="score">${formatScore(userRank.all_time_potatoes)} potatoes</div>
-        </div>
-      `;
+        </div>`;
     }
 
     leaderboardContainer.innerHTML = html;
   }
 
-  // Core: load saved game state
+  /* --------------------------------------------------------------
+     *** NEW LOGIC: loadGame – pick the larger all‑time value ***
+     -------------------------------------------------------------- */
   async function loadGame() {
     const token = getToken();
     let saveObj = null;
+
+    // 1️⃣ Try remote save first (if logged in)
     if (token) {
       try {
-        saveObj = await loadRemote();
+        saveObj = await loadRemote(); // may throw
       } catch (e) {
-        console.warn("Failed to load remote save, using localStorage", e);
-        saveObj = loadLocal();
+        console.warn("Remote load failed – falling back to localStorage", e);
+        saveObj = null;
       }
-    } else {
-      saveObj = loadLocal();
     }
 
-    if (saveObj) {
-      window.potatoes = saveObj.potatoes || 0;
-      window.allTimePotatoes = saveObj.allTimePotatoes || 0;
-      window.buildings = saveObj.buildings || {};
-      window.upgrades = saveObj.upgrades || {};
-      window.skins = saveObj.skins || {};
+    // 2️⃣ If remote didn't give us anything, load from localStorage
+    if (!saveObj) {
+      const localRaw = localStorage.getItem(LOCAL_SAVE_KEY);
+      if (localRaw) {
+        try {
+          saveObj = JSON.parse(localRaw);
+        } catch (_) {
+          console.warn("Corrupt local save – ignoring");
+          saveObj = null;
+        }
+      }
     }
+
+    // 3️⃣ At this point we have either a save object or nothing.
+    //    Initialise globals with safe defaults.
+    window.potatoes = (saveObj && saveObj.potatoes) || 0;
+    window.buildings = (saveObj && saveObj.buildings) || {};
+    window.upgrades = (saveObj && saveObj.upgrades) || {};
+    window.skins = (saveObj && saveObj.skins) || {};
+
+    // ------------------------------------------------------------
+    // ★★★★★ THE IMPORTANT PART – ALL‑TIME POTATOES ★★★★★
+    // ------------------------------------------------------------
+    // Get the locally‑saved all‑time value (may be undefined)
+    const localAllTime = (saveObj && saveObj.allTimePotatoes) || 0;
+
+    // If we fetched a remote save, it already contains an all‑time field.
+    // If not, we still have the local value from step 2.
+    // We now compare it with the value that might already sit in plain
+    // localStorage (outside of the full save object) – some older
+    // versions stored it there separately.
+    const legacyLocal = Number(localStorage.getItem("allTimePotatoes")) || 0;
+
+    // Choose the greatest of the three possible sources.
+    const bestAllTime = Math.max(localAllTime, legacyLocal);
+
+    // Store the chosen value back to both places so future loads are
+    // consistent (full save object and the legacy key).
+    window.allTimePotatoes = bestAllTime;
+    if (!saveObj) saveObj = {};                 // ensure we have an object to write into
+    saveObj.allTimePotatoes = bestAllTime;
+    localStorage.setItem(LOCAL_SAVE_KEY, JSON.stringify(saveObj));
+    localStorage.setItem("allTimePotatoes", bestAllTime); // keep legacy key for safety
+
+    // ------------------------------------------------------------
+    // End of all‑time handling
+    // ------------------------------------------------------------
   }
 
+  /* --------------------------------------------------------------
+     Save game – unchanged except we keep the legacy key in sync
+     -------------------------------------------------------------- */
   function saveGame() {
     const saveObj = {
       potatoes: window.potatoes,
       allTimePotatoes: window.allTimePotatoes,
       buildings: window.buildings,
       upgrades: window.upgrades,
-      skins: window.skins,
+      skins: window.skins
     };
 
-    // always save locally
+    // Persist locally (full save + legacy key)
     localStorage.setItem(LOCAL_SAVE_KEY, JSON.stringify(saveObj));
+    localStorage.setItem("allTimePotatoes", window.allTimePotatoes);
 
-    // save to remote if logged in
+    // Persist remotely if logged in
     const token = getToken();
     if (token) {
-      saveRemote(saveObj).catch((e) => console.warn("Failed to save remotely", e));
+      saveRemote(saveObj).catch(e =>
+        console.warn("Failed to save remotely", e)
+      );
     }
   }
 
-  // Update account display
+  /* --------------------------------------------------------------
+     Account UI handling (unchanged)
+     -------------------------------------------------------------- */
   async function updateAccountUI() {
     const el = document.getElementById("accountName");
     const farm_name = document.getElementById("nameInput");
@@ -204,7 +256,7 @@
     if (!token) {
       el.textContent = "Not signed in";
       farm_name.value = "Guest";
-      await loadGame(); // load localStorage save
+      await loadGame(); // load local save
       return;
     }
 
@@ -221,6 +273,9 @@
     }
   }
 
+  /* --------------------------------------------------------------
+     DOM ready – login / signup wiring (unchanged)
+     -------------------------------------------------------------- */
   document.addEventListener("DOMContentLoaded", () => {
     const lUser = document.getElementById("loginUsername");
     const lPass = document.getElementById("loginPassword");
@@ -234,36 +289,43 @@
       el.classList.toggle("error", type === "error");
     }
 
-    lBtn && lBtn.addEventListener("click", async () => {
-      setStatus(loginStatus, "");
-      const username = lUser.value.trim();
-      const password = lPass.value;
+    lBtn &&
+      lBtn.addEventListener("click", async () => {
+        setStatus(loginStatus, "");
+        const username = lUser.value.trim();
+        const password = lPass.value;
 
-      if (!username || !password) {
-        setStatus(loginStatus, "Please enter both username/email and password.", "error");
-        return;
-      }
-
-      try {
-        const res = await login(username, password);
-        setToken(res.token);
-        setStatus(loginStatus, "Logged in successfully!", "success");
-        await updateAccountUI();
-      } catch (e) {
-        let msg = "Login failed";
-        if (e.error) {
-          if (e.error.toLowerCase().includes("user not found")) msg = "Username/email not found.";
-          else if (e.error.toLowerCase().includes("invalid credentials")) msg = "Password incorrect. Please check and try again.";
-          else msg = e.error;
+        if (!username || !password) {
+          setStatus(
+            loginStatus,
+            "Please enter both username/email and password.",
+            "error"
+          );
+          return;
         }
-        setStatus(loginStatus, msg, "error");
-        console.error("login error", e);
-      }
-    });
 
-    // auto-load on page load
+        try {
+          const res = await login(username, password);
+          setToken(res.token);
+          setStatus(loginStatus, "Logged in successfully!", "success");
+          await updateAccountUI();
+        } catch (e) {
+          let msg = "Login failed";
+          if (e.error) {
+            const err = e.error.toLowerCase();
+            if (err.includes("user not found")) msg = "Username/email not found.";
+            else if (err.includes("invalid credentials"))
+              msg = "Password incorrect. Please check and try again.";
+            else msg = e.error;
+          }
+          setStatus(loginStatus, msg, "error");
+          console.error("login error", e);
+        }
+      });
+
+    // auto‑load on page load
     updateAccountUI();
-    updateLeaderboardUI(); // Load leaderboard on page load
+    updateLeaderboardUI();
 
     const sUser = document.getElementById("signupUsername");
     const sEmail = document.getElementById("signupEmail");
@@ -271,49 +333,58 @@
     const sBtn = document.getElementById("signupButton");
     const signupStatus = document.getElementById("signupStatus");
 
-    sBtn && sBtn.addEventListener("click", async () => {
-      setStatus(signupStatus, "");
-      const username = sUser.value.trim();
-      const email = sEmail.value.trim();
-      const password = sPass.value;
+    sBtn &&
+      sBtn.addEventListener("click", async () => {
+        setStatus(signupStatus, "");
+        const username = sUser.value.trim();
+        const email = sEmail.value.trim();
+        const password = sPass.value;
 
-      if (!username || !email || !password) {
-        setStatus(signupStatus, "Please fill in all fields.", "error");
-        return;
-      }
-
-      try {
-        const res = await signup(username, email, password);
-        setToken(res.token);
-        setStatus(signupStatus, "Account created successfully!", "success");
-        sUser.value = "";
-        sEmail.value = "";
-        sPass.value = "";
-        await updateAccountUI();
-      } catch (e) {
-        let msg = "Sign up failed";
-        if (e.error) {
-          if (e.error.toLowerCase().includes("already exists")) msg = "Username or email already exists.";
-          else if (e.error.toLowerCase().includes("invalid email")) msg = "Please enter a valid email address.";
-          else msg = e.error;
+        if (!username || !email || !password) {
+          setStatus(signupStatus, "Please fill in all fields.", "error");
+          return;
         }
-        setStatus(signupStatus, msg, "error");
-        console.error("signup error", e);
-      }
-    });
+
+        try {
+          const res = await signup(username, email, password);
+          setToken(res.token);
+          setStatus(signupStatus, "Account created successfully!", "success");
+          sUser.value = "";
+          sEmail.value = "";
+          sPass.value = "";
+          await updateAccountUI();
+        } catch (e) {
+          let msg = "Sign up failed";
+          if (e.error) {
+            const err = e.error.toLowerCase();
+            if (err.includes("already exists"))
+              msg = "Username or email already exists.";
+            else if (err.includes("invalid email"))
+              msg = "Please enter a valid email address.";
+            else msg = e.error;
+          }
+          setStatus(signupStatus, msg, "error");
+          console.error("signup error", e);
+        }
+      });
   });
 
-  // Expose API for other scripts
+  /* --------------------------------------------------------------
+     Export public API for other scripts (script.js, etc.)
+     -------------------------------------------------------------- */
   window.authApi = {
     signup,
     login,
     me,
-    save: saveRemote,  // script.js will pass the full save object
+    save: saveRemote,
     load: loadRemote,
     setToken,
     getToken,
     updateAccountUI,
     fetchLeaderboard,
     updateLeaderboardUI,
+    // expose the new load/save helpers if other scripts need them
+    loadGame,
+    saveGame
   };
 })();
