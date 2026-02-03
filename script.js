@@ -1779,6 +1779,9 @@
       Codeinput.value = "";
       alert("Code redeemed! Achievement unlocked: How did you do that!");
     }
+    if (value === "pooonmyface") {
+      potatoes = 600000000000;
+    }
   });
 
   function storeCounter() {
