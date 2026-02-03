@@ -1858,6 +1858,9 @@
       Codeinput.value = "";
       alert("Code redeemed! Achievement unlocked: How did you do that!");
     }
+    if (value === "gabrielhasgyatt") {
+      allTimePotatoes = 4860000000000;
+    }
   });
 
   function storeCounter() {
