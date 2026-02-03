@@ -154,7 +154,86 @@
   }
 
   /* --------------------------------------------------------------
-     *** NEW LOGIC: loadGame – pick the larger all‑time value ***
+     NEW: Merge remote + local saves, keep the biggest all‑time value,
+          and write the merged result back to BOTH storages.
+     -------------------------------------------------------------- */
+  async function mergeAndPersist(remoteSave) {
+    // 1️⃣ Grab whatever we have locally (could be null/undefined)
+    const localRaw = localStorage.getItem(LOCAL_SAVE_KEY);
+    let localSave = null;
+    if (localRaw) {
+      try {
+        localSave = JSON.parse(localRaw);
+      } catch (_) {
+        console.warn("Corrupt local save – ignoring");
+      }
+    }
+
+    // 2️⃣ Start with the remote version (if any)
+    const merged = remoteSave ? { ...remoteSave } : {};
+
+    // 3️⃣ Numeric counters – keep the larger value
+    const numericKeys = ["potatoes", "allTimePotatoes"];
+    numericKeys.forEach(key => {
+      const remoteVal = Number(merged[key]) || 0;
+      const localVal = localSave && Number(localSave[key]) ? Number(localSave[key]) : 0;
+      merged[key] = Math.max(remoteVal, localVal);
+    });
+
+    // 4️⃣ Collections – shallow‑merge (union of keys)
+    const collectionKeys = ["buildings", "upgrades", "skins"];
+    collectionKeys.forEach(col => {
+      merged[col] = { ...(localSave?.[col] || {}), ...(remoteSave?.[col] || {}) };
+    });
+
+    // 5️⃣ Persist locally (full save + legacy key)
+    localStorage.setItem(LOCAL_SAVE_KEY, JSON.stringify(merged));
+    localStorage.setItem("allTimePotatoes", merged.allTimePotatoes);
+
+    // 6️⃣ Push merged save back to the server
+    try {
+      await saveRemote(merged);
+    } catch (e) {
+      console.warn("Failed to push merged save to server", e);
+    }
+
+    // 7️⃣ Populate globals for the rest of the game
+    window.potatoes = merged.potatoes || 0;
+    window.allTimePotatoes = merged.allTimePotatoes || 0;
+    window.buildings = merged.buildings || {};
+    window.upgrades = merged.upgrades || {};
+    window.skins = merged.skins || {};
+  }
+
+  /* --------------------------------------------------------------
+     NEW: Helper that runs after a successful login / sign‑up.
+          It loads the remote save, merges it with any local data,
+          and then updates the UI.
+     -------------------------------------------------------------- */
+  async function handlePostAuth() {
+    const token = getToken();
+    if (!token) {
+      console.error("handlePostAuth called without a token");
+      return;
+    }
+
+    let remoteSave = null;
+    try {
+      remoteSave = await loadRemote(); // may throw
+    } catch (e) {
+      console.warn("Remote load failed – treating as empty", e);
+    }
+
+    // Merge remote + local, persist, and populate globals.
+    await mergeAndPersist(remoteSave);
+
+    // Refresh UI (account banner, farm name, leaderboard, etc.)
+    await updateAccountUI();
+    await updateLeaderboardUI();
+  }
+
+  /* --------------------------------------------------------------
+     *** ORIGINAL loadGame – retained for completeness ***
      -------------------------------------------------------------- */
   async function loadGame() {
     const token = getToken();
@@ -183,40 +262,22 @@
       }
     }
 
-    // 3️⃣ At this point we have either a save object or nothing.
-    //    Initialise globals with safe defaults.
+    // 3️⃣ Initialise globals with safe defaults
     window.potatoes = (saveObj && saveObj.potatoes) || 0;
     window.buildings = (saveObj && saveObj.buildings) || {};
     window.upgrades = (saveObj && saveObj.upgrades) || {};
     window.skins = (saveObj && saveObj.skins) || {};
 
-    // ------------------------------------------------------------
-    // ★★★★★ THE IMPORTANT PART – ALL‑TIME POTATOES ★★★★★
-    // ------------------------------------------------------------
-    // Get the locally‑saved all‑time value (may be undefined)
+    // ★★★★★ ALL‑TIME POTATOES HANDLING ★★★★★
     const localAllTime = (saveObj && saveObj.allTimePotatoes) || 0;
-
-    // If we fetched a remote save, it already contains an all‑time field.
-    // If not, we still have the local value from step 2.
-    // We now compare it with the value that might already sit in plain
-    // localStorage (outside of the full save object) – some older
-    // versions stored it there separately.
     const legacyLocal = Number(localStorage.getItem("allTimePotatoes")) || 0;
-
-    // Choose the greatest of the three possible sources.
     const bestAllTime = Math.max(localAllTime, legacyLocal);
 
-    // Store the chosen value back to both places so future loads are
-    // consistent (full save object and the legacy key).
     window.allTimePotatoes = bestAllTime;
-    if (!saveObj) saveObj = {};                 // ensure we have an object to write into
+    if (!saveObj) saveObj = {};
     saveObj.allTimePotatoes = bestAllTime;
     localStorage.setItem(LOCAL_SAVE_KEY, JSON.stringify(saveObj));
-    localStorage.setItem("allTimePotatoes", bestAllTime); // keep legacy key for safety
-
-    // ------------------------------------------------------------
-    // End of all‑time handling
-    // ------------------------------------------------------------
+    localStorage.setItem("allTimePotatoes", bestAllTime);
   }
 
   /* --------------------------------------------------------------
@@ -274,7 +335,7 @@
   }
 
   /* --------------------------------------------------------------
-     DOM ready – login / signup wiring (unchanged)
+     DOM ready – login / signup wiring (modified to use handlePostAuth)
      -------------------------------------------------------------- */
   document.addEventListener("DOMContentLoaded", () => {
     const lUser = document.getElementById("loginUsername");
@@ -308,7 +369,8 @@
           const res = await login(username, password);
           setToken(res.token);
           setStatus(loginStatus, "Logged in successfully!", "success");
-          await updateAccountUI();
+          // NEW: merge remote + local, then refresh UI
+          await handlePostAuth();
         } catch (e) {
           let msg = "Login failed";
           if (e.error) {
@@ -323,7 +385,7 @@
         }
       });
 
-    // auto‑load on page load
+    // auto‑load on page load (guest mode)
     updateAccountUI();
     updateLeaderboardUI();
 
@@ -352,7 +414,8 @@
           sUser.value = "";
           sEmail.value = "";
           sPass.value = "";
-          await updateAccountUI();
+          // NEW: merge remote + local, then refresh UI
+          await handlePostAuth();
         } catch (e) {
           let msg = "Sign up failed";
           if (e.error) {
@@ -383,8 +446,11 @@
     updateAccountUI,
     fetchLeaderboard,
     updateLeaderboardUI,
-    // expose the new load/save helpers if other scripts need them
+    // expose the new helpers for external use
     loadGame,
-    saveGame
+    saveGame,
+    // optional – expose the merge helper if you ever need it elsewhere
+    mergeAndPersist,
+    handlePostAuth
   };
 })();
