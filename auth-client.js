@@ -126,28 +126,40 @@
 
     /* ----- build HTML ----- */
     let html = "";
+
     topPlayers.forEach((entry, idx) => {
       const rank = idx + 1;
-      const skinId = entry.equippedSkin || "default";
+      const skinId = entry.equippedSkin || "default";   // <-- correct skin for THIS player
       let cls = "other";
       if (rank === 1) cls = "first";
       else if (rank === 2) cls = "second";
       else if (rank === 3) cls = "third";
-      const userSkin = userRank.equippedSkin || "default";
+
       html += `
         <div class="${cls}">
           <div class="place">${getRankSuffix(rank)}</div>
           <div class="username">${entry.username}</div>
-          <div class="score">${formatScore(entry.all_time_potatoes)} <img src="assets/variants/${userSkin}.png" alt="Potato" class="leaderboard-potato" width="4%"></div>
+          <div class="score">
+            ${formatScore(entry.all_time_potatoes)}
+            <img src="assets/variants/${skinId}.png"
+                alt="Potato"
+                class="leaderboard-potato">
+          </div>
         </div>`;
     });
 
     if (userRank) {
+      const userSkin = userRank.equippedSkin || "default";   // <-- skin for the logged‑in user
       html += `
         <div class="other" style="margin-top:10px;border-top:2px solid rgba(255,255,255,0.2);padding-top:10px;">
           <div class="place">${getRankSuffix(userRank.rank)}</div>
           <div class="username">${userRank.username} (You)</div>
-          <div class="score">${formatScore(userRank.all_time_potatoes)} potatoes</div>
+          <div class="score">
+            ${formatScore(userRank.all_time_potatoes)}
+            <img src="assets/variants/${userSkin}.png"
+                alt="Potato"
+                class="leaderboard-potato">
+          </div>
         </div>`;
     }
 

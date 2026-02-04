@@ -14,7 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve frontend from project root so frontend and API share same origin
 app.use(express.static(path.join(__dirname)));
-// ensure index is served
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
 const pool = new Pool({
@@ -24,7 +23,9 @@ const pool = new Pool({
 
 const JWT_SECRET = process.env.JWT_SECRET || "change-me";
 
-// Ensure users table exists
+/* -------------------------------------------------------------
+   Database schema – users, saves, leaderboard
+   ------------------------------------------------------------- */
 async function ensureTables() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -36,7 +37,6 @@ async function ensureTables() {
     )
   `);
 
-  // New: saves table (one row per user)
   await pool.query(`
     CREATE TABLE IF NOT EXISTS saves (
       user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
@@ -45,7 +45,6 @@ async function ensureTables() {
     )
   `);
 
-  // Leaderboard table
   await pool.query(`
     CREATE TABLE IF NOT EXISTS leaderboard (
       user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
@@ -60,6 +59,9 @@ ensureTables().catch((e) => {
   process.exit(1);
 });
 
+/* -------------------------------------------------------------
+   Helper functions
+   ------------------------------------------------------------- */
 function createToken(user) {
   return jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "7d" });
 }
@@ -72,7 +74,20 @@ async function getUserById(id) {
   return r.rows[0];
 }
 
-// Signup
+/**
+ * Extract the ID of the skin that has `equipped: true`.
+ * Returns "default" if the save is missing, the skins array is missing,
+ * or no skin is marked as equipped.
+ */
+function getEquippedSkin(save) {
+  if (!save || !Array.isArray(save.skins)) return "default";
+  const equipped = save.skins.find((s) => s.equipped);
+  return equipped ? equipped.id : "default";
+}
+
+/* -------------------------------------------------------------
+   Auth routes – signup, login, me
+   ------------------------------------------------------------- */
 app.post("/api/auth/signup", async (req, res) => {
   try {
     let { username, email, password } = req.body;
@@ -81,13 +96,11 @@ app.post("/api/auth/signup", async (req, res) => {
       return res.status(400).json({ error: "Missing fields" });
     }
 
-    // Normalize & validate email
     email = validator.normalizeEmail(email);
     if (!validator.isEmail(email)) {
       return res.status(400).json({ error: "Invalid email address" });
     }
 
-    // Check if user already exists
     const exists = await pool.query(
       "SELECT id FROM users WHERE email = $1 OR username = $2",
       [email, username],
@@ -96,20 +109,14 @@ app.post("/api/auth/signup", async (req, res) => {
       return res.status(409).json({ error: "User already exists" });
     }
 
-    // Hash password
     const hash = await bcrypt.hash(password, 10);
-
-    // Insert new user
     const insert = await pool.query(
       "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
       [username, email, hash],
     );
 
-    // Create token
     const user = insert.rows[0];
     const token = createToken(user);
-
-    // Return token and user
     res.json({ token, user });
   } catch (e) {
     console.error(e);
@@ -117,11 +124,10 @@ app.post("/api/auth/signup", async (req, res) => {
   }
 });
 
-// Login
 app.post("/api/auth/login", async (req, res) => {
   try {
     const fullUrl = getFullUrl(req);
-    const { identifier, password } = req.body; // identifier = email or username
+    const { identifier, password } = req.body;
     if (!identifier || !password)
       return res.status(400).json({ error: "Missing fields" });
 
@@ -159,7 +165,6 @@ const getFullUrl = (req) => {
   return url.toString();
 };
 
-// GET /api/auth/me returns user object if authenticated
 app.get("/api/auth/me", async (req, res) => {
   try {
     const auth = req.headers.authorization;
@@ -174,7 +179,9 @@ app.get("/api/auth/me", async (req, res) => {
   }
 });
 
-// helper to verify token and set req.userId
+/* -------------------------------------------------------------
+   Middleware – requireAuth
+   ------------------------------------------------------------- */
 function requireAuth(req, res, next) {
   try {
     const auth = req.headers.authorization;
@@ -188,14 +195,15 @@ function requireAuth(req, res, next) {
   }
 }
 
-// New: save game for authenticated user
+/* -------------------------------------------------------------
+   Save / Load routes
+   ------------------------------------------------------------- */
 app.post("/api/auth/save", requireAuth, async (req, res) => {
   try {
     const userId = req.userId;
-    const saveData = req.body; // expect full save object
+    const saveData = req.body;
     if (!saveData) return res.status(400).json({ error: "Missing save body" });
 
-    // pg library handles JSON objects directly for JSONB columns
     await pool.query(
       `INSERT INTO saves (user_id, data, updated_at)
        VALUES ($1, $2, now())
@@ -203,7 +211,7 @@ app.post("/api/auth/save", requireAuth, async (req, res) => {
       [userId, saveData],
     );
 
-    // Update leaderboard with allTimePotatoes (handle both flat and nested formats)
+    // Update leaderboard with allTimePotatoes (flat or nested format)
     let allTimePotatoes = saveData.allTimePotatoes;
     if (!allTimePotatoes && saveData.stats) {
       allTimePotatoes = saveData.stats.allTimePotatoes;
@@ -226,14 +234,13 @@ app.post("/api/auth/save", requireAuth, async (req, res) => {
   }
 });
 
-// New: load game for authenticated user
 app.get("/api/auth/load", requireAuth, async (req, res) => {
   try {
     const userId = req.userId;
     const r = await pool.query("SELECT data FROM saves WHERE user_id = $1", [
       userId,
     ]);
-    if (!r.rowCount) return res.json(null); // No save yet, return null so game starts fresh
+    if (!r.rowCount) return res.json(null);
     res.json(r.rows[0].data);
   } catch (e) {
     console.error("load error", e);
@@ -241,20 +248,44 @@ app.get("/api/auth/load", requireAuth, async (req, res) => {
   }
 });
 
-// Get leaderboard (top 10 players + user's rank if not in top 10)
+/* -------------------------------------------------------------
+   Leaderboard route – now includes `equippedSkin`
+   ------------------------------------------------------------- */
 app.get("/api/leaderboard", async (req, res) => {
   try {
-    // Get top 10
-    const topPlayers = await pool.query(
-      `SELECT username, all_time_potatoes, updated_at 
-       FROM leaderboard 
-       ORDER BY all_time_potatoes DESC 
+    /* -------------------- 1️⃣ Top 10 (with user_id) -------------------- */
+    const topResult = await pool.query(
+      `SELECT user_id, username, all_time_potatoes, updated_at
+       FROM leaderboard
+       ORDER BY all_time_potatoes DESC
        LIMIT 10`,
     );
+    const topPlayers = topResult.rows; // array of objects
 
+    /* -------------------- 2️⃣ Pull saves for those users -------------------- */
+    const userIds = topPlayers.map((p) => p.user_id);
+    let savesMap = {}; // user_id → saved JSON (or null)
+    if (userIds.length) {
+      const savesRes = await pool.query(
+        `SELECT user_id, data
+         FROM saves
+         WHERE user_id = ANY($1::int[])`,
+        [userIds],
+      );
+      savesRes.rows.forEach((row) => {
+        savesMap[row.user_id] = row.data; // data is already a JS object
+      });
+    }
+
+    /* -------------------- 3️⃣ Attach equippedSkin to each top player -------------------- */
+    topPlayers.forEach((p) => {
+      const save = savesMap[p.user_id];
+      p.equippedSkin = getEquippedSkin(save);
+      delete p.user_id; // we don't need to expose the raw DB id
+    });
+
+    /* -------------------- 4️⃣ Logged‑in user's rank (if any) -------------------- */
     let userRank = null;
-
-    // If user is authenticated, get their rank
     const auth = req.headers.authorization;
     if (auth) {
       try {
@@ -262,37 +293,47 @@ app.get("/api/leaderboard", async (req, res) => {
         const payload = jwt.verify(token, JWT_SECRET);
         const userId = payload.userId;
 
-        // Get user's rank and score
         const rankQuery = await pool.query(
-          `SELECT 
-            (SELECT COUNT(*) + 1 FROM leaderboard WHERE all_time_potatoes > l.all_time_potatoes) as rank,
-            username,
-            all_time_potatoes
+          `SELECT
+             (SELECT COUNT(*) + 1 FROM leaderboard WHERE all_time_potatoes > l.all_time_potatoes) AS rank,
+             username,
+             all_time_potatoes,
+             l.user_id
            FROM leaderboard l
            WHERE user_id = $1`,
           [userId],
         );
 
         if (rankQuery.rowCount > 0) {
-          const userInfo = rankQuery.rows[0];
-          // Only include user rank if they're not in top 10
-          if (userInfo.rank > 10) {
-            userRank = userInfo;
+          const info = rankQuery.rows[0];
+          if (info.rank > 10) {
+            // Pull this user's save to get the equipped skin
+            const saveRes = await pool.query(
+              `SELECT data FROM saves WHERE user_id = $1`,
+              [userId],
+            );
+            const saveData = saveRes.rowCount ? saveRes.rows[0].data : null;
+            info.equippedSkin = getEquippedSkin(saveData);
+            delete info.user_id;
+            userRank = info;
           }
         }
       } catch (e) {
-        // Invalid token or user not found, just return top 10
         console.log("Could not get user rank:", e.message);
       }
     }
 
-    res.json({ topPlayers: topPlayers.rows, userRank });
+    /* -------------------- 5️⃣ Send response -------------------- */
+    res.json({ topPlayers, userRank });
   } catch (e) {
     console.error("leaderboard error", e);
     res.status(500).json({ error: "Server error" });
   }
 });
 
+/* -------------------------------------------------------------
+   Server start
+   ------------------------------------------------------------- */
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Auth server listening on ${PORT}`);
