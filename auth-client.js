@@ -93,10 +93,11 @@
 
     function getEquippedSkin() {
       if (!Array.isArray(window.skins)) return "default";
-
       const equipped = window.skins.find(s => s.equipped);
       return equipped ? equipped.id : "default";
     }
+
+    window.getEquippedSkin = getEquippedSkin;
 
     /* ----- formatting helpers (same as original) ----- */
     function formatScore(num) {
@@ -132,7 +133,9 @@
     };
 
     /* ----- build HTML ----- */
-    const skinId = getEquippedSkin();
+    const skinId = window.getEquippedSkin
+      ? window.getEquippedSkin()
+      : "default";
     let html = "";
     topPlayers.forEach((entry, idx) => {
       const rank = idx + 1;

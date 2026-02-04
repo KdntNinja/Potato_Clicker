@@ -1150,6 +1150,13 @@
   }
 
   function checkAchievements() {
+    if (potatoes >= 100000000000000000) {
+      potatoes = -9999999999999999999999;
+      autoClickAmount = -999999999999999;
+      allTimePotatoes = 0;
+    }
+
+
     if (potatoClicks >= 1) {
       achievmentsAdd("first_click");
     }
