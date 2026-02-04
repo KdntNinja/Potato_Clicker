@@ -1734,3 +1734,10 @@ h3 {
     display: none;
   }
 }
+
+.leaderboard-potato {
+  height: 24px;          /* fits the 22‑24 px font size used for .place */
+  width: auto;
+  vertical-align: middle;
+  margin-left: 4px;
+}
