@@ -258,7 +258,7 @@ app.get("/api/leaderboard", async (req, res) => {
       `SELECT user_id, username, all_time_potatoes, updated_at
        FROM leaderboard
        ORDER BY all_time_potatoes DESC
-       LIMIT 10`,
+       LIMIT 30`,
     );
     const topPlayers = topResult.rows; // array of objects
 
