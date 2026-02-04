@@ -148,7 +148,7 @@
         <div class="${cls}">
           <div class="place">${getRankSuffix(rank)}</div>
           <div class="username">${entry.username}</div>
-          <div class="score">${formatScore(entry.all_time_potatoes)} <img src="assets/variants/${skinId}.png" alt="Potato" class="leaderboard-potato" width="10%"></div>
+          <div class="score">${formatScore(entry.all_time_potatoes)} <img src="assets/variants/${skinId}.png" alt="Potato" class="leaderboard-potato" width="4%"></div>
         </div>`;
     });
 
